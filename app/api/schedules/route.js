@@ -53,16 +53,30 @@ export async function POST(req) {
     // Handle recurring schedule creation
     if (data.isRecurring && data.recurringPattern) {
       const schedules = [];
-      const startDate = new Date(data.dateTime);
+      const startDate = new Date(data.startTime);
       const endDate = new Date(startDate);
       endDate.setMonth(endDate.getMonth() + 3); // Create 3 months of recurring classes
 
+      // Calculate time difference between start and end time for consistency
+      const timeDiff = new Date(data.endTime).getTime() - new Date(data.startTime).getTime();
+
       let currentDate = new Date(startDate);
       while (currentDate <= endDate) {
+        // Create a new date object for this instance
+        const instanceStartTime = new Date(currentDate);
+        const instanceEndTime = new Date(instanceStartTime.getTime() + timeDiff);
+        
         const scheduleData = {
           ...data,
-          dateTime: new Date(currentDate)
+          startTime: instanceStartTime,
+          endTime: instanceEndTime
         };
+        
+        // Remove dateTime if it exists as we're using startTime/endTime
+        if (scheduleData.dateTime) {
+          delete scheduleData.dateTime;
+        }
+        
         const schedule = new Schedule(scheduleData);
         await schedule.save();
         schedules.push(schedule);

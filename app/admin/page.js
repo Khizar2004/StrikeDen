@@ -4,6 +4,14 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useTheme } from '../../components/ThemeProvider';
+import { FaSun, FaMoon } from 'react-icons/fa';
+
+// Helper function to format time
+const formatTime = (timeString) => {
+  if (!timeString) return 'N/A';
+  return new Date(timeString).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+};
 
 // Tooltip Component
 const Tooltip = ({ text, children }) => {
@@ -17,9 +25,9 @@ const Tooltip = ({ text, children }) => {
     >
       {children}
       {isVisible && (
-        <div className="absolute z-10 w-64 px-3 py-2 text-sm text-white bg-gray-800 rounded-lg shadow-lg -top-1 left-full ml-2">
+        <div className="absolute z-10 w-64 px-3 py-2 text-sm text-white bg-gray-800 dark:bg-gray-800 rounded-lg shadow-lg -top-1 left-full ml-2">
           {text}
-          <div className="absolute w-2 h-2 bg-gray-800 transform rotate-45 -left-1 top-3"></div>
+          <div className="absolute w-2 h-2 bg-gray-800 dark:bg-gray-800 transform rotate-45 -left-1 top-3"></div>
         </div>
       )}
     </div>
@@ -32,13 +40,13 @@ const ConfirmModal = ({ isOpen, onClose, onConfirm, title, message }) => {
   
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg max-w-md w-full p-6 shadow-xl">
-        <h3 className="text-xl font-bold mb-4">{title}</h3>
-        <p className="mb-6 text-gray-600">{message}</p>
+      <div className="bg-white dark:bg-gray-800 rounded-lg max-w-md w-full p-6 shadow-xl transition-colors duration-200">
+        <h3 className="text-xl font-bold mb-4 text-gray-800 dark:text-white">{title}</h3>
+        <p className="mb-6 text-gray-600 dark:text-gray-300">{message}</p>
         <div className="flex justify-end space-x-3">
           <button 
             onClick={onClose}
-            className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-100"
+            className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
           >
             Cancel
           </button>
@@ -47,9 +55,9 @@ const ConfirmModal = ({ isOpen, onClose, onConfirm, title, message }) => {
               onConfirm();
               onClose();
             }}
-            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors duration-200"
           >
-            Delete
+            Confirm
           </button>
         </div>
       </div>
@@ -58,6 +66,7 @@ const ConfirmModal = ({ isOpen, onClose, onConfirm, title, message }) => {
 };
 
 export default function AdminPage() {
+  const { theme, setTheme, mounted } = useTheme();
   const [activeTab, setActiveTab] = useState("trainers");
   const [schedules, setSchedules] = useState([]);
   const [trainers, setTrainers] = useState([]);
@@ -76,13 +85,13 @@ export default function AdminPage() {
     startTime: "",
     endTime: "",
     trainer: "",
-    capacity: 20,
     description: "",
     isRecurring: false,
     recurringPattern: null
   });
   const [isAuth, setIsAuth] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const [viewAllClasses, setViewAllClasses] = useState(false);
   const [isLoading, setIsLoading] = useState({
     trainers: false,
     schedules: false,
@@ -124,13 +133,25 @@ export default function AdminPage() {
       const response = await fetch("/api/trainers");
       const data = await response.json();
       if (data.success) {
-        setTrainers(data.data); // API returns trainers in data field
+        // Check which property contains the trainers data
+        if (data.data) {
+          setTrainers(data.data);
+        } else if (data.trainers) {
+          setTrainers(data.trainers);
+        } else {
+          // Fallback if neither expected property exists
+          console.error("Unexpected API response format:", data);
+          setTrainers([]);
+          toast.error('Unexpected data format from API');
+        }
       } else {
         toast.error(data.error || 'Failed to fetch trainers');
+        setTrainers([]);
       }
     } catch (error) {
       console.error("Error fetching trainers:", error);
       toast.error("Failed to fetch trainers");
+      setTrainers([]);
     } finally {
       setIsLoading({...isLoading, trainers: false});
     }
@@ -139,7 +160,13 @@ export default function AdminPage() {
   const fetchSchedules = async () => {
     try {
       setIsLoading({...isLoading, schedules: true});
-      const response = await fetch(`/api/schedules?date=${selectedDate}`);
+      
+      // Build the URL based on whether we want all classes or just for a specific date
+      const url = viewAllClasses 
+        ? `/api/schedules` 
+        : `/api/schedules?date=${selectedDate}`;
+      
+      const response = await fetch(url);
       const data = await response.json();
       if (data.success) {
         setSchedules(data.schedules);
@@ -195,9 +222,6 @@ export default function AdminPage() {
         return;
       }
 
-      // Ensure capacity is a number
-      const capacity = parseInt(newClass.capacity) || 20;
-
       // Create a clean object with correctly formatted data
       const classData = {
         className: newClass.className.trim(),
@@ -205,7 +229,7 @@ export default function AdminPage() {
         trainer: newClass.trainer,
         startTime: formattedStartTime.toISOString(),
         endTime: formattedEndTime.toISOString(),
-        capacity: capacity
+        capacity: 20 // Default capacity
       };
       
       // Add optional fields only if they have values
@@ -269,7 +293,6 @@ export default function AdminPage() {
           startTime: "",
           endTime: "",
           trainer: "",
-          capacity: 20,
           description: "",
           isRecurring: false,
           recurringPattern: null
@@ -323,6 +346,52 @@ export default function AdminPage() {
       message: "Are you sure you want to delete this class? This action cannot be undone.",
       onConfirm: () => handleDeleteSchedule(id),
       itemId: id
+    });
+  };
+
+  const handleDeleteAllSchedules = async () => {
+    try {
+      setIsLoading({...isLoading, deleteSchedule: true});
+      
+      // Create an array of promises for each schedule deletion
+      const deletePromises = schedules.map(schedule => 
+        fetch(`/api/schedules?id=${schedule._id}`, {
+          method: "DELETE",
+        }).then(res => res.json())
+      );
+      
+      // Wait for all deletions to complete
+      const results = await Promise.all(deletePromises);
+      
+      // Check if all deletions were successful
+      const allSuccessful = results.every(result => result.success);
+      
+      if (allSuccessful) {
+        toast.success(`Successfully deleted ${schedules.length} classes`);
+        // Refresh the schedule list (which will now be empty)
+        setSchedules([]);
+      } else {
+        // Some deletions failed
+        const successCount = results.filter(result => result.success).length;
+        toast.warning(`Deleted ${successCount} out of ${schedules.length} classes. Some deletions failed.`);
+        // Refresh to see what's left
+        fetchSchedules();
+      }
+    } catch (error) {
+      console.error("Error deleting all schedules:", error);
+      toast.error("Failed to delete all classes");
+    } finally {
+      setIsLoading({...isLoading, deleteSchedule: false});
+    }
+  };
+
+  const confirmDeleteAllSchedules = () => {
+    setConfirmModal({
+      isOpen: true,
+      title: "Delete All Classes",
+      message: `Are you sure you want to delete all ${schedules.length} displayed classes? This action cannot be undone.`,
+      onConfirm: handleDeleteAllSchedules,
+      itemId: null
     });
   };
 
@@ -457,11 +526,11 @@ export default function AdminPage() {
     router.push("/admin/login");
   };
 
-  // Render nothing until authentication is confirmed
-  if (!isAuth) return null;
+  // Render nothing until authentication is confirmed and theme is mounted
+  if (!isAuth || !mounted) return null;
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 transition-colors duration-200">
       {/* Confirmation Modal */}
       <ConfirmModal 
         isOpen={confirmModal.isOpen}
@@ -486,12 +555,14 @@ export default function AdminPage() {
             {showDebug ? 'Hide Debug' : debugInfo.lastApiResponse?.status === 400 ? '🔴 Debug (Error Found)' : 'Debug'}
           </button>
         </div>
-        <button
-          onClick={handleLogout}
-          className="bg-red-600 px-4 py-2 rounded text-white hover:bg-red-700"
-        >
-          Logout
-        </button>
+        <div className="flex items-center gap-4">
+          <button
+            onClick={handleLogout}
+            className="bg-red-600 px-4 py-2 rounded text-white hover:bg-red-700"
+          >
+            Logout
+          </button>
+        </div>
       </header>
 
       {/* Debug Information (hidden by default) */}
@@ -548,22 +619,16 @@ export default function AdminPage() {
         <div className="w-64 bg-gray-800 text-white p-6">
           <ul>
             <li
-              className={`cursor-pointer py-2 ${activeTab === "trainers" ? "bg-red-600" : ""}`}
+              className={`cursor-pointer py-2 px-3 rounded transition-colors duration-200 ${activeTab === "trainers" ? "bg-red-600" : "hover:bg-gray-700"}`}
               onClick={() => setActiveTab("trainers")}
             >
               Manage Trainers
             </li>
             <li
-              className={`cursor-pointer py-2 ${activeTab === "schedule" ? "bg-red-600" : ""}`}
+              className={`cursor-pointer py-2 px-3 rounded transition-colors duration-200 ${activeTab === "schedule" ? "bg-red-600" : "hover:bg-gray-700"}`}
               onClick={() => setActiveTab("schedule")}
             >
               Manage Schedule
-            </li>
-            <li
-              className={`cursor-pointer py-2 ${activeTab === "members" ? "bg-red-600" : ""}`}
-              onClick={() => setActiveTab("members")}
-            >
-              Manage Members
             </li>
           </ul>
         </div>
@@ -572,12 +637,12 @@ export default function AdminPage() {
         <div className="flex-1 p-6">
           {activeTab === "trainers" && (
             <div>
-              <h2 className="text-2xl font-bold mb-4">Manage Trainers</h2>
+              <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">Manage Trainers</h2>
               
               {/* Add New Trainer Form */}
-              <div className="bg-white p-6 rounded-lg shadow-lg mb-6">
-                <h3 className="text-xl font-semibold mb-4">Add New Trainer</h3>
-                <p className="text-gray-600 mb-4">Fill in the information below to add a new trainer to the system. Required fields are marked with *</p>
+              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg mb-6 transition-colors duration-200">
+                <h3 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">Add New Trainer</h3>
+                <p className="text-gray-600 dark:text-gray-300 mb-4">Fill in the information below to add a new trainer to the system. Required fields are marked with *</p>
                 
                 <form onSubmit={(e) => {
                   e.preventDefault();
@@ -585,7 +650,7 @@ export default function AdminPage() {
                 }}>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label htmlFor="trainerName" className="block text-sm font-medium text-gray-700 mb-1">
+                      <label htmlFor="trainerName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                         Trainer Name *
                       </label>
                       <input
@@ -594,20 +659,20 @@ export default function AdminPage() {
                         placeholder="Enter trainer's full name"
                         value={newTrainer?.name || ''}
                         onChange={(e) => setNewTrainer({ ...newTrainer, name: e.target.value })}
-                        className="p-2 border rounded-lg w-full"
+                        className="p-2 border rounded-lg w-full text-black dark:text-white dark:bg-gray-700 dark:border-gray-600"
                         required
                       />
                     </div>
                     
                     <div>
-                      <label htmlFor="specialization" className="block text-sm font-medium text-gray-700 mb-1">
+                      <label htmlFor="specialization" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                         Specialization *
                       </label>
                       <select
                         id="specialization"
                         value={newTrainer?.specialization || ''}
                         onChange={(e) => setNewTrainer({ ...newTrainer, specialization: e.target.value })}
-                        className="p-2 border rounded-lg w-full"
+                        className="p-2 border rounded-lg w-full text-black dark:text-white dark:bg-gray-700 dark:border-gray-600"
                         required
                       >
                         <option value="">Select Specialization</option>
@@ -618,7 +683,7 @@ export default function AdminPage() {
                     </div>
 
                     <div>
-                      <label htmlFor="experience" className="block text-sm font-medium text-gray-700 mb-1">
+                      <label htmlFor="experience" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                         Years of Experience *
                       </label>
                       <input
@@ -633,13 +698,13 @@ export default function AdminPage() {
                         }}
                         min="0"
                         max="50"
-                        className="p-2 border rounded-lg w-full"
+                        className="p-2 border rounded-lg w-full text-black dark:text-white dark:bg-gray-700 dark:border-gray-600"
                         required
                       />
                     </div>
 
                     <div>
-                      <label htmlFor="imageUrl" className="block text-sm font-medium text-gray-700 mb-1">
+                      <label htmlFor="imageUrl" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                         Profile Image URL <span className="text-gray-500">(optional)</span>
                         <Tooltip text="Paste a URL to an image of the trainer. You can upload images to free hosting sites like Imgur or use photos from your gym's website.">
                           <span className="ml-1 text-gray-500 cursor-help text-xs">(?)</span>
@@ -651,13 +716,13 @@ export default function AdminPage() {
                         placeholder="https://example.com/image.jpg"
                         value={newTrainer?.image || ''}
                         onChange={(e) => setNewTrainer({ ...newTrainer, image: e.target.value })}
-                        className="p-2 border rounded-lg w-full"
+                        className="p-2 border rounded-lg w-full text-black dark:text-white dark:bg-gray-700 dark:border-gray-600"
                       />
                       <p className="text-sm text-gray-500 mt-1">Add a link to the trainer's profile photo</p>
                     </div>
 
                     <div className="md:col-span-2">
-                      <label htmlFor="bio" className="block text-sm font-medium text-gray-700 mb-1">
+                      <label htmlFor="bio" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                         Bio <span className="text-gray-500">(optional)</span>
                       </label>
                       <textarea
@@ -665,7 +730,7 @@ export default function AdminPage() {
                         placeholder="Short biography about the trainer"
                         value={newTrainer?.bio || ''}
                         onChange={(e) => setNewTrainer({ ...newTrainer, bio: e.target.value })}
-                        className="p-2 border rounded-lg w-full"
+                        className="p-2 border rounded-lg w-full text-black dark:text-white dark:bg-gray-700 dark:border-gray-600"
                         rows="3"
                       />
                     </div>
@@ -709,7 +774,7 @@ export default function AdminPage() {
                               }
                             }
                           }}
-                          className="p-2 border rounded-lg flex-grow"
+                          className="p-2 border rounded-lg flex-grow text-black dark:text-white dark:bg-gray-700 dark:border-gray-600"
                         />
                       </div>
                       <p className="text-sm text-gray-500 mt-1">Type a certification and press Enter to add it</p>
@@ -778,24 +843,24 @@ export default function AdminPage() {
               </div>
 
               {/* Display Trainers */}
-              <h3 className="text-xl font-semibold mb-4">Current Trainers</h3>
+              <h3 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">Current Trainers</h3>
               {isLoading.trainers ? (
                 <div className="text-center py-8">
-                  <p className="text-gray-500">Loading trainers...</p>
+                  <p className="text-gray-500 dark:text-gray-400">Loading trainers...</p>
                 </div>
               ) : trainers.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {trainers.map((trainer) => (
-                    <div key={trainer._id} className="bg-white p-4 rounded-lg shadow-lg">
+                    <div key={trainer._id} className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg transition-colors duration-200">
                       <div className="flex justify-between items-start">
                         <div>
-                          <h3 className="text-xl font-semibold">{trainer.name}</h3>
-                          <p className="text-gray-600">{trainer.specialization}</p>
+                          <h3 className="text-xl font-semibold text-gray-800 dark:text-white">{trainer.name}</h3>
+                          <p className="text-gray-600 dark:text-gray-300">{trainer.specialization}</p>
                         </div>
                         <button
                           onClick={() => confirmDeleteTrainer(trainer._id)}
                           disabled={isLoading.deleteTrainer}
-                          className="text-red-600 hover:text-red-800"
+                          className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
                           aria-label="Delete trainer"
                         >
                           ×
@@ -806,14 +871,14 @@ export default function AdminPage() {
                         alt={trainer.name}
                         className="w-full h-48 object-cover rounded-lg my-2"
                       />
-                      <p className="text-gray-600">Experience: {trainer.experience} years</p>
-                      {trainer.bio && <p className="text-gray-500 mt-2">{trainer.bio}</p>}
+                      <p className="text-gray-600 dark:text-gray-300">Experience: {trainer.experience} years</p>
+                      {trainer.bio && <p className="text-gray-500 dark:text-gray-400 mt-2">{trainer.bio}</p>}
                       {trainer.certifications?.length > 0 && (
                         <div className="mt-2">
-                          <p className="font-semibold">Certifications:</p>
+                          <p className="font-semibold text-gray-700 dark:text-gray-300">Certifications:</p>
                           <div className="flex flex-wrap gap-1 mt-1">
                             {trainer.certifications.map((cert, index) => (
-                              <span key={index} className="bg-gray-100 px-2 py-1 rounded text-sm">
+                              <span key={index} className="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded text-sm text-gray-800 dark:text-gray-200">
                                 {cert}
                               </span>
                             ))}
@@ -824,9 +889,9 @@ export default function AdminPage() {
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-8 bg-white rounded-lg shadow">
-                  <p className="text-gray-500">No trainers added yet.</p>
-                  <p className="text-gray-500">Use the form above to add your first trainer.</p>
+                <div className="text-center py-8 bg-white dark:bg-gray-800 rounded-lg shadow transition-colors duration-200">
+                  <p className="text-gray-500 dark:text-gray-400">No trainers added yet.</p>
+                  <p className="text-gray-500 dark:text-gray-400">Use the form above to add your first trainer.</p>
                 </div>
               )}
             </div>
@@ -835,30 +900,30 @@ export default function AdminPage() {
           {activeTab === "schedule" && (
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-white p-6 rounded-lg shadow-md">
-                  <h3 className="text-xl font-semibold mb-4">Add Class</h3>
+                <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                  <h3 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">Add Class</h3>
                   <form onSubmit={(e) => {
                     e.preventDefault();
                     handleAddSchedule();
                   }}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="mb-4">
-                        <label className="block text-sm font-medium mb-1">Class Name</label>
+                        <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Class Name</label>
                         <input
                           type="text"
                           required
                           value={newClass.className}
                           onChange={(e) => setNewClass({...newClass, className: e.target.value})}
-                          className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+                          className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 text-black dark:text-white dark:bg-gray-700 dark:border-gray-600"
                         />
                       </div>
                       <div className="mb-4">
-                        <label className="block text-sm font-medium mb-1">Class Type</label>
+                        <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Class Type</label>
                         <select
                           required
                           value={newClass.classType}
                           onChange={(e) => setNewClass({...newClass, classType: e.target.value})}
-                          className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+                          className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 text-black dark:text-white dark:bg-gray-700 dark:border-gray-600"
                         >
                           <option value="">Select Class Type</option>
                           <option value="Boxing">Boxing</option>
@@ -870,42 +935,42 @@ export default function AdminPage() {
                         </select>
                       </div>
                       <div className="mb-4">
-                        <label className="block text-sm font-medium mb-1">Date</label>
+                        <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Date</label>
                         <input
                           type="date"
                           required
                           value={newClass.date}
                           onChange={(e) => setNewClass({...newClass, date: e.target.value})}
-                          className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+                          className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 text-black dark:text-white dark:bg-gray-700 dark:border-gray-600"
                         />
                       </div>
                       <div className="mb-4">
-                        <label className="block text-sm font-medium mb-1">Start Time</label>
+                        <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Start Time</label>
                         <input
                           type="time"
                           required
                           value={newClass.startTime}
                           onChange={(e) => setNewClass({...newClass, startTime: e.target.value})}
-                          className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+                          className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 text-black dark:text-white dark:bg-gray-700 dark:border-gray-600"
                         />
                       </div>
                       <div className="mb-4">
-                        <label className="block text-sm font-medium mb-1">End Time</label>
+                        <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">End Time</label>
                         <input
                           type="time"
                           required
                           value={newClass.endTime}
                           onChange={(e) => setNewClass({...newClass, endTime: e.target.value})}
-                          className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+                          className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 text-black dark:text-white dark:bg-gray-700 dark:border-gray-600"
                         />
                       </div>
                       <div className="mb-4">
-                        <label className="block text-sm font-medium mb-1">Trainer</label>
+                        <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Trainer</label>
                         <select
                           required
                           value={newClass.trainer}
                           onChange={(e) => setNewClass({...newClass, trainer: e.target.value})}
-                          className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+                          className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 text-black dark:text-white dark:bg-gray-700 dark:border-gray-600"
                         >
                           <option value="">Select Trainer</option>
                           {trainers.map((trainer) => (
@@ -915,23 +980,12 @@ export default function AdminPage() {
                           ))}
                         </select>
                       </div>
-                      <div className="mb-4">
-                        <label className="block text-sm font-medium mb-1">Capacity</label>
-                        <input
-                          type="number"
-                          required
-                          value={newClass.capacity}
-                          onChange={(e) => setNewClass({...newClass, capacity: e.target.value})}
-                          className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500"
-                          min="1"
-                        />
-                      </div>
                       <div className="mb-4 md:col-span-2">
-                        <label className="block text-sm font-medium mb-1">Description (Optional)</label>
+                        <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Description (Optional)</label>
                         <textarea
                           value={newClass.description}
                           onChange={(e) => setNewClass({...newClass, description: e.target.value})}
-                          className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+                          className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 text-black dark:text-white dark:bg-gray-700 dark:border-gray-600"
                           rows="3"
                         />
                       </div>
@@ -946,7 +1000,7 @@ export default function AdminPage() {
                           onChange={(e) => setNewClass({...newClass, isRecurring: e.target.checked})}
                           className="mr-2"
                         />
-                        <label htmlFor="isRecurring" className="text-sm font-medium">
+                        <label htmlFor="isRecurring" className="text-sm font-medium text-gray-700 dark:text-gray-300">
                           Make this a recurring class
                         </label>
                       </div>
@@ -954,12 +1008,12 @@ export default function AdminPage() {
                   
                     {newClass.isRecurring && (
                       <div className="mb-4">
-                        <label className="block text-sm font-medium mb-1">Recurring Pattern</label>
+                        <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Recurring Pattern</label>
                         <select
                           required={newClass.isRecurring}
                           value={newClass.recurringPattern || ""}
                           onChange={(e) => setNewClass({...newClass, recurringPattern: e.target.value})}
-                          className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+                          className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 text-black dark:text-white dark:bg-gray-700 dark:border-gray-600"
                         >
                           <option value="">Select Pattern</option>
                           <option value="daily">Daily</option>
@@ -1066,85 +1120,117 @@ export default function AdminPage() {
 
                 {/* Schedule View Controls */}
                 <div className="mb-6">
-                  <h3 className="text-xl font-semibold mb-4">View Schedule</h3>
-                  <div className="flex items-center gap-4 bg-white p-4 rounded-lg shadow">
-                    <label htmlFor="dateFilter" className="text-sm font-medium text-gray-700">
-                      Filter by date:
-                    </label>
-                    <input
-                      id="dateFilter"
-                      type="date"
-                      value={selectedDate}
-                      onChange={(e) => {
-                        setSelectedDate(e.target.value);
-                      }}
-                      className="p-2 border rounded-lg"
-                    />
-                    <button 
-                      onClick={fetchSchedules}
-                      disabled={isLoading.schedules}
-                      className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-                    >
-                      {isLoading.schedules ? 'Loading...' : 'View Classes'}
-                    </button>
+                  <h3 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">View Schedule</h3>
+                  <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+                    <div className="flex flex-col md:flex-row md:items-center gap-4">
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          id="viewAllClasses"
+                          checked={viewAllClasses}
+                          onChange={(e) => setViewAllClasses(e.target.checked)}
+                          className="mr-1"
+                        />
+                        <label htmlFor="viewAllClasses" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                          View all classes
+                        </label>
+                      </div>
+                      
+                      {!viewAllClasses && (
+                        <div className="flex items-center gap-2">
+                          <label htmlFor="dateFilter" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                            Filter by date:
+                          </label>
+                          <input
+                            id="dateFilter"
+                            type="date"
+                            value={selectedDate}
+                            onChange={(e) => {
+                              setSelectedDate(e.target.value);
+                            }}
+                            className="p-2 border rounded-lg text-black dark:text-white dark:bg-gray-700 dark:border-gray-600"
+                          />
+                        </div>
+                      )}
+                      
+                      <button 
+                        onClick={fetchSchedules}
+                        disabled={isLoading.schedules}
+                        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors duration-200"
+                      >
+                        {isLoading.schedules ? 'Loading...' : viewAllClasses ? 'View All Classes' : 'View Classes for Date'}
+                      </button>
+                    </div>
                   </div>
                 </div>
 
                 {/* Display Schedules */}
                 <div>
-                  <h3 className="text-xl font-semibold mb-4">Classes for {new Date(selectedDate).toLocaleDateString()}</h3>
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-xl font-semibold text-gray-800 dark:text-white">
+                      {viewAllClasses ? 'All Classes' : `Classes for ${new Date(selectedDate).toLocaleDateString()}`}
+                    </h3>
+                    
+                    {schedules.length > 0 && (
+                      <button
+                        onClick={confirmDeleteAllSchedules}
+                        disabled={isLoading.deleteSchedule}
+                        className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center"
+                      >
+                        {isLoading.deleteSchedule ? 'Deleting...' : 'Delete All Classes'}
+                      </button>
+                    )}
+                  </div>
+                  
                   {isLoading.schedules ? (
                     <div className="text-center py-8">
-                      <p className="text-gray-500">Loading classes...</p>
+                      <p className="text-gray-500 dark:text-gray-400">Loading classes...</p>
                     </div>
                   ) : schedules.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                       {schedules.map((schedule) => (
-                        <div key={schedule._id} className="bg-white p-4 rounded-lg shadow-lg">
-                          <div className="flex justify-between items-start">
-                            <h3 className="text-xl font-semibold">{schedule.className}</h3>
+                        <div key={schedule._id} className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+                          <div className="flex justify-between items-start mb-2">
+                            <h4 className="font-semibold text-gray-800 dark:text-white">{schedule.className}</h4>
                             <button
                               onClick={() => confirmDeleteSchedule(schedule._id)}
                               disabled={isLoading.deleteSchedule}
-                              className="text-red-600 hover:text-red-800"
+                              className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
                               aria-label="Delete class"
                             >
                               ×
                             </button>
                           </div>
-                          <div className="mt-2 text-sm text-gray-600">
-                            <p className="font-semibold text-gray-800">{schedule.classType}</p>
-                            <p>Date: {new Date(schedule.startTime).toLocaleDateString()}</p>
-                            <p>Time: {new Date(schedule.startTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} - {new Date(schedule.endTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
-                            <p>Trainer: {schedule.trainer?.name}</p>
-                            <p className="mt-1">
-                              {schedule.enrolledStudents?.length || 0} / {schedule.capacity} spots filled
-                            </p>
-                            {schedule.description && (
-                              <p className="mt-2 text-gray-500">{schedule.description}</p>
-                            )}
-                            {schedule.isRecurring && (
-                              <p className="mt-1 text-blue-600">Recurring: {schedule.recurringPattern}</p>
-                            )}
+                          <div className="text-sm text-gray-600 dark:text-gray-300">
+                            <span className="font-medium">Date:</span> {new Date(schedule.startTime).toLocaleDateString()}
                           </div>
+                          <div className="text-sm text-gray-600 dark:text-gray-300">
+                            <span className="font-medium">Type:</span> {schedule.classType}
+                          </div>
+                          <div className="text-sm text-gray-600 dark:text-gray-300">
+                            <span className="font-medium">Time:</span> {formatTime(schedule.startTime)} - {formatTime(schedule.endTime)}
+                          </div>
+                          <div className="text-sm text-gray-600 dark:text-gray-300">
+                            <span className="font-medium">Trainer:</span> {schedule.trainer?.name || 'Unknown'}
+                          </div>
+                          {schedule.description && (
+                            <div className="text-sm text-gray-600 dark:text-gray-300 mt-2">
+                              <span className="font-medium">Description:</span> {schedule.description}
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>
                   ) : (
-                    <div className="text-center py-8 bg-white rounded-lg shadow">
-                      <p className="text-gray-500">No classes scheduled for this date.</p>
-                      <p className="text-gray-500 mt-2">Use the form above to add a new class.</p>
+                    <div className="text-center py-8 bg-white dark:bg-gray-800 rounded-lg shadow">
+                      <p className="text-gray-500 dark:text-gray-400">
+                        {viewAllClasses ? 'No classes found.' : 'No classes scheduled for this date.'}
+                      </p>
+                      <p className="text-gray-500 dark:text-gray-400 mt-2">Use the form above to add a new class.</p>
                     </div>
                   )}
                 </div>
               </div>
-            </div>
-          )}
-
-          {activeTab === "members" && (
-            <div>
-              <h2 className="text-2xl font-bold mb-4">Manage Members</h2>
-              {/* Member management forms will go here */}
             </div>
           )}
         </div>

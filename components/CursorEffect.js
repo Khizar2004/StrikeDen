@@ -6,6 +6,7 @@ export default function CursorEffect() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isVisible, setIsVisible] = useState(false);
   const [isHoveringClickable, setIsHoveringClickable] = useState(false);
+  const [isClicking, setIsClicking] = useState(false);
 
   useEffect(() => {
     // Only enable on non-touch devices
@@ -13,7 +14,8 @@ export default function CursorEffect() {
       setIsVisible(true);
       
       const handleMouseMove = (e) => {
-        setMousePosition({ x: e.clientX, y: e.clientY });
+        const newPosition = { x: e.clientX, y: e.clientY };
+        setMousePosition(newPosition);
       };
       
       // Check if hovering over clickable elements
@@ -28,69 +30,118 @@ export default function CursorEffect() {
         setIsHoveringClickable(isClickable || isNavbar);
       };
       
+      const handleMouseDown = () => {
+        setIsClicking(true);
+      };
+      
+      const handleMouseUp = () => {
+        setIsClicking(false);
+      };
+      
       window.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseover', handleMouseOver);
+      document.addEventListener('mousedown', handleMouseDown);
+      document.addEventListener('mouseup', handleMouseUp);
       
       return () => {
         window.removeEventListener('mousemove', handleMouseMove);
         document.removeEventListener('mouseover', handleMouseOver);
+        document.removeEventListener('mousedown', handleMouseDown);
+        document.removeEventListener('mouseup', handleMouseUp);
       };
     }
   }, []);
 
-  // Don't render anything on touch devices or when hovering navbar
+  // Don't render anything on touch devices
   if (!isVisible) return null;
 
   return (
     <>
-      {!isHoveringClickable && (
+      {/* Main cursor dot */}
+      <motion.div
+        className="cursor-dot fixed top-0 left-0 z-50 pointer-events-none"
+        style={{
+          position: 'fixed',
+          width: isClicking ? '12px' : '16px',
+          height: isClicking ? '12px' : '16px',
+          borderRadius: '50%',
+          backgroundColor: 'rgba(229, 9, 20, 0.9)',
+          mixBlendMode: 'screen',
+        }}
+        animate={{
+          x: mousePosition.x - (isClicking ? 6 : 8),
+          y: mousePosition.y - (isClicking ? 6 : 8),
+          scale: isClicking ? 0.8 : 1,
+        }}
+        transition={{
+          duration: 0.15,
+          ease: "circOut",
+        }}
+      />
+      
+      {/* Outer ring - only show when hovering clickable elements */}
+      {isHoveringClickable && (
         <motion.div
-          className="cursor-dot fixed top-0 left-0 z-50 pointer-events-none"
+          className="cursor-ring fixed top-0 left-0 z-50 pointer-events-none"
           style={{
             position: 'fixed',
-            width: '20px',
-            height: '20px',
+            width: '40px',
+            height: '40px',
             borderRadius: '50%',
-            backgroundColor: 'rgba(0, 112, 243, 0.5)',
-            mixBlendMode: 'difference',
-            filter: 'blur(5px)',
+            border: '2px solid rgba(229, 9, 20, 0.8)',
+            transform: 'translate(-50%, -50%)',
           }}
           animate={{
-            x: mousePosition.x - 10,
-            y: mousePosition.y - 10,
-            scale: [1, 1.2, 1],
-            opacity: [0.5, 0.8, 0.5],
+            x: mousePosition.x,
+            y: mousePosition.y,
+            scale: [1, 1.1, 1],
           }}
           transition={{
-            duration: 0.5,
+            duration: 0.3,
             ease: "circOut",
+            scale: {
+              duration: 0.5,
+              ease: "easeInOut",
+              repeat: Infinity,
+              repeatType: "reverse",
+            }
           }}
         />
       )}
       
-      <motion.div
-        className="cursor-ring fixed top-0 left-0 z-50 pointer-events-none"
-        style={{
-          position: 'fixed',
-          width: isHoveringClickable ? '50px' : '40px',
-          height: isHoveringClickable ? '50px' : '40px',
-          borderRadius: '50%',
-          border: isHoveringClickable 
-            ? '2px solid rgba(255, 59, 48, 0.7)' 
-            : '1px solid rgba(255, 59, 48, 0.5)',
-          mixBlendMode: 'difference',
-          transform: 'translate(-50%, -50%)',
-        }}
-        animate={{
-          x: mousePosition.x,
-          y: mousePosition.y,
-          scale: isHoveringClickable ? 1.2 : 1,
-        }}
-        transition={{
-          duration: 0.15,
-          ease: "linear",
-        }}
-      />
+      {/* Click effect */}
+      <AnimatePresence>
+        {isClicking && (
+          <motion.div
+            className="cursor-click fixed top-0 left-0 z-48 pointer-events-none"
+            style={{
+              position: 'fixed',
+              width: '50px',
+              height: '50px',
+              borderRadius: '50%',
+              border: '2px solid rgba(229, 9, 20, 0.8)',
+              transform: 'translate(-50%, -50%)',
+            }}
+            initial={{ 
+              x: mousePosition.x, 
+              y: mousePosition.y, 
+              scale: 0.5, 
+              opacity: 0.8 
+            }}
+            animate={{ 
+              scale: 1.5, 
+              opacity: 0 
+            }}
+            exit={{ 
+              opacity: 0 
+            }}
+            transition={{
+              duration: 0.4,
+              ease: "easeOut",
+            }}
+          />
+        )}
+      </AnimatePresence>
     </>
   );
 } 
