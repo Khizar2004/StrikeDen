@@ -1,0 +1,118 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes shine {
+  0% {
+    transform: translateX(-100%) translateY(-100%);
+  }
+  25%, 100% {
+    transform: translateX(100%) translateY(100%);
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@layer base {
+  body {
+    @apply bg-secondary-50 text-secondary-900 font-sans antialiased;
+    padding-top: 64px;
+    cursor: none;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-sans font-medium tracking-tight;
+  }
+  
+  a, button, nav, nav * {
+    cursor: pointer !important;
+  }
+}
+
+@layer components {
+  .container-padded {
+    @apply px-4 sm:px-6 lg:px-8 mx-auto max-w-7xl;
+  }
+  
+  .btn {
+    @apply inline-flex items-center justify-center px-6 py-3 text-sm font-medium rounded-md 
+    transition-all duration-300 shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2
+    transform hover:-translate-y-0.5 active:translate-y-0 tracking-wide;
+  }
+  
+  .btn-primary {
+    @apply bg-primary text-white hover:bg-primary-600 focus:ring-primary
+    border border-primary-600 shadow-primary-500/20;
+  }
+  
+  .btn-accent {
+    @apply bg-accent text-white hover:bg-accent-dark focus:ring-accent
+    border border-accent-dark shadow-accent/20;
+  }
+  
+  .btn-secondary {
+    @apply bg-white text-secondary-800 hover:bg-secondary-100 focus:ring-secondary-400
+    border border-secondary-200 shadow-secondary-300/20;
+  }
+  
+  .card {
+    @apply bg-white rounded-xl shadow-card p-6 transition-all duration-200;
+  }
+  
+  .input {
+    @apply w-full px-4 py-3 rounded-lg border border-secondary-200 bg-white text-secondary-900 
+    focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200;
+  }
+  
+  .glass-panel {
+    @apply backdrop-blur-md bg-white/10 border border-white/20 shadow-lg;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent;
+  }
+  
+  .text-shadow {
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+  
+  .text-shadow-sm {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  }
+  
+  .text-shadow-lg {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  }
+  
+  .filter-grayscale {
+    filter: grayscale(1);
+  }
+  
+  .filter-grayscale-0 {
+    filter: grayscale(0);
+  }
+  
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+  
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+  
+  .backface-hidden {
+    backface-visibility: hidden;
+  }
+}
