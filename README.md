@@ -1,7 +1,7 @@
 # StrikeDen | MMA & Judo Training Center
 
 <p align="center">
-  <img src="public/logo.png" alt="StrikeDen Logo" width="200" height="auto" />
+  <img src="public/images/logo.png" alt="StrikeDen Logo" width="200" height="auto" />
 </p>
 
 <p align="center">
@@ -165,7 +165,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 👏 Acknowledgements
 
-- Logo and branding design by [Designer Name]
 - Icons from [React Icons](https://react-icons.github.io/react-icons/)
 - Map functionality powered by [Leaflet](https://leafletjs.com/)
 - Animations by [Framer Motion](https://www.framer.com/motion/)
@@ -174,12 +173,11 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 For any inquiries, please reach out to:
 
-- **Email**: info@strikeden.pk
 - **Phone**: +92 337 2629350
 - **Address**: 2nd Floor, 38-C, Shahbaz Commercial, DHA Phase 6, Karachi, Pakistan
 
 ---
 
 <p align="center">
-  Built with ❤️ by [Your Name/Team]
+  Built by Khizar Aamir
 </p>
