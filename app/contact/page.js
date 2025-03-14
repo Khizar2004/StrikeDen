@@ -4,6 +4,13 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { useTheme } from "../../components/ThemeProvider";
 import { FaMapMarkerAlt, FaPhone, FaClock, FaFacebookF, FaInstagram, FaWhatsapp } from "react-icons/fa";
+import dynamic from 'next/dynamic';
+
+// Dynamically import the map component with no SSR to avoid window undefined errors
+const InteractiveMap = dynamic(() => import('../../components/InteractiveMap'), {
+  ssr: false,
+  loading: () => <div className="h-96 w-full bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center">Loading map...</div>
+});
 
 // Contact info card component
 const ContactInfoCard = ({ icon, title, children }) => {
@@ -51,7 +58,7 @@ const BusinessHours = () => {
 const SocialLinks = () => {
   const socials = [
     { name: "Facebook", icon: <FaFacebookF />, url: "https://www.facebook.com/profile.php?id=61570916734685" },
-    { name: "Instagram", icon: <FaInstagram />, url: "https://www.instagram.com/strikeden.pk/reel/DHGm0jFsCaR/" },
+    { name: "Instagram", icon: <FaInstagram />, url: "https://www.instagram.com/strikeden.pk/" },
     { name: "WhatsApp", icon: <FaWhatsapp />, url: "https://api.whatsapp.com/send/?phone=923372629350&text&type=phone_number&app_absent=0" }
   ];
   
@@ -147,7 +154,7 @@ export default function ContactPage() {
               <p className="mb-2">2nd Floor, 38-C, Shahbaz Commercial, DHA Phase 6</p>
               <p className="mb-2">Karachi 75500, Pakistan</p>
               <a href="https://www.google.com/maps/place/Strike+Den+%7C+MMA+%26+Judo/@24.7948238,67.0468958,963m/data=!3m1!1e3!4m6!3m5!1s0x3eb33d8b3de8175d:0xccac7c6c8c8c752e!8m2!3d24.7948238!4d67.0494707!16s%2Fg%2F11wws9jpr8?entry=ttu&g_ep=EgoyMDI1MDMxMS4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener noreferrer" className="text-red-500 hover:text-red-600 transition-colors duration-300">
-                View on Map
+                Open in Google Maps
               </a>
             </ContactInfoCard>
             
@@ -169,6 +176,23 @@ export default function ContactPage() {
             </ContactInfoCard>
           </div>
         </section>
+        
+        {/* Map Section */}
+        <motion.section 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="mb-16"
+        >
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg transition-colors duration-300 overflow-hidden">
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Find Us on the Map</h2>
+            </div>
+            <div className="h-96 w-full">
+              <InteractiveMap />
+            </div>
+          </div>
+        </motion.section>
         
         {/* Social Media Section */}
         <section className="mb-16">

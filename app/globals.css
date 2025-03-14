@@ -531,3 +531,24 @@
     transform: rotate(3deg);
   }
 }
+
+/* Leaflet Map Styles */
+.leaflet-container {
+  height: 100%;
+  width: 100%;
+  z-index: 1;
+}
+
+.leaflet-control-container .leaflet-routing-container-hide {
+  display: none;
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: 8px;
+  padding: 4px;
+}
+
+.leaflet-popup-content {
+  margin: 10px;
+  line-height: 1.5;
+}

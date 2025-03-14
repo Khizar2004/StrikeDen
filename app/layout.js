@@ -95,7 +95,7 @@ export default function RootLayout({ children }) {
                       </a>
                       
                       <a 
-                        href="https://www.instagram.com/strikeden.pk/reel/DHGm0jFsCaR/" 
+                        href="https://www.instagram.com/strikeden.pk/" 
                         className="text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-500 transition-colors duration-200 relative group"
                         target="_blank" 
                         rel="noopener noreferrer"
