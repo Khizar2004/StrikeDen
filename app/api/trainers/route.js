@@ -1,7 +1,8 @@
 import { connectDB } from "@/lib/dbConnect";
 import Trainer from "@/lib/Trainer";
+import { adminAuthMiddleware } from "@/lib/middleware";
 
-// GET ALL TRAINERS
+// GET ALL TRAINERS (public endpoint)
 export async function GET() {
   try {
     await connectDB();
@@ -15,8 +16,12 @@ export async function GET() {
   }
 }
 
-// CREATE NEW TRAINER
+// CREATE NEW TRAINER (protected endpoint)
 export async function POST(request) {
+  // Check admin authentication
+  const authResponse = await adminAuthMiddleware(request);
+  if (authResponse) return authResponse;
+  
   try {
     await connectDB();
     const body = await request.json();

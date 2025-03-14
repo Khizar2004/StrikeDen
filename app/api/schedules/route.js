@@ -2,7 +2,9 @@ import { connectDB } from "@/lib/dbConnect";
 import Schedule from "@/lib/Schedule";
 import Member from "@/lib/Member";
 import { NextResponse } from 'next/server';
+import { adminAuthMiddleware } from "@/lib/middleware";
 
+// GET schedules (public endpoint)
 export async function GET(req) {
   try {
     await connectDB();
@@ -45,7 +47,12 @@ export async function GET(req) {
   }
 }
 
+// POST new schedule (protected endpoint)
 export async function POST(req) {
+  // Check admin authentication
+  const authResponse = await adminAuthMiddleware(req);
+  if (authResponse) return authResponse;
+  
   try {
     await connectDB();
     const data = await req.json();
@@ -118,7 +125,12 @@ export async function POST(req) {
   }
 }
 
+// PUT/update schedule (protected endpoint)
 export async function PUT(req) {
+  // Check admin authentication
+  const authResponse = await adminAuthMiddleware(req);
+  if (authResponse) return authResponse;
+  
   try {
     await connectDB();
     const data = await req.json();
@@ -147,7 +159,12 @@ export async function PUT(req) {
   }
 }
 
+// DELETE schedule (protected endpoint)
 export async function DELETE(req) {
+  // Check admin authentication
+  const authResponse = await adminAuthMiddleware(req);
+  if (authResponse) return authResponse;
+  
   try {
     await connectDB();
     const { searchParams } = new URL(req.url);

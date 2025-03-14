@@ -117,14 +117,29 @@ export default function AdminPage() {
 
   // Check for authentication and fetch initial data
   useEffect(() => {
-    const stored = localStorage.getItem("adminLoggedIn");
-    if (stored === "true") {
-      setIsAuth(true);
-      fetchTrainers();
-      fetchSchedules();
-    } else {
-      router.push("/admin/login");
-    }
+    const checkAuth = async () => {
+      try {
+        const res = await fetch('/api/auth/check-auth', {
+          method: 'GET',
+          credentials: 'include'
+        });
+        
+        const data = await res.json();
+        
+        if (data.success) {
+          setIsAuth(true);
+          fetchTrainers();
+          fetchSchedules();
+        } else {
+          router.push("/admin/login");
+        }
+      } catch (error) {
+        console.error('Auth check error:', error);
+        router.push("/admin/login");
+      }
+    };
+    
+    checkAuth();
   }, [router]);
 
   const fetchTrainers = async () => {
@@ -521,9 +536,25 @@ export default function AdminPage() {
     });
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("adminLoggedIn");
-    router.push("/admin/login");
+  const handleLogout = async () => {
+    try {
+      const res = await fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include'
+      });
+      
+      const data = await res.json();
+      
+      if (data.success) {
+        toast.success('Logged out successfully');
+        router.push("/admin/login");
+      } else {
+        toast.error('Logout failed');
+      }
+    } catch (error) {
+      console.error('Logout error:', error);
+      toast.error('An error occurred during logout');
+    }
   };
 
   // Render nothing until authentication is confirmed and theme is mounted
@@ -676,7 +707,7 @@ export default function AdminPage() {
                         required
                       >
                         <option value="">Select Specialization</option>
-                        {['Boxing', 'Brazilian Jiu-Jitsu', 'Muay Thai', 'Wrestling', 'MMA', 'Conditioning'].map(type => (
+                        {['Boxing', 'Kickboxing', 'MMA', 'Taekwondo', 'Judo'].map(type => (
                           <option key={type} value={type}>{type}</option>
                         ))}
                       </select>
@@ -927,11 +958,10 @@ export default function AdminPage() {
                         >
                           <option value="">Select Class Type</option>
                           <option value="Boxing">Boxing</option>
-                          <option value="Brazilian Jiu-Jitsu">Brazilian Jiu-Jitsu</option>
-                          <option value="Muay Thai">Muay Thai</option>
-                          <option value="Wrestling">Wrestling</option>
+                          <option value="Kickboxing">Kickboxing</option>
                           <option value="MMA">MMA</option>
-                          <option value="Conditioning">Conditioning</option>
+                          <option value="Taekwondo">Taekwondo</option>
+                          <option value="Judo">Judo</option>
                         </select>
                       </div>
                       <div className="mb-4">

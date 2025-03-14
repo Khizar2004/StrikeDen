@@ -190,28 +190,22 @@ export default function ClassesPage() {
       level: "All Levels"
     },
     {
-      title: "Brazilian Jiu-Jitsu",
-      description: "Master the art of ground fighting with techniques focused on control, submissions, and positional dominance.",
+      title: "MMA",
+      description: "A comprehensive mixed martial arts training that combines striking, takedowns, and ground fighting techniques.",
       image: "/images/placeholder-class.jpg",
       level: "All Levels"
     },
     {
-      title: "MMA Fundamentals",
-      description: "A comprehensive introduction to mixed martial arts, covering striking, takedowns, and ground fighting.",
+      title: "Taekwondo",
+      description: "Korean martial art emphasizing high kicks, jumping kicks, and spinning kicks with focus on discipline and technique.",
       image: "/images/placeholder-class.jpg",
-      level: "Beginner"
+      level: "All Levels"
     },
     {
-      title: "Advanced MMA",
-      description: "For experienced fighters looking to refine technique and develop advanced strategies for competition.",
+      title: "Judo",
+      description: "Japanese martial art focusing on throws and groundwork, emphasizing using an opponent's strength against them.",
       image: "/images/placeholder-class.jpg",
-      level: "Advanced"
-    },
-    {
-      title: "Strength & Conditioning",
-      description: "High-intensity workouts designed specifically for combat sports athletes to build functional strength and endurance.",
-      image: "/images/placeholder-class.jpg",
-      level: "Intermediate"
+      level: "All Levels"
     }
   ];
   

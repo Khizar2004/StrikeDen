@@ -193,6 +193,25 @@ export default function Navbar() {
             )}
           </Link>
           
+          {/* Admin Link */}
+          <Link href="/admin/login" className={linkClasses('/admin/login')}>
+            <span className="relative z-10 flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+              Admin
+            </span>
+            {activeLink === '/admin/login' && (
+              <motion.span 
+                className="absolute inset-0 bg-primary-500/10 rounded-md -z-10"
+                layoutId="navHighlight"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3 }}
+              />
+            )}
+          </Link>
+          
           {/* Theme Toggle */}
           <div className="ml-4">
             <ThemeToggle />
@@ -305,6 +324,22 @@ export default function Navbar() {
                   />
                 </Link>
               </motion.div>
+              
+              {/* Admin Link for Mobile */}
+              <motion.div variants={mobileItemVariants}>
+                <Link href="/admin/login" className="block px-4 py-3 text-white hover:text-primary-500 hover:bg-secondary-700/80 rounded-lg transition-all duration-200 relative overflow-hidden group">
+                  <span className="relative z-10 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                    Admin
+                  </span>
+                  <motion.span 
+                    className="absolute inset-0 bg-gradient-to-r from-primary-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  />
+                </Link>
+              </motion.div>
+              
               <motion.div variants={mobileItemVariants} className="pt-2">
                 <Link href="/contact" className="block px-4 py-3 bg-primary-500 text-white rounded-lg text-center shadow-red-glow hover:bg-primary-600 transition-all duration-200 relative overflow-hidden group">
                   <span className="relative z-10">Join Now</span>

@@ -3,163 +3,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useTheme } from "../../components/ThemeProvider";
-import { FaMapMarkerAlt, FaPhone, FaClock, FaFacebookF, FaInstagram, FaTwitter, FaYoutube } from "react-icons/fa";
-import { MdEmail } from "react-icons/md";
-
-// Contact form component
-const ContactForm = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    subject: "General Inquiry",
-    message: ""
-  });
-  
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState(null);
-  const { theme } = useTheme();
-  
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-  
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setSubmitStatus("success");
-      // Reset form after successful submission
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        subject: "General Inquiry",
-        message: ""
-      });
-      
-      // Clear success message after 5 seconds
-      setTimeout(() => {
-        setSubmitStatus(null);
-      }, 5000);
-    }, 1500);
-  };
-  
-  return (
-    <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl transition-colors duration-300">
-      <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">Send Us a Message</h3>
-      
-      {submitStatus === "success" && (
-        <motion.div 
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-100 p-4 rounded-lg mb-6 border border-green-200 dark:border-green-700"
-        >
-          <div className="flex items-center">
-            <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-            </svg>
-            <span>Thank you for your message! We'll get back to you shortly.</span>
-          </div>
-        </motion.div>
-      )}
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <div>
-          <label htmlFor="name" className="block text-gray-700 dark:text-gray-300 mb-2 font-medium">Name</label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-            className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-3 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors duration-300"
-            placeholder="Your name"
-          />
-        </div>
-        
-        <div>
-          <label htmlFor="email" className="block text-gray-700 dark:text-gray-300 mb-2 font-medium">Email</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-            className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-3 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors duration-300"
-            placeholder="your.email@example.com"
-          />
-        </div>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <div>
-          <label htmlFor="phone" className="block text-gray-700 dark:text-gray-300 mb-2 font-medium">Phone (optional)</label>
-          <input
-            type="tel"
-            id="phone"
-            name="phone"
-            value={formData.phone}
-            onChange={handleChange}
-            className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-3 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors duration-300"
-            placeholder="(123) 456-7890"
-          />
-        </div>
-        
-        <div>
-          <label htmlFor="subject" className="block text-gray-700 dark:text-gray-300 mb-2 font-medium">Subject</label>
-          <select
-            id="subject"
-            name="subject"
-            value={formData.subject}
-            onChange={handleChange}
-            className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-3 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors duration-300"
-          >
-            <option value="General Inquiry">General Inquiry</option>
-            <option value="Membership">Membership</option>
-            <option value="Private Training">Private Training</option>
-            <option value="Corporate Events">Corporate Events</option>
-            <option value="Other">Other</option>
-          </select>
-        </div>
-      </div>
-      
-      <div className="mb-6">
-        <label htmlFor="message" className="block text-gray-700 dark:text-gray-300 mb-2 font-medium">Message</label>
-        <textarea
-          id="message"
-          name="message"
-          value={formData.message}
-          onChange={handleChange}
-          required
-          rows="5"
-          className="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-3 text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors duration-300"
-          placeholder="How can we help you?"
-        ></textarea>
-      </div>
-      
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 rounded-lg transition-colors duration-300 flex justify-center items-center"
-      >
-        {isSubmitting ? (
-          <span className="inline-block h-5 w-5 border-t-2 border-b-2 border-white rounded-full animate-spin mr-2"></span>
-        ) : null}
-        {isSubmitting ? "Sending..." : "Send Message"}
-      </button>
-    </form>
-  );
-};
+import { FaMapMarkerAlt, FaPhone, FaClock, FaFacebookF, FaInstagram, FaWhatsapp } from "react-icons/fa";
 
 // Contact info card component
 const ContactInfoCard = ({ icon, title, children }) => {
@@ -170,7 +14,7 @@ const ContactInfoCard = ({ icon, title, children }) => {
       transition={{ duration: 0.3 }}
       className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg transition-colors duration-300"
     >
-      <div className="text-red-500 text-3xl mb-4">{icon}</div>
+      <div className="text-red-500 text-4xl mb-4">{icon}</div>
       <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-3">{title}</h3>
       <div className="text-gray-600 dark:text-gray-300">
         {children}
@@ -182,13 +26,13 @@ const ContactInfoCard = ({ icon, title, children }) => {
 // Business hours component
 const BusinessHours = () => {
   const hours = [
-    { day: "Monday", hours: "6:00 AM - 10:00 PM" },
-    { day: "Tuesday", hours: "6:00 AM - 10:00 PM" },
-    { day: "Wednesday", hours: "6:00 AM - 10:00 PM" },
-    { day: "Thursday", hours: "6:00 AM - 10:00 PM" },
-    { day: "Friday", hours: "6:00 AM - 9:00 PM" },
-    { day: "Saturday", hours: "8:00 AM - 6:00 PM" },
-    { day: "Sunday", hours: "9:00 AM - 5:00 PM" }
+    { day: "Monday", hours: "8–10 a.m., 4–10 p.m." },
+    { day: "Tuesday", hours: "8–10 a.m., 4–10 p.m." },
+    { day: "Wednesday", hours: "8–10 a.m., 4–10 p.m." },
+    { day: "Thursday", hours: "8–10 a.m., 4–10 p.m." },
+    { day: "Friday", hours: "8–10 a.m., 4–10 p.m." },
+    { day: "Saturday", hours: "8–10 a.m., 4–10 p.m." },
+    { day: "Sunday", hours: "Closed" }
   ];
   
   return (
@@ -206,10 +50,9 @@ const BusinessHours = () => {
 // Social media links component
 const SocialLinks = () => {
   const socials = [
-    { name: "Facebook", icon: <FaFacebookF />, url: "#" },
-    { name: "Instagram", icon: <FaInstagram />, url: "#" },
-    { name: "Twitter", icon: <FaTwitter />, url: "#" },
-    { name: "YouTube", icon: <FaYoutube />, url: "#" }
+    { name: "Facebook", icon: <FaFacebookF />, url: "https://www.facebook.com/profile.php?id=61570916734685" },
+    { name: "Instagram", icon: <FaInstagram />, url: "https://www.instagram.com/strikeden.pk/reel/DHGm0jFsCaR/" },
+    { name: "WhatsApp", icon: <FaWhatsapp />, url: "https://api.whatsapp.com/send/?phone=923372629350&text&type=phone_number&app_absent=0" }
   ];
   
   return (
@@ -262,7 +105,7 @@ const FAQItem = ({ question, answer, delay }) => {
           animate={{ opacity: 1, height: "auto" }}
           exit={{ opacity: 0, height: 0 }}
           transition={{ duration: 0.3 }}
-          className="p-6 bg-gray-50 dark:bg-gray-750 text-gray-600 dark:text-gray-300 border-t border-gray-200 dark:border-gray-700 transition-colors duration-300"
+          className="p-6 bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-200 border-t border-gray-200 dark:border-gray-700 transition-colors duration-300"
         >
           <p>{answer}</p>
         </motion.div>
@@ -288,83 +131,57 @@ export default function ContactPage() {
           transition={{ duration: 0.7 }}
           className="mb-16 text-center"
         >
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6 transition-colors duration-300">Contact Us</h1>
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6 transition-colors duration-300">Get in Touch</h1>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto transition-colors duration-300">
-            We're here to answer your questions and help you on your fitness journey.
+            Connect with us through our social media channels or visit us at our location.
           </p>
         </motion.div>
         
-        {/* Contact Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-20">
-          {/* Contact Form */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
-            <ContactForm />
-          </motion.div>
-          
-          {/* Contact Information */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            className="space-y-6"
-          >
-            <ContactInfoCard icon={<FaMapMarkerAlt />} title="Our Location">
-              <p className="mb-4">
-                123 Fighter Street<br />
-                Downtown Combat District<br />
-                New York, NY 10001
-              </p>
-              <div className="mt-4 aspect-video relative rounded-xl overflow-hidden shadow-lg">
-                {/* Interactive map would go here - using a placeholder image for now */}
-                <Image
-                  src="/gym-bg.jpg"
-                  alt="Map location of Strike Den"
-                  fill
-                  className="object-cover"
-                />
-                <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40">
-                  <a 
-                    href="https://maps.google.com" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg transition-colors duration-300 font-medium flex items-center"
-                  >
-                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                    Open in Google Maps
-                  </a>
-                </div>
-              </div>
+        {/* Contact Info Section */}
+        <section className="mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <ContactInfoCard 
+              icon={<FaMapMarkerAlt />}
+              title="Visit Us"
+            >
+              <p className="mb-2">2nd Floor, 38-C, Shahbaz Commercial, DHA Phase 6</p>
+              <p className="mb-2">Karachi 75500, Pakistan</p>
+              <a href="https://www.google.com/maps/place/Strike+Den+%7C+MMA+%26+Judo/@24.7948238,67.0468958,963m/data=!3m1!1e3!4m6!3m5!1s0x3eb33d8b3de8175d:0xccac7c6c8c8c752e!8m2!3d24.7948238!4d67.0494707!16s%2Fg%2F11wws9jpr8?entry=ttu&g_ep=EgoyMDI1MDMxMS4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener noreferrer" className="text-red-500 hover:text-red-600 transition-colors duration-300">
+                View on Map
+              </a>
             </ContactInfoCard>
             
-            <ContactInfoCard icon={<FaPhone />} title="Contact Information">
-              <div className="space-y-4">
-                <div className="flex items-center">
-                  <FaPhone className="text-gray-500 dark:text-gray-400 mr-3" />
-                  <p><span className="text-gray-500 dark:text-gray-400">Phone:</span> <a href="tel:+11234567890" className="text-gray-800 dark:text-white hover:text-red-600 dark:hover:text-red-400 transition-colors duration-300">(123) 456-7890</a></p>
-                </div>
-                <div className="flex items-center">
-                  <MdEmail className="text-gray-500 dark:text-gray-400 mr-3" />
-                  <p><span className="text-gray-500 dark:text-gray-400">Email:</span> <a href="mailto:info@strikeden.com" className="text-gray-800 dark:text-white hover:text-red-600 dark:hover:text-red-400 transition-colors duration-300">info@strikeden.com</a></p>
-                </div>
-              </div>
-              <div className="mt-6">
-                <p className="mb-3 text-gray-800 dark:text-white font-semibold">Connect With Us:</p>
-                <SocialLinks />
-              </div>
+            <ContactInfoCard 
+              icon={<FaPhone />}
+              title="Call Us"
+            >
+              <p className="mb-2">Have a question? Give us a call:</p>
+              <a href="tel:+923372629350" className="text-red-500 hover:text-red-600 transition-colors duration-300 text-xl font-semibold">
+                +92 337 2629350
+              </a>
             </ContactInfoCard>
             
-            <ContactInfoCard icon={<FaClock />} title="Business Hours">
+            <ContactInfoCard 
+              icon={<FaClock />}
+              title="Business Hours"
+            >
               <BusinessHours />
             </ContactInfoCard>
-          </motion.div>
-        </div>
+          </div>
+        </section>
+        
+        {/* Social Media Section */}
+        <section className="mb-16">
+          <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl transition-colors duration-300 text-center">
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">Connect With Us</h2>
+            <p className="text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
+              Follow us on social media to stay updated with the latest news, events, and promotions from Strike Den.
+            </p>
+            <div className="flex justify-center">
+              <SocialLinks />
+            </div>
+          </div>
+        </section>
         
         {/* FAQ Section */}
         <section className="mb-20">
@@ -424,12 +241,6 @@ export default function ContactPage() {
               className="bg-white text-red-600 hover:bg-gray-100 px-8 py-4 rounded-lg font-semibold transition-colors duration-300 shadow-md"
             >
               View Our Schedule
-            </a>
-            <a 
-              href="#" 
-              className="bg-transparent hover:bg-red-700 text-white border-2 border-white px-8 py-4 rounded-lg font-semibold transition-colors duration-300"
-            >
-              Book a Free Trial
             </a>
           </div>
         </motion.section>

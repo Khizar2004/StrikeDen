@@ -92,48 +92,46 @@ const TestimonialCard = ({ testimonial }) => {
 // Value card component
 const ValueCard = ({ icon, title, description }) => {
   return (
-    <div className="text-center p-6 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10">
-      <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-500/10 text-red-500 text-2xl mb-4">
+    <div className="text-center p-6 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
+      <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-500/20 text-white text-2xl mb-4">
         {icon}
       </div>
       <h3 className="text-white text-xl font-bold mb-2">{title}</h3>
-      <p className="text-white/80">{description}</p>
+      <p className="text-white/90">{description}</p>
     </div>
   );
 };
 
 export default function AboutPage() {
   const { theme, mounted } = useTheme();
-  const [teamMembers] = useState([
-    {
-      name: "Alex Rodriguez",
-      role: "Head Coach & Founder",
-      image: "/images/placeholder-trainer.jpg",
-      bio: "Former professional MMA fighter with over 15 years of experience. Founded Strike Den with a vision to create an inclusive training environment for fighters of all levels.",
-      certifications: ["NASM CPT", "MMA Level 3 Coach"]
-    },
-    {
-      name: "Sarah Chen",
-      role: "Boxing Coach",
-      image: "/images/placeholder-trainer.jpg",
-      bio: "Olympic boxing medalist with a passion for teaching proper technique. Sarah's classes focus on footwork, defense, and developing powerful combinations.",
-      certifications: ["USA Boxing Certified", "Strength & Conditioning"]
-    },
-    {
-      name: "Marcus Johnson",
-      role: "Kickboxing Specialist",
-      image: "/images/placeholder-trainer.jpg",
-      bio: "With a background in Muay Thai and Dutch Kickboxing, Marcus brings international training methods to his high-energy classes.",
-      certifications: ["Muay Thai Level 2", "Injury Prevention"]
-    },
-    {
-      name: "Jasmine Patel",
-      role: "MMA Coach",
-      image: "/images/placeholder-trainer.jpg",
-      bio: "Former UFC competitor specializing in Brazilian Jiu-Jitsu and wrestling. Jasmine's approach balances technical proficiency with practical application.",
-      certifications: ["BJJ Black Belt", "Wrestling Coach"]
-    }
-  ]);
+  const [teamMembers, setTeamMembers] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+  // Fetch trainers from API
+  useEffect(() => {
+    const fetchTrainers = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch('/api/trainers');
+        const data = await response.json();
+        
+        if (data.success) {
+          // Use data.data since that's how the trainers API returns the data
+          setTeamMembers(data.data || []);
+        } else {
+          setError("Failed to load trainers");
+        }
+      } catch (err) {
+        console.error("Error fetching trainers:", err);
+        setError("Failed to load trainers. Please try again later.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchTrainers();
+  }, []);
 
   if (!mounted) {
     return null;
@@ -187,14 +185,13 @@ export default function AboutPage() {
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6 transition-colors duration-300">Our Story</h2>
               <div className="space-y-4 text-gray-600 dark:text-gray-300 transition-colors duration-300">
                 <p>
-                  Founded in 2015, Strike Den began as a small training facility dedicated to authentic martial arts training in a supportive environment. 
-                  What started as a dream to create a space where both beginners and advanced fighters could train together has grown into one of the most respected combat sports gyms in the area.
+                  Strike Den started in the smallest of spaces — a humble flat run by Sikander Ali Shah. It began with just 11 students, but not everyone believed in it. The place wasn't big, posh, or even pretty to look at.
                 </p>
                 <p>
-                  Our founder, Alex Rodriguez, built this gym with a clear vision: to strip away the intimidation factor often associated with fighting gyms and create a community where anyone could learn the art and science of combat sports.
+                  It was raw, unrefined, and built on the belief that hard work trumps all. Despite the early doubts, Sikander and his students stayed committed.
                 </p>
                 <p>
-                  Today, Strike Den is home to fighters of all levels – from those taking their first steps into martial arts to professional competitors preparing for major bouts.
+                  Two years of relentless effort, dedication, and grit later, Strike Den is now a fully operational MMA facility, equipped with everything you'd expect from a top-tier gym. It's proof that when you're driven by passion and perseverance, a small beginning can turn into something truly extraordinary.
                 </p>
               </div>
             </motion.div>
@@ -222,11 +219,11 @@ export default function AboutPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="text-center max-w-4xl mx-auto p-12 rounded-2xl"
+            className="bg-gradient-to-r from-red-600 to-red-800 text-center max-w-4xl mx-auto p-12 rounded-2xl"
           >
             <h2 className="text-3xl font-bold text-white mb-6">Our Mission</h2>
-            <p className="text-xl text-white/90 italic mb-12">
-              "To provide world-class combat sports training in a supportive environment that builds not just fighters, but confident, disciplined, and resilient individuals."
+            <p className="text-xl text-white italic mb-12">
+              "To bring world-class combat sports training to Karachi, fostering a supportive and disciplined environment where individuals build confidence, resilience, and strength—both in and out of the ring."
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <ValueCard 
@@ -261,11 +258,35 @@ export default function AboutPage() {
               Our coaches are experienced professionals who are passionate about sharing their knowledge and helping you achieve your goals.
             </p>
           </motion.div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {teamMembers.map((member, index) => (
-              <TeamMemberCard key={index} member={member} />
-            ))}
-          </div>
+          
+          {isLoading ? (
+            <div className="flex justify-center py-8">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-600"></div>
+            </div>
+          ) : error ? (
+            <div className="text-center py-8 bg-white dark:bg-gray-800 rounded-lg shadow">
+              <p className="text-red-500">{error}</p>
+            </div>
+          ) : teamMembers.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {teamMembers.map((member, index) => (
+                <TeamMemberCard 
+                  key={member._id || index} 
+                  member={{
+                    name: member.name,
+                    role: member.specialization,
+                    image: member.image || "/images/placeholder-trainer.jpg",
+                    bio: member.bio || `Coach with ${member.experience} years of experience`,
+                    certifications: member.certifications || []
+                  }} 
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8 bg-white dark:bg-gray-800 rounded-lg shadow">
+              <p className="text-gray-500 dark:text-gray-400">No trainers information available.</p>
+            </div>
+          )}
         </section>
 
         {/* Our Facilities Section */}
@@ -278,40 +299,25 @@ export default function AboutPage() {
           >
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-3 transition-colors duration-300">Our Facilities</h2>
             <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto transition-colors duration-300">
-              Strike Den is equipped with state-of-the-art training facilities to support your combat sports journey.
+              Strike Den is equipped with everything you need for effective training in a functional, no-nonsense environment.
             </p>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <FacilityFeature 
-              icon={<GiBoxingGlove className="text-red-500" />}
-              title="Boxing Ring"
-              description="Professional-grade boxing ring with spring-loaded floor for optimal training and sparring sessions."
+              icon={<FaUsers className="text-red-500" />}
+              title="Padded Training Area"
+              description="Spacious padded area for sparring, grappling, and all types of martial arts practice in a safe environment."
             />
             <FacilityFeature 
-              icon={<MdSportsKabaddi className="text-red-500" />}
-              title="MMA Octagon"
-              description="Regulation-sized MMA cage for realistic training scenarios and competition preparation."
+              icon={<GiBoxingGlove className="text-red-500" />}
+              title="Heavy Bag Section"
+              description="Multiple heavy bags and striking equipment for developing power, technique, and endurance."
             />
             <FacilityFeature 
               icon={<FaDumbbell className="text-red-500" />}
-              title="Strength Area"
-              description="Fully equipped strength and conditioning zone with free weights, machines, and functional training equipment."
-            />
-            <FacilityFeature 
-              icon={<MdFitnessCenter className="text-red-500" />}
-              title="Heavy Bag Section"
-              description="Multiple heavy bags, speed bags, and specialized striking equipment for technique development."
-            />
-            <FacilityFeature 
-              icon={<MdSpa className="text-red-500" />}
-              title="Recovery Zone"
-              description="Dedicated space for stretching, mobility work, and recovery with foam rollers and massage tools."
-            />
-            <FacilityFeature 
-              icon={<GiShower className="text-red-500" />}
-              title="Modern Amenities"
-              description="Clean locker rooms with showers, personal lockers, and a comfortable lounge area for members."
+              title="Strength & Conditioning"
+              description="Essential weights and equipment for building strength and conditioning to complement your martial arts training."
             />
           </div>
         </section>

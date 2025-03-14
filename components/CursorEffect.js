@@ -7,11 +7,27 @@ export default function CursorEffect() {
   const [isVisible, setIsVisible] = useState(false);
   const [isHoveringClickable, setIsHoveringClickable] = useState(false);
   const [isClicking, setIsClicking] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(true);
 
   useEffect(() => {
     // Only enable on non-touch devices
     if (window.matchMedia('(hover: hover)').matches) {
       setIsVisible(true);
+      
+      // Check initial theme
+      const htmlElement = document.documentElement;
+      setIsDarkMode(htmlElement.classList.contains('dark'));
+      
+      // Setup observer for theme changes
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          if (mutation.attributeName === 'class') {
+            setIsDarkMode(htmlElement.classList.contains('dark'));
+          }
+        });
+      });
+      
+      observer.observe(htmlElement, { attributes: true });
       
       const handleMouseMove = (e) => {
         const newPosition = { x: e.clientX, y: e.clientY };
@@ -48,12 +64,17 @@ export default function CursorEffect() {
         document.removeEventListener('mouseover', handleMouseOver);
         document.removeEventListener('mousedown', handleMouseDown);
         document.removeEventListener('mouseup', handleMouseUp);
+        observer.disconnect();
       };
     }
   }, []);
 
   // Don't render anything on touch devices
   if (!isVisible) return null;
+
+  // Use appropriate color based on theme
+  const cursorColor = isDarkMode ? 'rgba(229, 9, 20, 0.9)' : 'rgba(0, 0, 0, 0.8)';
+  const ringColor = isDarkMode ? 'rgba(229, 9, 20, 0.8)' : 'rgba(0, 0, 0, 0.6)';
 
   return (
     <>
@@ -65,8 +86,8 @@ export default function CursorEffect() {
           width: isClicking ? '12px' : '16px',
           height: isClicking ? '12px' : '16px',
           borderRadius: '50%',
-          backgroundColor: 'rgba(229, 9, 20, 0.9)',
-          mixBlendMode: 'screen',
+          backgroundColor: cursorColor,
+          mixBlendMode: isDarkMode ? 'screen' : 'normal',
         }}
         animate={{
           x: mousePosition.x - (isClicking ? 6 : 8),
@@ -88,7 +109,7 @@ export default function CursorEffect() {
             width: '40px',
             height: '40px',
             borderRadius: '50%',
-            border: '2px solid rgba(229, 9, 20, 0.8)',
+            border: `2px solid ${ringColor}`,
             transform: 'translate(-50%, -50%)',
           }}
           animate={{
@@ -119,7 +140,7 @@ export default function CursorEffect() {
               width: '50px',
               height: '50px',
               borderRadius: '50%',
-              border: '2px solid rgba(229, 9, 20, 0.8)',
+              border: `2px solid ${ringColor}`,
               transform: 'translate(-50%, -50%)',
             }}
             initial={{ 

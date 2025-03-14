@@ -48,7 +48,7 @@ export default function Home() {
       
       if (data.success) {
         // Get only 3 trainers for the homepage
-        setTrainers(data.trainers.slice(0, 3));
+        setTrainers(data.data.slice(0, 3));
       }
       
       setIsLoading(false);
@@ -398,12 +398,12 @@ export default function Home() {
       </section>
       
       {/* CTA Section */}
-      <section className="py-20 px-4 bg-gray-900 dark:bg-gray-900 text-white relative overflow-hidden transition-colors duration-300">
+      <section className="py-20 px-4 bg-gray-900 dark:bg-gray-800 text-white relative overflow-hidden transition-colors duration-300">
         <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-black/70 z-10"></div>
+          <div className="absolute inset-0 bg-black/70 dark:bg-black/60 z-10 transition-colors duration-300"></div>
           <Image 
             src="/images/cta-background.jpg" 
-            alt="CTA Background" 
+            alt="Training at Strike Den" 
             fill
             className="object-cover"
           />
