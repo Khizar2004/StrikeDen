@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import { useTheme } from "../../components/ThemeProvider";
 import Image from "next/image";
 import { FaCalendarAlt, FaClock, FaUserFriends, FaChalkboardTeacher } from "react-icons/fa";
+import Schedule from "../../components/Schedule";
+import ClassesSlider from "../../components/ClassesSlider";
 
 // Class card component
 const ClassCard = ({ scheduleClass }) => {
@@ -57,29 +59,34 @@ const ClassCard = ({ scheduleClass }) => {
   );
 };
 
-// Filter component
+// Filter component for classes
 const ClassFilter = ({ activeFilter, setActiveFilter, classTypes }) => {
   return (
-    <div className="mb-8 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md border border-gray-100 dark:border-gray-700">
-      <h3 className="text-gray-900 dark:text-white text-lg font-semibold mb-4">Filter by Type:</h3>
-      <div className="flex flex-wrap gap-2">
-        <button 
-          onClick={() => setActiveFilter('all')} 
-          className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 ${activeFilter === 'all' ? 'bg-red-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}`}
+    <div className="flex flex-wrap gap-2 justify-center mb-4">
+      <button
+        className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 ${
+          activeFilter === 'all'
+            ? 'bg-red-600 text-white'
+            : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600'
+        }`}
+        onClick={() => setActiveFilter('all')}
+      >
+        All Classes
+      </button>
+      
+      {classTypes.map((type) => (
+        <button
+          key={type}
+          className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 ${
+            activeFilter === type
+              ? 'bg-red-600 text-white'
+              : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600'
+          }`}
+          onClick={() => setActiveFilter(type)}
         >
-          All Classes
+          {type}
         </button>
-        
-        {classTypes.map(type => (
-          <button 
-            key={type} 
-            onClick={() => setActiveFilter(type)} 
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 ${activeFilter === type ? 'bg-red-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'}`}
-          >
-            {type}
-          </button>
-        ))}
-      </div>
+      ))}
     </div>
   );
 };
@@ -87,32 +94,28 @@ const ClassFilter = ({ activeFilter, setActiveFilter, classTypes }) => {
 // Class type card component
 const ClassTypeCard = ({ title, description, image, level }) => {
   return (
-    <motion.div
+    <motion.div 
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 group"
+      className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col h-full"
     >
       <div className="relative h-48 w-full">
         <Image
-          src={image || "/images/placeholder-class.jpg"}
+          src={image || "/images/placeholder.jpg"}
           alt={title}
           fill
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
+          objectFit="cover"
+          className="transition-transform duration-300 group-hover:scale-105"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-        <div className="absolute top-4 right-4">
-          <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-            level === 'Beginner' ? 'bg-green-100 text-green-800' :
-            level === 'Intermediate' ? 'bg-yellow-100 text-yellow-800' :
-            'bg-red-100 text-red-800'
-          }`}>
+      </div>
+      <div className="p-6 flex-grow">
+        <div className="flex justify-between items-center mb-3">
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white">{title}</h3>
+          <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs rounded-full font-medium">
             {level}
           </span>
         </div>
-      </div>
-      <div className="p-6">
-        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{title}</h3>
         <p className="text-gray-600 dark:text-gray-400">{description}</p>
       </div>
     </motion.div>
@@ -120,222 +123,190 @@ const ClassTypeCard = ({ title, description, image, level }) => {
 };
 
 export default function ClassesPage() {
-  const { theme, mounted } = useTheme();
-  const [classes, setClasses] = useState([]);
-  const [filteredClasses, setFilteredClasses] = useState([]);
+  const { theme } = useTheme();
   const [activeFilter, setActiveFilter] = useState('all');
-  const [classTypes, setClassTypes] = useState([]);
+  const [filteredClasses, setFilteredClasses] = useState([]);
+  const [upcomingClasses, setUpcomingClasses] = useState([]);
+  const [scheduleData, setScheduleData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isUpcomingLoading, setIsUpcomingLoading] = useState(true);
   const [error, setError] = useState(null);
-  
-  // Fetch all classes on page load
+  const [classTypes, setClassTypes] = useState(['Boxing', 'Kickboxing', 'MMA']);
+
+  // Fetch schedule and upcoming classes data
   useEffect(() => {
-    const fetchClasses = async () => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      setIsUpcomingLoading(true);
+      
       try {
-        setIsLoading(true);
-        const oneWeekAhead = new Date();
-        oneWeekAhead.setDate(oneWeekAhead.getDate() + 7);
+        // Fetch both schedule data and upcoming classes from the API
+        const schedulesResponse = await fetch('/api/schedules');
+        const schedulesData = await schedulesResponse.json();
         
-        // Fetch classes for the next 7 days
-        const currentDate = new Date().toISOString().split('T')[0];
-        const response = await fetch(`/api/schedules`);
-        const data = await response.json();
-        
-        if (data.success) {
-          const classes = data.schedules;
-          setClasses(classes);
+        if (schedulesData.success) {
+          // 1. Process data for the weekly schedule
+          const scheduleByDay = {
+            monday: [],
+            tuesday: [],
+            wednesday: [],
+            thursday: [],
+            friday: [],
+            saturday: [],
+            sunday: []
+          };
           
-          // Extract unique class types
-          const types = [...new Set(classes.map(cls => cls.classType))];
-          setClassTypes(types);
+          schedulesData.schedules.forEach(cls => {
+            const date = new Date(cls.startTime);
+            const dayName = date.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
+            const startTime = new Date(cls.startTime);
+            const endTime = new Date(cls.endTime);
+            
+            if (scheduleByDay[dayName]) {
+              scheduleByDay[dayName].push({
+                id: cls._id,
+                name: cls.className,
+                time: `${formatTime(startTime)} - ${formatTime(endTime)}`,
+                trainer: cls.trainer?.name || 'TBA',
+                classType: cls.classType
+              });
+            }
+          });
+          
+          // Sort classes by time for each day
+          Object.keys(scheduleByDay).forEach(day => {
+            scheduleByDay[day].sort((a, b) => {
+              const timeA = a.time.split(' - ')[0];
+              const timeB = b.time.split(' - ')[0];
+              return timeA.localeCompare(timeB);
+            });
+          });
+          
+          setScheduleData(scheduleByDay);
+          
+          // 2. Process data for the upcoming classes cards
+          const now = new Date();
+          const classes = schedulesData.schedules
+            // Only include classes in the future
+            .filter(classItem => new Date(classItem.startTime) > now)
+            .map(classItem => ({
+              id: classItem._id,
+              className: classItem.className,
+              classType: classItem.classType,
+              startTime: classItem.startTime,
+              endTime: classItem.endTime,
+              trainer: classItem.trainer || { name: 'TBA' },
+              description: classItem.description
+            }));
+          
+          // Sort classes by date/time (nearest future classes first)
+          const sortedClasses = classes.sort((a, b) => {
+            const dateA = new Date(a.startTime);
+            const dateB = new Date(b.startTime);
+            return dateA - dateB;
+          });
+          
+          setUpcomingClasses(sortedClasses);
+          
+          // Extract unique class types for filtering
+          const types = [...new Set(classes.map(c => c.classType))];
+          if (types.length > 0) {
+            setClassTypes(types);
+          }
         } else {
-          setError("Failed to load classes");
+          setError("Failed to load class data. Please try again later.");
         }
-      } catch (err) {
-        console.error("Error fetching classes:", err);
-        setError("Failed to load classes. Please try again later.");
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setError("Failed to load class data. Please try again later.");
       } finally {
         setIsLoading(false);
+        setIsUpcomingLoading(false);
       }
     };
     
-    fetchClasses();
+    fetchData();
   }, []);
-  
-  // Filter classes when activeFilter changes
+
+  // Helper function to format time
+  const formatTime = (date) => {
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
+  // Filter classes when active filter changes
   useEffect(() => {
     if (activeFilter === 'all') {
-      setFilteredClasses(classes);
+      setFilteredClasses(upcomingClasses);
     } else {
-      setFilteredClasses(classes.filter(cls => cls.classType === activeFilter));
+      setFilteredClasses(upcomingClasses.filter(c => c.classType === activeFilter));
     }
-  }, [activeFilter, classes]);
+  }, [activeFilter, upcomingClasses]);
 
-  if (!mounted) {
-    return null;
-  }
-
-  // Sample class types for the "Our Classes" section
-  const classTypesList = [
-    {
-      title: "Boxing",
-      description: "Learn proper boxing technique, footwork, and combinations. Develop speed, power, and defensive skills.",
-      image: "/images/placeholder-class.jpg",
-      level: "All Levels"
-    },
-    {
-      title: "Kickboxing",
-      description: "Combine boxing with powerful kicks in this high-energy class that improves coordination and full-body strength.",
-      image: "/images/placeholder-class.jpg",
-      level: "All Levels"
-    },
-    {
-      title: "MMA",
-      description: "A comprehensive mixed martial arts training that combines striking, takedowns, and ground fighting techniques.",
-      image: "/images/placeholder-class.jpg",
-      level: "All Levels"
-    },
-    {
-      title: "Taekwondo",
-      description: "Korean martial art emphasizing high kicks, jumping kicks, and spinning kicks with focus on discipline and technique.",
-      image: "/images/placeholder-class.jpg",
-      level: "All Levels"
-    },
-    {
-      title: "Judo",
-      description: "Japanese martial art focusing on throws and groundwork, emphasizing using an opponent's strength against them.",
-      image: "/images/placeholder-class.jpg",
-      level: "All Levels"
-    }
-  ];
-  
   return (
-    <main className="bg-gray-50 dark:bg-gray-900 min-h-screen pt-24 pb-12 px-4 transition-colors duration-300">
-      <div className="max-w-7xl mx-auto">
-        <motion.h1 
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-4xl font-bold text-gray-900 dark:text-white text-center mb-2"
-        >
-          Our Classes
-        </motion.h1>
-        <motion.p 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="text-gray-600 dark:text-gray-400 text-center max-w-2xl mx-auto mb-16"
-        >
-          Join our expert-led classes and transform your fitness journey. Whether you're a beginner or an experienced athlete, we have the perfect class for you.
-        </motion.p>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-24">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="w-full"
+      >
+        {/* Class Types Slider */}
+        <ClassesSlider />
 
-        {/* Class Types Section */}
-        <section className="mb-20">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-            {classTypesList.map((classType, index) => (
-              <ClassTypeCard 
-                key={index}
-                title={classType.title}
-                description={classType.description}
-                image={classType.image}
-                level={classType.level}
-              />
-            ))}
-          </div>
-        </section>
-        
-        {/* Schedule Section */}
-        <section>
+        {/* Weekly Schedule Section */}
+        <div className="container mx-auto px-4 py-8">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-            className="text-center mb-12"
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="mb-20 bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden"
           >
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-3 transition-colors duration-300">Class Schedule</h2>
+            <Schedule initialClasses={scheduleData} />
           </motion.div>
-          
-          {/* Filters */}
-          {!isLoading && !error && (
-            <ClassFilter 
-              activeFilter={activeFilter} 
-              setActiveFilter={setActiveFilter} 
-              classTypes={classTypes}
-            />
-          )}
-          
-          {/* Loading and Error States */}
-          {isLoading && (
-            <div className="flex justify-center items-center py-20">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-600"></div>
-            </div>
-          )}
-          
-          {error && (
-            <div className="text-center py-20 bg-white dark:bg-gray-800 rounded-xl p-8 shadow-md">
-              <p className="text-red-500 mb-4">{error}</p>
-              <button 
-                onClick={() => window.location.reload()} 
-                className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors duration-300"
-              >
-                Try Again
-              </button>
-            </div>
-          )}
-          
-          {/* Classes Grid */}
-          {!isLoading && !error && (
-            <>
-              {filteredClasses.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {filteredClasses.map(cls => (
-                    <ClassCard key={cls._id} scheduleClass={cls} />
+
+          {/* Upcoming Classes Section */}
+          <div className="mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8 text-center">
+              Upcoming Classes
+            </h2>
+            
+            {error ? (
+              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/30 rounded-lg p-6 text-center">
+                <p className="text-red-600 dark:text-red-400">{error}</p>
+                <button 
+                  onClick={() => window.location.reload()} 
+                  className="mt-4 px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 transition-colors"
+                >
+                  Try Again
+                </button>
+              </div>
+            ) : isUpcomingLoading ? (
+              <div className="flex justify-center items-center py-16">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>
+              </div>
+            ) : upcomingClasses.length === 0 ? (
+              <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-8 text-center">
+                <p className="text-gray-600 dark:text-gray-400">No upcoming classes are currently scheduled.</p>
+                <p className="text-gray-500 dark:text-gray-500 mt-2 text-sm">Please check back later or contact us for more information.</p>
+              </div>
+            ) : (
+              <>
+                <ClassFilter
+                  activeFilter={activeFilter}
+                  setActiveFilter={setActiveFilter}
+                  classTypes={classTypes}
+                />
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
+                  {filteredClasses.map((scheduleClass) => (
+                    <ClassCard key={scheduleClass.id} scheduleClass={scheduleClass} />
                   ))}
                 </div>
-              ) : (
-                <div className="text-center py-12 bg-white dark:bg-gray-800 rounded-xl p-8 shadow-md">
-                  <p className="text-gray-600 dark:text-gray-400 text-lg">No classes found for this filter.</p>
-                  {activeFilter !== 'all' && (
-                    <button 
-                      onClick={() => setActiveFilter('all')} 
-                      className="mt-4 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors duration-300"
-                    >
-                      View All Classes
-                    </button>
-                  )}
-                </div>
-              )}
-            </>
-          )}
-        </section>
-        
-        {/* Call to Action */}
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="mt-20 text-center bg-gradient-to-r from-red-600 to-red-800 p-12 rounded-2xl shadow-xl"
-        >
-          <h2 className="text-3xl font-bold text-white mb-4">Our Class Schedule</h2>
-          <p className="text-white text-opacity-90 mb-8 max-w-2xl mx-auto">
-            Check out our schedule and find a class that fits your interests and skill level.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a 
-              href="/contact" 
-              className="bg-white text-red-600 hover:bg-gray-100 px-8 py-4 rounded-lg font-semibold transition-colors duration-300 shadow-md"
-            >
-              Contact Us
-            </a>
-            <a 
-              href="/about" 
-              className="bg-transparent hover:bg-red-700 text-white border-2 border-white px-8 py-4 rounded-lg font-semibold transition-colors duration-300"
-            >
-              Learn More About Us
-            </a>
+              </>
+            )}
           </div>
-        </motion.section>
-      </div>
-    </main>
+        </div>
+      </motion.div>
+    </div>
   );
 } 
