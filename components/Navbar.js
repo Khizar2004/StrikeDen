@@ -3,12 +3,19 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import ThemeToggle from './ThemeToggle';
+import { usePathname } from 'next/navigation';
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeLink, setActiveLink] = useState('/');
   const navRef = useRef(null);
+  const pathname = usePathname();
+
+  // Set active link based on pathname
+  useEffect(() => {
+    setActiveLink(pathname);
+  }, [pathname]);
 
   // Handle scroll effect
   useEffect(() => {
@@ -18,9 +25,6 @@ export default function Navbar() {
         setScrolled(isScrolled);
       }
     };
-
-    // Set active link based on current path
-    setActiveLink(window.location.pathname);
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);

@@ -31,7 +31,9 @@ const staggerContainer = {
 export default function Home() {
   const { theme, mounted } = useTheme();
   const [trainers, setTrainers] = useState([]);
+  const [classes, setClasses] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isClassesLoading, setIsClassesLoading] = useState(true);
   const heroRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: heroRef,
@@ -58,8 +60,26 @@ export default function Home() {
     }
   }
   
+  async function fetchClasses() {
+    try {
+      setIsClassesLoading(true);
+      const response = await fetch('/api/classes');
+      const data = await response.json();
+      
+      if (data.success) {
+        setClasses(data.classes || []);
+      }
+      
+      setIsClassesLoading(false);
+    } catch (error) {
+      console.error("Error fetching classes:", error);
+      setIsClassesLoading(false);
+    }
+  }
+  
   useEffect(() => {
     fetchTrainers();
+    fetchClasses();
   }, []);
 
   if (!mounted) {
@@ -234,79 +254,61 @@ export default function Home() {
             </motion.p>
           </motion.div>
           
-          <motion.div 
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-8"
-          >
-            <motion.div variants={fadeInUp} className="relative group overflow-hidden rounded-xl shadow-lg">
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10"></div>
-              <Image 
-                src="/images/boxing-class.jpg" 
-                alt="Boxing Class" 
-                width={600} 
-                height={400} 
-                className="w-full h-80 object-cover transition-transform duration-500 group-hover:scale-110"
-              />
-              <div className="absolute bottom-0 left-0 p-6 z-20">
-                <h3 className="text-2xl font-bold text-white mb-2">Boxing</h3>
-                <p className="text-gray-200 mb-4">Master the sweet science with our expert boxing coaches.</p>
-                <Link href="/classes" className="inline-block bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors duration-300">
-                  Learn More
+          {isClassesLoading ? (
+            <div className="flex justify-center py-20">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-500"></div>
+            </div>
+          ) : classes.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-500 dark:text-gray-400">No classes available at the moment.</p>
+            </div>
+          ) : (
+            <>
+              <motion.div 
+                variants={staggerContainer}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-100px" }}
+                className="grid grid-cols-1 md:grid-cols-3 gap-8"
+              >
+                {classes.slice(0, 3).map((classItem, index) => (
+                  <motion.div key={classItem._id || index} variants={fadeInUp} className="relative group overflow-hidden rounded-xl shadow-lg">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10"></div>
+                    <Image 
+                      src={classItem.image || `/images/${classItem.slug || 'default'}-class.jpg`} 
+                      alt={classItem.title} 
+                      width={600} 
+                      height={400} 
+                      className="w-full h-80 object-cover transition-transform duration-500 group-hover:scale-110"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = "/images/cta-background.jpg";
+                      }}
+                    />
+                    <div className="absolute bottom-0 left-0 p-6 z-20">
+                      <h3 className="text-2xl font-bold text-white mb-2">{classItem.title}</h3>
+                      <p className="text-gray-200 mb-4">{classItem.shortDescription || 'Join our professional instructors and master this discipline.'}</p>
+                      <Link href={`/classes/${classItem.slug || classItem._id}`} className="inline-block bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors duration-300">
+                        Learn More
+                      </Link>
+                    </div>
+                  </motion.div>
+                ))}
+              </motion.div>
+              
+              <motion.div 
+                variants={fadeInUp}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-100px" }}
+                className="text-center mt-12"
+              >
+                <Link href="/classes" className="inline-block bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-lg font-bold text-lg transition-colors duration-300">
+                  View All Classes
                 </Link>
-              </div>
-            </motion.div>
-            
-            <motion.div variants={fadeInUp} className="relative group overflow-hidden rounded-xl shadow-lg">
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10"></div>
-              <Image 
-                src="/images/kickboxing-class.jpg" 
-                alt="Kickboxing Class" 
-                width={600} 
-                height={400} 
-                className="w-full h-80 object-cover transition-transform duration-500 group-hover:scale-110"
-              />
-              <div className="absolute bottom-0 left-0 p-6 z-20">
-                <h3 className="text-2xl font-bold text-white mb-2">Kickboxing</h3>
-                <p className="text-gray-200 mb-4">Develop powerful kicks and strikes in our high-energy kickboxing classes.</p>
-                <Link href="/classes" className="inline-block bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors duration-300">
-                  Learn More
-                </Link>
-              </div>
-            </motion.div>
-            
-            <motion.div variants={fadeInUp} className="relative group overflow-hidden rounded-xl shadow-lg">
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10"></div>
-              <Image 
-                src="/images/mma-class.jpg" 
-                alt="MMA Class" 
-                width={600} 
-                height={400} 
-                className="w-full h-80 object-cover transition-transform duration-500 group-hover:scale-110"
-              />
-              <div className="absolute bottom-0 left-0 p-6 z-20">
-                <h3 className="text-2xl font-bold text-white mb-2">MMA</h3>
-                <p className="text-gray-200 mb-4">Comprehensive mixed martial arts training for all skill levels.</p>
-                <Link href="/classes" className="inline-block bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors duration-300">
-                  Learn More
-                </Link>
-              </div>
-            </motion.div>
-          </motion.div>
-          
-          <motion.div 
-            variants={fadeInUp}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            className="text-center mt-12"
-          >
-            <Link href="/classes" className="inline-block bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-lg font-bold text-lg transition-colors duration-300">
-              View All Classes
-            </Link>
-          </motion.div>
+              </motion.div>
+            </>
+          )}
         </div>
       </section>
       
@@ -350,10 +352,7 @@ export default function Home() {
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
                         <div>
-                          <p className="text-white mb-4">{trainer.bio}</p>
-                          <Link href={`/trainers/${trainer._id}`} className="inline-block bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors duration-300">
-                            View Profile
-                          </Link>
+                          <p className="text-white">{trainer.bio}</p>
                         </div>
                       </div>
                     </div>

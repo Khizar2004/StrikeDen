@@ -7,10 +7,9 @@ const JWT_SECRET = process.env.JWT_SECRET || 'strike-den-secure-jwt-secret';
 
 export async function GET() {
   try {
-    // Get the token from the cookies - using async/await correctly
-    // Note: In Next.js 13+, cookies() returns a ReadonlyRequestCookies object
-    // which doesn't need to be awaited
-    const token = cookies().get('admin_token')?.value;
+    // Get the token from the cookies
+    const cookieStore = cookies();
+    const token = await cookieStore.get('admin_token')?.value;
     
     if (!token) {
       return NextResponse.json(

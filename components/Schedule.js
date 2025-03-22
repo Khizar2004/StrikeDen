@@ -13,7 +13,7 @@ export default function Schedule({ initialClasses }) {
   useEffect(() => {
     if (initialClasses) {
       // If data is provided as props, use it directly
-      setScheduleData(initialClasses);
+      setScheduleData(organizeByDay(initialClasses));
       return;
     }
 
@@ -41,46 +41,65 @@ export default function Schedule({ initialClasses }) {
     fetchSchedule();
   }, [initialClasses]);
 
-  // Function to organize classes by day of the week
+  // Function to organize classes by day of week
   const organizeByDay = (classes) => {
     const days = {
-      sunday: [],
       monday: [],
       tuesday: [],
       wednesday: [],
       thursday: [],
       friday: [],
-      saturday: []
+      saturday: [],
+      sunday: []
     };
-    
-    // Sort classes into days
-    classes.forEach(cls => {
-      const date = new Date(cls.startTime);
-      const dayName = date.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
+
+    // Sort and filter out any duplicates
+    const seen = new Set();
+
+    classes.forEach(classItem => {
+      // Create a unique key for this class based on properties that should make it unique
+      const classKey = `${classItem.dayOfWeek}-${classItem.className}-${classItem.trainer}-${classItem.startTimeString}`;
       
-      if (days[dayName]) {
-        days[dayName].push({
-          id: cls._id || cls.id,
-          name: cls.className,
-          time: `${formatTime(new Date(cls.startTime))} - ${formatTime(new Date(cls.endTime))}`,
-          trainer: cls.trainer?.name || 'TBA',
-          classType: cls.classType
-        });
+      // Skip if we've already seen this exact class
+      if (seen.has(classKey)) {
+        return;
+      }
+      
+      seen.add(classKey);
+      
+      // Format the class item for display
+      const formattedClass = {
+        ...classItem,
+        // Use the stored time strings directly
+        startTime: classItem.startTimeString,
+        endTime: classItem.endTimeString
+      };
+      
+      // Add to the appropriate day
+      if (days[classItem.dayOfWeek]) {
+        days[classItem.dayOfWeek].push(formattedClass);
       }
     });
-    
-    // Sort classes by time within each day
+
+    // Sort classes within each day by start time
     Object.keys(days).forEach(day => {
       days[day].sort((a, b) => {
-        const timeA = a.time.split(' - ')[0];
-        const timeB = b.time.split(' - ')[0];
-        return timeA.localeCompare(timeB);
+        const timeA = a.startTime.split(':').map(Number);
+        const timeB = b.startTime.split(':').map(Number);
+        
+        // Compare hours first
+        if (timeA[0] !== timeB[0]) {
+          return timeA[0] - timeB[0];
+        }
+        
+        // If hours are equal, compare minutes
+        return timeA[1] - timeB[1];
       });
     });
-    
+
     return days;
   };
-  
+
   // Format time to 12-hour format
   const formatTime = (date) => {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -208,10 +227,10 @@ export default function Schedule({ initialClasses }) {
                         >
                           <div>
                             <h4 className="font-medium text-lg text-gray-900 dark:text-white">
-                              {classItem.name}
+                              {classItem.className}
                             </h4>
                             <p className="text-sm text-gray-500 dark:text-gray-400">
-                              Instructor: {classItem.trainer}
+                              Instructor: {classItem.trainer?.name || "Unknown"}
                             </p>
                             {classItem.classType && (
                               <span className="inline-block mt-1 px-2 py-1 bg-primary-100 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400 text-xs rounded-full">
@@ -220,7 +239,7 @@ export default function Schedule({ initialClasses }) {
                             )}
                           </div>
                           <div className="mt-2 sm:mt-0 px-3 py-1 bg-primary-100 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400 rounded text-sm font-medium">
-                            {classItem.time}
+                            {classItem.startTime} - {classItem.endTime}
                           </div>
                         </div>
                       ))}

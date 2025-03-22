@@ -101,19 +101,13 @@ export default function TrainersPage() {
                     </div>
                     <div className="p-6">
                       <p className="text-gray-700 dark:text-gray-300 text-sm mb-4 transition-colors duration-300">{trainer.bio}</p>
-                      <div className="flex flex-wrap gap-2 mb-4">
+                      <div className="flex flex-wrap gap-2">
                         {trainer.certifications && trainer.certifications.map((cert, index) => (
                           <span key={index} className="bg-gray-100 dark:bg-gray-700 text-xs text-gray-700 dark:text-gray-300 px-3 py-1 rounded-full transition-colors duration-300">
                             {cert}
                           </span>
                         ))}
                       </div>
-                      <Link 
-                        href={`/trainers/${trainer._id}`}
-                        className="inline-block bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors duration-300"
-                      >
-                        View Profile
-                      </Link>
                     </div>
                   </div>
                 </TiltCard>
