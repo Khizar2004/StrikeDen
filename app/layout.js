@@ -4,7 +4,6 @@ import Navbar from "../components/Navbar";
 import 'react-toastify/dist/ReactToastify.css';
 import { ThemeProvider } from "../components/ThemeProvider";
 import ToastContainerWrapper from "../components/ToastContainerWrapper";
-import CursorEffect from "../components/CursorEffect";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,7 +36,6 @@ export default function RootLayout({ children }) {
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`} suppressHydrationWarning>
       <body className="min-h-screen flex flex-col bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-white transition-colors duration-300">
         <ThemeProvider>
-          <CursorEffect />
           <Navbar />
           
           {/* Background effects */}
