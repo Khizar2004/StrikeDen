@@ -132,7 +132,8 @@ export async function PUT(req) {
   }
 }
 
-// DELETE schedule (protected endpoint)
+// The DELETE endpoint has been moved to the [id]/route.js file
+// Keeping this here for backward compatibility, but it should use the more RESTful approach
 export async function DELETE(request) {
   // Check admin authentication
   const authResponse = await adminAuthMiddleware(request);
@@ -141,24 +142,36 @@ export async function DELETE(request) {
   try {
     await connectDB();
     
-    // Extract id from URL query parameters instead of trying to parse JSON body
+    // Extract id from URL query parameters
     const url = new URL(request.url);
     const id = url.searchParams.get('id');
     
     if (!id) {
-      return NextResponse.json({ success: false, message: "Schedule ID is required" }, { status: 400 });
+      return NextResponse.json({ 
+        success: false, 
+        message: "Schedule ID is required" 
+      }, { status: 400 });
     }
     
     const result = await Schedule.findByIdAndDelete(id);
     
     if (!result) {
-      return NextResponse.json({ success: false, message: "Schedule not found" }, { status: 404 });
+      return NextResponse.json({ 
+        success: false, 
+        message: "Schedule not found" 
+      }, { status: 404 });
     }
     
-    return NextResponse.json({ success: true, message: "Schedule deleted successfully" });
+    return NextResponse.json({ 
+      success: true, 
+      message: "Schedule deleted successfully" 
+    });
     
   } catch (error) {
     console.error("Error deleting schedule:", error);
-    return NextResponse.json({ success: false, message: error.message }, { status: 500 });
+    return NextResponse.json({ 
+      success: false, 
+      message: error.message || "Failed to delete schedule"
+    }, { status: 500 });
   }
 }

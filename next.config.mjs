@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['plus.unsplash.com', 'images.unsplash.com', 'unsplash.com', 'example.com', 'cdn.vox-cdn.com'],
+    domains: ['plus.unsplash.com', 'images.unsplash.com', 'unsplash.com', 'example.com', 'cdn.vox-cdn.com', 'images.aeonmedia.co'],
     remotePatterns: [
       {
         protocol: 'https',
@@ -14,6 +14,10 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'cdn.vox-cdn.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.aeonmedia.co',
       },
     ],
   },

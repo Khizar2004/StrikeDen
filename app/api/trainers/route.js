@@ -1,18 +1,16 @@
 import { connectDB } from "@/lib/dbConnect";
 import Trainer from "@/lib/Trainer";
 import { adminAuthMiddleware } from "@/lib/middleware";
+import { createSuccessResponse, createErrorResponse, handleApiError } from "@/lib/apiResponse";
 
 // GET ALL TRAINERS (public endpoint)
 export async function GET() {
   try {
     await connectDB();
     const trainers = await Trainer.find({}).sort({ createdAt: -1 });
-    return Response.json({ success: true, data: trainers });
+    return createSuccessResponse(trainers);
   } catch (error) {
-    return Response.json(
-      { success: false, error: "Failed to fetch trainers" },
-      { status: 500 }
-    );
+    return handleApiError(error);
   }
 }
 
@@ -28,30 +26,23 @@ export async function POST(request) {
     
     // Validate required fields
     if (!body.name || !body.specialization) {
-      return Response.json(
-        { success: false, error: "Missing required fields" },
-        { status: 400 }
-      );
+      return createErrorResponse("Missing required fields", 400);
+    }
+
+    // Validate image URL if present
+    if (body.image && typeof body.image === 'string') {
+      const isValidPath = body.image.startsWith('/uploads/');
+      const isValidUrl = /^https?:\/\/.+\.(jpg|jpeg|png|gif|webp)$/i.test(body.image);
+      
+      if (body.image && !(isValidPath || isValidUrl)) {
+        return createErrorResponse("Invalid image URL format", 400);
+      }
     }
 
     const newTrainer = await Trainer.create(body);
-    return Response.json(
-      { success: true, data: newTrainer },
-      { status: 201 }
-    );
+    return createSuccessResponse(newTrainer, 201);
     
   } catch (error) {
-    // Handle validation errors
-    if (error.name === 'ValidationError') {
-      const errors = Object.values(error.errors).map(e => e.message);
-      return Response.json(
-        { success: false, error: errors.join(", ") },
-        { status: 400 }
-      );
-    }
-    return Response.json(
-      { success: false, error: "Server error" },
-      { status: 500 }
-    );
+    return handleApiError(error);
   }
 }
