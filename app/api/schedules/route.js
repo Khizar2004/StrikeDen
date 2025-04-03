@@ -1,114 +1,113 @@
 import { connectDB } from "@/lib/dbConnect";
 import Schedule from "@/lib/Schedule";
 import Member from "@/lib/Member";
+import Trainer from "@/lib/Trainer";
 import { NextResponse } from 'next/server';
+import { adminAuthMiddleware } from "@/lib/middleware";
 
-export async function GET(req) {
+// GET schedules (public endpoint)
+export async function GET() {
   try {
     await connectDB();
-    const { searchParams } = new URL(req.url);
-    
-    // Build query based on filters
-    const query = { active: true };
-    
-    if (searchParams.has('classType')) {
-      query.classType = searchParams.get('classType');
-    }
-    if (searchParams.has('level')) {
-      query.level = searchParams.get('level');
-    }
-    if (searchParams.has('trainer')) {
-      query.trainer = searchParams.get('trainer');
-    }
-    if (searchParams.has('date')) {
-      const date = new Date(searchParams.get('date'));
-      const nextDay = new Date(date);
-      nextDay.setDate(date.getDate() + 1);
-      query.startTime = {
-        $gte: date,
-        $lt: nextDay
-      };
-    }
-
-    const schedules = await Schedule.find(query)
-      .populate('trainer', 'name specialization image')
-      .populate('enrolledStudents', 'name')
-      .sort({ dateTime: 1 });
-
-    return NextResponse.json({ success: true, schedules });
+    // Get all schedules sorted by day of week and start time, and populate the trainer field
+    const schedules = await Schedule.find({})
+      .populate('trainer')
+      .sort({ dayOfWeek: 1, startTimeString: 1 });
+    return NextResponse.json({ success: true, data: schedules });
   } catch (error) {
     console.error("Error fetching schedules:", error);
-    return NextResponse.json(
-      { success: false, message: "Failed to fetch schedules" },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, message: error.message }, { status: 500 });
   }
 }
 
-export async function POST(req) {
+// POST new schedule (protected endpoint)
+export async function POST(request) {
+  // Check admin authentication
+  const authResponse = await adminAuthMiddleware(request);
+  if (authResponse) return authResponse;
+  
   try {
     await connectDB();
-    const data = await req.json();
+    
+    const data = await request.json();
+    console.log("API received data:", data);
 
-    // Handle recurring schedule creation
-    if (data.isRecurring && data.recurringPattern) {
-      const schedules = [];
-      const startDate = new Date(data.dateTime);
-      const endDate = new Date(startDate);
-      endDate.setMonth(endDate.getMonth() + 3); // Create 3 months of recurring classes
-
-      let currentDate = new Date(startDate);
-      while (currentDate <= endDate) {
-        const scheduleData = {
-          ...data,
-          dateTime: new Date(currentDate)
-        };
-        const schedule = new Schedule(scheduleData);
-        await schedule.save();
-        schedules.push(schedule);
-
-        // Calculate next occurrence based on pattern
-        switch (data.recurringPattern) {
-          case 'daily':
-            currentDate.setDate(currentDate.getDate() + 1);
-            break;
-          case 'weekly':
-            currentDate.setDate(currentDate.getDate() + 7);
-            break;
-          case 'biweekly':
-            currentDate.setDate(currentDate.getDate() + 14);
-            break;
-          case 'monthly':
-            currentDate.setMonth(currentDate.getMonth() + 1);
-            break;
-        }
-      }
-
-      return NextResponse.json({ 
-        success: true, 
-        message: 'Recurring schedules created successfully',
-        schedules 
-      });
-    } else {
-      // Create single schedule
-      const schedule = new Schedule(data);
-      await schedule.save();
-      return NextResponse.json({ success: true, schedule });
+    // Validate required fields
+    const requiredFields = ['className', 'classType', 'dayOfWeek', 'startTimeString', 'endTimeString', 'trainer'];
+    const missingFields = requiredFields.filter(field => !data[field]);
+    
+    if (missingFields.length > 0) {
+      return NextResponse.json({
+        success: false,
+        message: `Missing required fields: ${missingFields.join(', ')}`
+      }, { status: 400 });
     }
+
+    // Validate time format
+    const timeFormatRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
+    if (!timeFormatRegex.test(data.startTimeString) || !timeFormatRegex.test(data.endTimeString)) {
+      return NextResponse.json({
+        success: false,
+        message: "Start and end times must be in format HH:MM (24-hour)"
+      }, { status: 400 });
+    }
+
+    // Validate day of week
+    const validDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+    if (!validDays.includes(data.dayOfWeek.toLowerCase())) {
+      return NextResponse.json({
+        success: false,
+        message: "Invalid day of week. Must be one of: " + validDays.join(', ')
+      }, { status: 400 });
+    }
+
+    // Validate class type
+    const validClassTypes = ['Boxing', 'Brazilian Jiu-Jitsu', 'Muay Thai', 'Wrestling', 'MMA', 'Conditioning', 'Kickboxing', 'Taekwondo', 'Judo'];
+    if (!validClassTypes.includes(data.classType)) {
+      return NextResponse.json({
+        success: false,
+        message: "Invalid class type. Must be one of: " + validClassTypes.join(', ')
+      }, { status: 400 });
+    }
+
+    // Create the schedule
+    const schedule = await Schedule.create({
+      className: data.className,
+      classType: data.classType,
+      dayOfWeek: data.dayOfWeek.toLowerCase(),
+      startTimeString: data.startTimeString,
+      endTimeString: data.endTimeString,
+      trainer: data.trainer,
+      description: data.description || '',
+      capacity: data.capacity || 20
+    });
+
+    return NextResponse.json({ success: true, data: schedule });
   } catch (error) {
-    console.error("Error adding schedule:", error);
-    return NextResponse.json(
-      { success: false, message: error.message || "Failed to add schedule" },
-      { status: 400 }
-    );
+    console.error("Error creating schedule:", error);
+    return NextResponse.json({ 
+      success: false, 
+      message: error.message || "Failed to create schedule",
+      error: process.env.NODE_ENV === 'development' ? error.toString() : undefined
+    }, { status: 500 });
   }
 }
 
+// PUT/update schedule (protected endpoint)
 export async function PUT(req) {
+  // Check admin authentication
+  const authResponse = await adminAuthMiddleware(req);
+  if (authResponse) return authResponse;
+  
   try {
     await connectDB();
     const data = await req.json();
     const { id, ...updateData } = data;
+
+    // If dayOfWeek is provided, ensure it's lowercase
+    if (updateData.dayOfWeek) {
+      updateData.dayOfWeek = updateData.dayOfWeek.toLowerCase();
+    }
 
     const schedule = await Schedule.findByIdAndUpdate(
       id,
@@ -133,39 +132,46 @@ export async function PUT(req) {
   }
 }
 
-export async function DELETE(req) {
+// The DELETE endpoint has been moved to the [id]/route.js file
+// Keeping this here for backward compatibility, but it should use the more RESTful approach
+export async function DELETE(request) {
+  // Check admin authentication
+  const authResponse = await adminAuthMiddleware(request);
+  if (authResponse) return authResponse;
+  
   try {
     await connectDB();
-    const { searchParams } = new URL(req.url);
-    const id = searchParams.get('id');
-
+    
+    // Extract id from URL query parameters
+    const url = new URL(request.url);
+    const id = url.searchParams.get('id');
+    
     if (!id) {
-      return NextResponse.json(
-        { success: false, message: 'Schedule ID is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ 
+        success: false, 
+        message: "Schedule ID is required" 
+      }, { status: 400 });
     }
-
-    // Soft delete by setting active to false
-    const schedule = await Schedule.findByIdAndUpdate(
-      id,
-      { active: false },
-      { new: true }
-    );
-
-    if (!schedule) {
-      return NextResponse.json(
-        { success: false, message: 'Schedule not found' },
-        { status: 404 }
-      );
+    
+    const result = await Schedule.findByIdAndDelete(id);
+    
+    if (!result) {
+      return NextResponse.json({ 
+        success: false, 
+        message: "Schedule not found" 
+      }, { status: 404 });
     }
-
-    return NextResponse.json({ success: true, message: 'Schedule deleted successfully' });
+    
+    return NextResponse.json({ 
+      success: true, 
+      message: "Schedule deleted successfully" 
+    });
+    
   } catch (error) {
     console.error("Error deleting schedule:", error);
-    return NextResponse.json(
-      { success: false, message: error.message || "Failed to delete schedule" },
-      { status: 400 }
-    );
+    return NextResponse.json({ 
+      success: false, 
+      message: error.message || "Failed to delete schedule"
+    }, { status: 500 });
   }
 }
