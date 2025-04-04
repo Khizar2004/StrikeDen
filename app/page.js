@@ -37,7 +37,8 @@ export default function Home() {
   const heroRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: heroRef,
-    offset: ["start start", "end start"]
+    offset: ["start start", "end start"],
+    layoutEffect: false // Fix for the hydration warning
   });
   
   const heroOpacity = useTransform(scrollYProgress, [0, 1], [1, 0]);
@@ -87,12 +88,12 @@ export default function Home() {
   }
   
   return (
-    <main className="bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors duration-300">
+    <main className="bg-gray-100 dark:bg-gray-900 min-h-screen">
       {/* Hero Section */}
       <section ref={heroRef} className="relative h-screen flex items-center justify-center overflow-hidden">
         {/* Background video or image */}
         <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-black/50 z-10"></div>
+          <div className="absolute inset-0 bg-black/60 z-10"></div>
           <video 
             autoPlay 
             loop 
@@ -110,38 +111,31 @@ export default function Home() {
           className="relative z-20 text-center px-4 max-w-5xl mx-auto"
         >
           <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-5xl md:text-7xl font-bold text-white mb-6 drop-shadow-lg"
+            className="text-6xl md:text-8xl font-black text-white mb-6 tracking-tighter"
           >
-            UNLEASH YOUR <span className="text-red-500">FIGHTING</span> SPIRIT
+            STRIKE DEN
           </motion.h1>
           
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-xl md:text-2xl text-gray-200 mb-10 max-w-3xl mx-auto"
+            className="text-xl md:text-2xl text-gray-100 mb-10 max-w-3xl mx-auto"
           >
-            Join Strike Den, where champions are forged through discipline, technique, and heart.
+            Where champions are forged through discipline, technique, and heart
           </motion.p>
           
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center"
           >
             <MagneticButton>
-              <Link href="/classes" className="bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-lg font-bold text-lg transition-colors duration-300 inline-block">
-                JOIN NOW
-              </Link>
-            </MagneticButton>
-            
-            <MagneticButton>
-              <Link href="/about" className="bg-transparent hover:bg-white/10 text-white border-2 border-white px-8 py-4 rounded-lg font-bold text-lg transition-colors duration-300 inline-block">
-                LEARN MORE
+              <Link href="/classes" className="bg-red-600 hover:bg-red-700 text-white px-10 py-5 rounded-lg font-bold text-lg transition-colors duration-300 inline-block">
+                EXPLORE CLASSES
               </Link>
             </MagneticButton>
           </motion.div>
@@ -172,85 +166,90 @@ export default function Home() {
         </motion.div>
       </section>
       
-      {/* Features Section */}
-      <section className="py-20 px-4 bg-white dark:bg-gray-900 transition-colors duration-300">
+      {/* Training Programs Section */}
+      <section className="py-24 px-4">
         <div className="max-w-7xl mx-auto">
           <motion.div 
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            className="text-center mb-16"
-          >
-            <motion.h2 variants={fadeInUp} className="text-4xl font-bold text-gray-900 dark:text-white mb-4 transition-colors duration-300">Why Choose Strike Den?</motion.h2>
-            <motion.p variants={fadeInUp} className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto transition-colors duration-300">
-              We offer a comprehensive approach to martial arts training with state-of-the-art facilities and expert coaching.
-            </motion.p>
-          </motion.div>
-          
-          <motion.div 
+            viewport={{ once: true }}
             variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-8"
+            className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center"
           >
-            <TiltCard>
-              <motion.div variants={fadeInUp} className="bg-gray-50 dark:bg-gray-800 p-8 rounded-xl shadow-lg h-full transition-colors duration-300">
-                <div className="text-red-500 text-4xl mb-4">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                  </svg>
+            <motion.div variants={fadeInUp}>
+              <h2 className="text-5xl md:text-6xl font-black text-gray-900 dark:text-white mb-8 leading-tight tracking-tighter">
+                TRAINING FOR <span className="text-red-600">EVERY BODY</span>
+              </h2>
+              <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
+                Whether you're looking to learn self-defense, get in shape, or train for competition, 
+                Strike Den offers diverse programs for all skill levels and goals.
+              </p>
+              <div className="space-y-4">
+                <div className="flex items-center">
+                  <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-red-600 mr-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-gray-900 dark:text-white text-lg">Combat Training</h3>
+                    <p className="text-gray-600 dark:text-gray-400">Expert instruction in various fighting styles</p>
+                  </div>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3 transition-colors duration-300">Expert Coaches</h3>
-                <p className="text-gray-600 dark:text-gray-300 transition-colors duration-300">
-                  Train with professional fighters and certified coaches who are dedicated to your progress and safety.
-                </p>
-              </motion.div>
-            </TiltCard>
-            
-            <TiltCard>
-              <motion.div variants={fadeInUp} className="bg-gray-50 dark:bg-gray-800 p-8 rounded-xl shadow-lg h-full transition-colors duration-300">
-                <div className="text-red-500 text-4xl mb-4">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                  </svg>
+                <div className="flex items-center">
+                  <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-red-600 mr-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-gray-900 dark:text-white text-lg">Strength & Conditioning</h3>
+                    <p className="text-gray-600 dark:text-gray-400">Build functional strength and endurance</p>
+                  </div>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3 transition-colors duration-300">Supportive Community</h3>
-                <p className="text-gray-600 dark:text-gray-300 transition-colors duration-300">
-                  Join a community of like-minded individuals who support and motivate each other to achieve their goals.
-                </p>
-              </motion.div>
-            </TiltCard>
-            
-            <TiltCard>
-              <motion.div variants={fadeInUp} className="bg-gray-50 dark:bg-gray-800 p-8 rounded-xl shadow-lg h-full transition-colors duration-300">
-                <div className="text-red-500 text-4xl mb-4">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-                  </svg>
+                <div className="flex items-center">
+                  <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-red-600 mr-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-gray-900 dark:text-white text-lg">Group & Private Training</h3>
+                    <p className="text-gray-600 dark:text-gray-400">Options to suit your preferences</p>
+                  </div>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3 transition-colors duration-300">Modern Facilities</h3>
-                <p className="text-gray-600 dark:text-gray-300 transition-colors duration-300">
-                  Train in our state-of-the-art facility with professional-grade equipment and dedicated training areas.
-                </p>
-              </motion.div>
-            </TiltCard>
+              </div>
+            </motion.div>
+            <motion.div variants={fadeInUp} className="relative">
+              <div className="absolute -top-5 -left-5 w-24 h-24 bg-red-600 rounded-xl -z-10"></div>
+              <Image 
+                src="/images/gym-story.jpg" 
+                alt="Strike Den Training" 
+                width={600} 
+                height={700} 
+                className="rounded-xl shadow-2xl w-full h-auto object-cover"
+              />
+              <div className="absolute -bottom-5 -right-5 w-24 h-24 bg-gray-800 dark:bg-red-600 rounded-xl -z-10"></div>
+            </motion.div>
           </motion.div>
         </div>
       </section>
       
       {/* Classes Preview Section */}
-      <section className="py-20 px-4 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+      <section className="py-24 px-4 bg-gray-900">
         <div className="max-w-7xl mx-auto">
           <motion.div 
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
+            viewport={{ once: true }}
+            variants={staggerContainer}
             className="text-center mb-16"
           >
-            <motion.h2 variants={fadeInUp} className="text-4xl font-bold text-gray-900 dark:text-white mb-4 transition-colors duration-300">Our Classes</motion.h2>
-            <motion.p variants={fadeInUp} className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto transition-colors duration-300">
-              Discover our diverse range of classes designed for all skill levels.
+            <motion.h2 variants={fadeInUp} className="text-5xl md:text-6xl font-black text-white mb-6 tracking-tighter">
+              FEATURED CLASSES
+            </motion.h2>
+            <motion.p variants={fadeInUp} className="text-xl text-gray-300 max-w-3xl mx-auto">
+              Explore our diverse range of classes designed to challenge and transform you
             </motion.p>
           </motion.div>
           
@@ -259,124 +258,59 @@ export default function Home() {
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-500"></div>
             </div>
           ) : classes.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-gray-500 dark:text-gray-400">No classes available at the moment.</p>
-            </div>
-          ) : (
-            <>
-              <motion.div 
-                variants={staggerContainer}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "-100px" }}
-                className="grid grid-cols-1 md:grid-cols-3 gap-8"
-              >
-                {classes.slice(0, 3).map((classItem, index) => (
-                  <motion.div key={classItem._id || index} variants={fadeInUp} className="relative group overflow-hidden rounded-xl shadow-lg">
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10"></div>
-                    <Image 
-                      src={classItem.image || `/images/${classItem.slug || 'default'}-class.jpg`} 
-                      alt={classItem.title} 
-                      width={600} 
-                      height={400} 
-                      className="w-full h-80 object-cover transition-transform duration-500 group-hover:scale-110"
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = "/images/cta-background.jpg";
-                      }}
-                    />
-                    <div className="absolute bottom-0 left-0 p-6 z-20">
-                      <h3 className="text-2xl font-bold text-white mb-2">{classItem.title}</h3>
-                      <p className="text-gray-200 mb-4">{classItem.shortDescription || 'Join our professional instructors and master this discipline.'}</p>
-                      <Link href={`/classes/${classItem.slug || classItem._id}`} className="inline-block bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors duration-300">
-                        Learn More
-                      </Link>
-                    </div>
-                  </motion.div>
-                ))}
-              </motion.div>
-              
-              <motion.div 
-                variants={fadeInUp}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "-100px" }}
-                className="text-center mt-12"
-              >
-                <Link href="/classes" className="inline-block bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-lg font-bold text-lg transition-colors duration-300">
-                  View All Classes
-                </Link>
-              </motion.div>
-            </>
-          )}
-        </div>
-      </section>
-      
-      {/* Trainers Section */}
-      <section className="py-20 px-4 bg-white dark:bg-gray-900 transition-colors duration-300">
-        <div className="max-w-7xl mx-auto">
-          <motion.div 
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            className="text-center mb-16"
-          >
-            <motion.h2 variants={fadeInUp} className="text-4xl font-bold text-gray-900 dark:text-white mb-4 transition-colors duration-300">Meet Our Trainers</motion.h2>
-            <motion.p variants={fadeInUp} className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto transition-colors duration-300">
-              Learn from experienced professionals who are passionate about helping you achieve your goals.
-            </motion.p>
-          </motion.div>
-          
-          {isLoading ? (
-            <div className="flex justify-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-500"></div>
+            <div className="text-center py-12 bg-gray-800/50 rounded-xl">
+              <p className="text-gray-300">Our class schedule is being updated. Check back soon!</p>
             </div>
           ) : (
             <motion.div 
               variants={staggerContainer}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, margin: "-100px" }}
+              viewport={{ once: true }}
               className="grid grid-cols-1 md:grid-cols-3 gap-8"
             >
-              {trainers.map((trainer, index) => (
-                <motion.div key={trainer._id || index} variants={fadeInUp}>
-                  <GlassCard>
-                    <div className="relative group overflow-hidden rounded-xl">
-                      <Image 
-                        src={trainer.image || "/images/placeholder-trainer.jpg"} 
-                        alt={trainer.name} 
-                        width={400} 
-                        height={500} 
-                        className="w-full h-96 object-cover transition-transform duration-500 group-hover:scale-110"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
-                        <div>
-                          <p className="text-white">{trainer.bio}</p>
-                        </div>
-                      </div>
+              {classes.slice(0, 3).map((classItem, index) => (
+                <motion.div 
+                  key={classItem._id || index} 
+                  variants={fadeInUp} 
+                  className="group"
+                >
+                  <div className="relative overflow-hidden rounded-xl shadow-xl h-96">
+                    <Image 
+                      src={classItem.image || `/images/${classItem.slug || 'default'}-class.jpg`} 
+                      alt={classItem.title} 
+                      fill
+                      className="object-cover transition-transform duration-700 group-hover:scale-110"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = "/images/default-class.jpg";
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent"></div>
+                    <div className="absolute bottom-0 left-0 p-8 w-full">
+                      <span className="text-red-500 text-sm uppercase tracking-wider font-bold">
+                        {classItem.category || 'Featured Class'}
+                      </span>
+                      <h3 className="text-3xl font-bold text-white mt-2 mb-3 group-hover:text-red-400 transition-colors duration-300">
+                        {classItem.title}
+                      </h3>
+                      <p className="text-gray-300 mb-6 line-clamp-2">
+                        {classItem.shortDescription || 'Join our expert instructors and master this discipline.'}
+                      </p>
+                      <Link href={`/classes/${classItem.slug || classItem._id}`} className="inline-flex items-center text-white border-b-2 border-red-500 pb-1 font-medium group-hover:border-white transition-colors duration-300">
+                        Learn More
+                        <svg 
+                          xmlns="http://www.w3.org/2000/svg" 
+                          className="h-5 w-5 ml-1 group-hover:translate-x-1 transition-transform duration-300" 
+                          fill="none" 
+                          viewBox="0 0 24 24" 
+                          stroke="currentColor"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </Link>
                     </div>
-                    <div className="p-6 text-center">
-                      <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-1 transition-colors duration-300">{trainer.name}</h3>
-                      <p className="text-red-500 font-medium mb-4">{trainer.specialization}</p>
-                      <div className="flex justify-center space-x-4">
-                        {trainer.socialMedia?.instagram && (
-                          <a href={trainer.socialMedia.instagram} target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-red-500 transition-colors duration-300">
-                            <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-                              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-                            </svg>
-                          </a>
-                        )}
-                        {trainer.socialMedia?.twitter && (
-                          <a href={trainer.socialMedia.twitter} target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-red-500 transition-colors duration-300">
-                            <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-                              <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"/>
-                            </svg>
-                          </a>
-                        )}
-                      </div>
-                    </div>
-                  </GlassCard>
+                  </div>
                 </motion.div>
               ))}
             </motion.div>
@@ -386,20 +320,93 @@ export default function Home() {
             variants={fadeInUp}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            className="text-center mt-12"
+            viewport={{ once: true }}
+            className="text-center mt-16"
           >
-            <Link href="/trainers" className="inline-block bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-lg font-bold text-lg transition-colors duration-300">
-              View All Trainers
+            <Link 
+              href="/classes" 
+              className="inline-block bg-red-600 hover:bg-red-700 text-white px-10 py-4 rounded-lg font-bold text-lg transition-colors duration-300"
+            >
+              VIEW ALL CLASSES
             </Link>
           </motion.div>
         </div>
       </section>
       
+      {/* Trainers Section */}
+      <section className="py-24 px-4 bg-white dark:bg-gray-900">
+        <div className="max-w-7xl mx-auto">
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={staggerContainer}
+            className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-16"
+          >
+            <motion.div variants={fadeInUp}>
+              <h2 className="text-5xl md:text-6xl font-black text-gray-900 dark:text-white mb-6 leading-tight tracking-tighter">
+                EXPERT <span className="text-red-600">TRAINERS</span> WHO CARE
+              </h2>
+              <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
+                Our instructors bring years of real-world experience and passion to every class. 
+                They're dedicated to your growth, safety, and success in achieving your fitness goals.
+              </p>
+              <Link 
+                href="/trainers" 
+                className="inline-flex items-center text-red-600 border-b-2 border-red-600 pb-1 font-bold hover:text-red-700 hover:border-red-700 transition-colors duration-300"
+              >
+                MEET OUR FULL TEAM
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  className="h-5 w-5 ml-1 group-hover:translate-x-1 transition-transform duration-300" 
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  stroke="currentColor"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </Link>
+            </motion.div>
+            
+            {isLoading ? (
+              <div className="flex justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-500"></div>
+              </div>
+            ) : (
+              <motion.div 
+                variants={staggerContainer}
+                className="grid grid-cols-1 sm:grid-cols-2 gap-8"
+              >
+                {trainers.slice(0, 2).map((trainer, index) => (
+                  <motion.div key={trainer._id || index} variants={fadeInUp}>
+                    <div className="relative overflow-hidden rounded-xl shadow-lg group">
+                      <Image 
+                        src={trainer.image || "/images/placeholder-trainer.jpg"} 
+                        alt={trainer.name} 
+                        width={300} 
+                        height={400} 
+                        className="w-full aspect-[3/4] object-cover transition-transform duration-500 group-hover:scale-110"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent opacity-100"></div>
+                      <div className="absolute bottom-0 left-0 p-6 w-full">
+                        <h3 className="text-2xl font-bold text-white">{trainer.name}</h3>
+                        <p className="text-red-400 font-medium mb-2">{trainer.specialization}</p>
+                        <p className="text-gray-300 text-sm line-clamp-2">
+                          {trainer.bio || `Expert instructor with years of experience.`}
+                        </p>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </motion.div>
+            )}
+          </motion.div>
+        </div>
+      </section>
+      
       {/* CTA Section */}
-      <section className="py-20 px-4 bg-gray-900 dark:bg-gray-800 text-white relative overflow-hidden transition-colors duration-300">
-        <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-black/70 dark:bg-black/60 z-10 transition-colors duration-300"></div>
+      <section className="py-20 px-4 bg-gray-900 relative overflow-hidden">
+        <div className="absolute inset-0 z-0 opacity-30">
           <Image 
             src="/images/cta-background.jpg" 
             alt="Training at Strike Den" 
@@ -412,17 +419,32 @@ export default function Home() {
           <motion.div 
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            className="text-center"
+            viewport={{ once: true }}
+            variants={staggerContainer}
+            className="bg-black/50 backdrop-blur-sm p-12 rounded-2xl"
           >
-            <motion.h2 variants={fadeInUp} className="text-4xl font-bold mb-6">Ready to Transform Your Life?</motion.h2>
-            <motion.p variants={fadeInUp} className="text-xl text-gray-300 max-w-3xl mx-auto mb-10">
-              Join Strike Den today and start your journey toward becoming a stronger, more confident version of yourself.
+            <motion.h2 
+              variants={fadeInUp} 
+              className="text-5xl md:text-6xl font-black text-white mb-6 text-center tracking-tighter"
+            >
+              START YOUR JOURNEY TODAY
+            </motion.h2>
+            <motion.p 
+              variants={fadeInUp} 
+              className="text-xl text-gray-200 max-w-3xl mx-auto mb-10 text-center"
+            >
+              Join our community and transform your mind and body through disciplined training and expert guidance.
             </motion.p>
-            <motion.div variants={fadeInUp}>
+            <motion.div 
+              variants={fadeInUp}
+              className="flex justify-center"
+            >
               <MagneticButton>
-                <Link href="/contact" className="bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-lg font-bold text-lg transition-colors duration-300 inline-block">
-                  GET STARTED NOW
+                <Link 
+                  href="/contact" 
+                  className="bg-red-600 hover:bg-red-700 text-white px-10 py-5 rounded-lg font-bold text-lg transition-colors duration-300 inline-block"
+                >
+                  GET STARTED
                 </Link>
               </MagneticButton>
             </motion.div>

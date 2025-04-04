@@ -2,19 +2,38 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 import { useTheme } from "../../components/ThemeProvider";
 import { FaMedal, FaDumbbell, FaUsers } from "react-icons/fa";
 import { MdSportsKabaddi, MdFitnessCenter, MdSpa } from "react-icons/md";
 import { GiBoxingGlove, GiMuscleUp, GiShower } from "react-icons/gi";
 
+// Animation variants
+const fadeInUp = {
+  hidden: { opacity: 0, y: 60 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] }
+  }
+};
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
+
 // Team member card component
 const TeamMemberCard = ({ member }) => {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-      className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300"
+      variants={fadeInUp}
+      className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300"
     >
       <div className="relative h-64 w-full">
         <Image
@@ -23,21 +42,23 @@ const TeamMemberCard = ({ member }) => {
           fill
           className="object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-        <div className="absolute bottom-0 left-0 p-4">
-          <h3 className="text-xl font-bold text-white mb-1">{member.name}</h3>
-          <p className="text-red-400 font-medium">{member.role}</p>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent"></div>
+        <div className="absolute bottom-0 left-0 p-6 w-full">
+          <h3 className="text-2xl font-bold text-white mb-1">{member.name}</h3>
+          <p className="text-red-400 font-medium">{member.role || member.specialization}</p>
         </div>
       </div>
       <div className="p-6">
         <p className="text-gray-700 dark:text-gray-300 text-sm mb-4">{member.bio}</p>
-        <div className="flex flex-wrap gap-2">
-          {member.certifications && member.certifications.map((cert, index) => (
-            <span key={index} className="bg-gray-100 dark:bg-gray-700 text-xs text-gray-700 dark:text-gray-300 px-3 py-1 rounded-full">
-              {cert}
-            </span>
-          ))}
-        </div>
+        {member.certifications && member.certifications.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {member.certifications.map((cert, index) => (
+              <span key={index} className="bg-gray-100 dark:bg-gray-700 text-xs text-gray-700 dark:text-gray-300 px-3 py-1 rounded-full">
+                {cert}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
     </motion.div>
   );
@@ -47,10 +68,8 @@ const TeamMemberCard = ({ member }) => {
 const FacilityFeature = ({ icon, title, description }) => {
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.3 }}
-      className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100 dark:border-gray-700"
+      variants={fadeInUp}
+      className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700"
     >
       <div className="text-red-500 text-3xl mb-4">{icon}</div>
       <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{title}</h3>
@@ -63,10 +82,8 @@ const FacilityFeature = ({ icon, title, description }) => {
 const TestimonialCard = ({ testimonial }) => {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-      className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md relative"
+      variants={fadeInUp}
+      className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-xl relative"
     >
       <div className="text-red-500 text-4xl absolute -top-4 -left-2 opacity-20">"</div>
       <div className="text-red-500 text-4xl absolute -bottom-8 -right-2 opacity-20">"</div>
@@ -86,19 +103,6 @@ const TestimonialCard = ({ testimonial }) => {
         </div>
       </div>
     </motion.div>
-  );
-};
-
-// Value card component
-const ValueCard = ({ icon, title, description }) => {
-  return (
-    <div className="text-center p-6 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
-      <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-500/20 text-white text-2xl mb-4">
-        {icon}
-      </div>
-      <h3 className="text-white text-xl font-bold mb-2">{title}</h3>
-      <p className="text-white/90">{description}</p>
-    </div>
   );
 };
 
@@ -159,31 +163,43 @@ export default function AboutPage() {
   ];
 
   return (
-    <main className="bg-gray-50 dark:bg-gray-900 min-h-screen pt-24 pb-12 px-4 transition-colors duration-300">
-      <div className="max-w-7xl mx-auto">
-        {/* Hero Section */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.7 }}
-          className="mb-20 text-center"
-        >
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6 transition-colors duration-300">About Strike Den</h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto transition-colors duration-300">
-            Where fighters are made and champions are forged.
-          </p>
-        </motion.div>
+    <main className="bg-gray-100 dark:bg-gray-900 min-h-screen">
+      {/* Hero Section */}
+      <div className="relative w-full h-[40vh] bg-gray-900">
+        <Image
+          src="/images/cta-background.jpg"
+          alt="About Strike Den"
+          fill
+          className="object-cover opacity-60"
+          priority
+        />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <motion.h1
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-6xl md:text-7xl font-black text-white tracking-tighter"
+          >
+            OUR STORY
+          </motion.h1>
+        </div>
+      </div>
 
-        {/* Our Story Section */}
-        <section className="mb-20">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6 transition-colors duration-300">Our Story</h2>
-              <div className="space-y-4 text-gray-600 dark:text-gray-300 transition-colors duration-300">
+      <div className="max-w-7xl mx-auto px-4 py-16">
+        {/* Origin Story Section */}
+        <motion.section 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={staggerContainer}
+          className="mb-24"
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+            <motion.div variants={fadeInUp}>
+              <h2 className="text-4xl md:text-5xl font-black text-gray-900 dark:text-white mb-8 tracking-tighter">
+                FROM HUMBLE <span className="text-red-600">BEGINNINGS</span>
+              </h2>
+              <div className="space-y-6 text-gray-600 dark:text-gray-300 text-lg">
                 <p>
                   Strike Den started in the smallest of spaces — a humble flat run by Sikander Ali Shah. It began with just 11 students, but not everyone believed in it. The place wasn't big, posh, or even pretty to look at.
                 </p>
@@ -194,81 +210,120 @@ export default function AboutPage() {
                   Two years of relentless effort, dedication, and grit later, Strike Den is now a fully operational MMA facility, equipped with everything you'd expect from a top-tier gym. It's proof that when you're driven by passion and perseverance, a small beginning can turn into something truly extraordinary.
                 </p>
               </div>
+              <div className="mt-8">
+                <Link href="/contact" className="inline-block bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-lg font-bold text-lg transition-colors duration-300">
+                  JOIN OUR COMMUNITY
+                </Link>
+              </div>
             </motion.div>
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-              className="relative h-80 w-full rounded-xl overflow-hidden shadow-xl"
-            >
-              <Image
-                src="/images/gym-story.jpg"
-                alt="Strike Den Gym Interior"
-                fill
-                className="object-cover"
+            <motion.div variants={fadeInUp} className="relative">
+              <div className="absolute -top-5 -left-5 w-24 h-24 bg-red-600 rounded-xl -z-10"></div>
+              <Image 
+                src="/images/gym-story.jpg" 
+                alt="Strike Den Gym Interior" 
+                width={600}
+                height={700}
+                className="rounded-xl shadow-2xl w-full h-auto object-cover"
               />
+              <div className="absolute -bottom-5 -right-5 w-24 h-24 bg-gray-800 dark:bg-red-600 rounded-xl -z-10"></div>
             </motion.div>
           </div>
-        </section>
+        </motion.section>
 
         {/* Our Mission Section */}
-        <section className="mb-20 relative">
-          <div className="absolute inset-0 bg-gradient-to-r from-red-600 to-red-800 rounded-2xl -z-10"></div>
-          <div className="absolute inset-0 opacity-10 bg-[url('/images/pattern-bg.png')] bg-repeat rounded-2xl -z-10"></div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="bg-gradient-to-r from-red-600 to-red-800 text-center max-w-4xl mx-auto p-12 rounded-2xl"
-          >
-            <h2 className="text-3xl font-bold text-white mb-6">Our Mission</h2>
-            <p className="text-xl text-white italic mb-12">
-              "To bring world-class combat sports training to Karachi, fostering a supportive and disciplined environment where individuals build confidence, resilience, and strength—both in and out of the ring."
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <ValueCard 
-                icon={<FaMedal />}
-                title="Excellence"
-                description="We pursue technical excellence in every aspect of combat sports."
-              />
-              <ValueCard 
-                icon={<FaUsers />}
-                title="Community"
-                description="We build a supportive community that lifts each other up."
-              />
-              <ValueCard 
-                icon={<GiMuscleUp />}
-                title="Growth"
-                description="We foster both physical and mental growth in all our members."
+        <motion.section 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={staggerContainer}
+          className="mb-24"
+        >
+          <div className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-900 rounded-3xl relative overflow-hidden">
+            <div className="absolute inset-0 opacity-20">
+              <Image 
+                src="/images/cta-background.jpg" 
+                alt="Mission background" 
+                fill 
+                className="object-cover"
               />
             </div>
-          </motion.div>
-        </section>
+            <div className="relative z-10 max-w-5xl mx-auto">
+              <motion.h2 
+                variants={fadeInUp} 
+                className="text-4xl md:text-5xl font-black text-white mb-8 text-center tracking-tighter"
+              >
+                OUR MISSION
+              </motion.h2>
+              <motion.p 
+                variants={fadeInUp} 
+                className="text-2xl text-white text-center italic font-light mb-16 max-w-4xl mx-auto"
+              >
+                "To bring world-class combat sports training to Karachi, fostering a supportive and disciplined environment where individuals build confidence, resilience, and strength—both in and out of the ring."
+              </motion.p>
+              <motion.div 
+                variants={staggerContainer}
+                className="grid grid-cols-1 md:grid-cols-3 gap-8"
+              >
+                <motion.div variants={fadeInUp} className="text-center bg-white/10 backdrop-blur-sm p-8 rounded-xl">
+                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-600 text-white text-2xl mb-4">
+                    <FaMedal />
+                  </div>
+                  <h3 className="text-white text-xl font-bold mb-3">Excellence</h3>
+                  <p className="text-white/90">We pursue technical excellence in every aspect of combat sports.</p>
+                </motion.div>
+                <motion.div variants={fadeInUp} className="text-center bg-white/10 backdrop-blur-sm p-8 rounded-xl">
+                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-600 text-white text-2xl mb-4">
+                    <FaUsers />
+                  </div>
+                  <h3 className="text-white text-xl font-bold mb-3">Community</h3>
+                  <p className="text-white/90">We build a supportive community that lifts each other up.</p>
+                </motion.div>
+                <motion.div variants={fadeInUp} className="text-center bg-white/10 backdrop-blur-sm p-8 rounded-xl">
+                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-600 text-white text-2xl mb-4">
+                    <GiMuscleUp />
+                  </div>
+                  <h3 className="text-white text-xl font-bold mb-3">Growth</h3>
+                  <p className="text-white/90">We foster both physical and mental growth in all our members.</p>
+                </motion.div>
+              </motion.div>
+            </div>
+          </div>
+        </motion.section>
 
         {/* Our Team Section */}
-        <section className="mb-20">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-            className="text-center mb-12"
+        <motion.section 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={staggerContainer}
+          className="mb-24"
+        >
+          <motion.h2 
+            variants={fadeInUp} 
+            className="text-4xl md:text-5xl font-black text-gray-900 dark:text-white mb-8 text-center tracking-tighter"
           >
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-3 transition-colors duration-300">Meet Our Team</h2>
-            <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto transition-colors duration-300">
-              Our coaches are experienced professionals who are passionate about sharing their knowledge and helping you achieve your goals.
-            </p>
-          </motion.div>
+            MEET OUR TEAM
+          </motion.h2>
+          <motion.p 
+            variants={fadeInUp} 
+            className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto text-center mb-12"
+          >
+            Our coaches are experienced professionals dedicated to helping you achieve your goals through personalized guidance and support.
+          </motion.p>
           
           {isLoading ? (
-            <div className="flex justify-center py-8">
+            <div className="flex justify-center py-20">
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-600"></div>
             </div>
           ) : error ? (
-            <div className="text-center py-8 bg-white dark:bg-gray-800 rounded-lg shadow">
+            <div className="text-center py-8 bg-white dark:bg-gray-800 rounded-xl shadow-xl">
               <p className="text-red-500">{error}</p>
             </div>
           ) : teamMembers.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <motion.div
+              variants={staggerContainer}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+            >
               {teamMembers.map((member, index) => (
                 <TeamMemberCard 
                   key={member._id || index} 
@@ -276,97 +331,137 @@ export default function AboutPage() {
                     name: member.name,
                     role: member.specialization,
                     image: member.image || "/images/placeholder-trainer.jpg",
-                    bio: member.bio || `Coach with ${member.experience} years of experience`,
+                    bio: member.bio || `Coach with ${member.experience || 'extensive'} experience`,
                     certifications: member.certifications || []
                   }} 
                 />
               ))}
-            </div>
+            </motion.div>
           ) : (
-            <div className="text-center py-8 bg-white dark:bg-gray-800 rounded-lg shadow">
-              <p className="text-gray-500 dark:text-gray-400">No trainers information available.</p>
+            <div className="text-center py-8 bg-white dark:bg-gray-800 rounded-xl shadow-xl">
+              <p className="text-gray-500 dark:text-gray-400">No trainers information available at the moment.</p>
             </div>
           )}
-        </section>
-
-        {/* Our Facilities Section */}
-        <section className="mb-20">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-            className="text-center mb-12"
+        </motion.section>
+        
+        {/* Facilities Section */}
+        <motion.section 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={staggerContainer}
+          className="mb-24"
+        >
+          <motion.h2 
+            variants={fadeInUp} 
+            className="text-4xl md:text-5xl font-black text-gray-900 dark:text-white mb-8 text-center tracking-tighter"
           >
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-3 transition-colors duration-300">Our Facilities</h2>
-            <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto transition-colors duration-300">
-              Strike Den is equipped with everything you need for effective training in a functional, no-nonsense environment.
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <FacilityFeature 
-              icon={<FaUsers className="text-red-500" />}
-              title="Padded Training Area"
-              description="Spacious padded area for sparring, grappling, and all types of martial arts practice in a safe environment."
-            />
-            <FacilityFeature 
-              icon={<GiBoxingGlove className="text-red-500" />}
-              title="Heavy Bag Section"
-              description="Multiple heavy bags and striking equipment for developing power, technique, and endurance."
-            />
-            <FacilityFeature 
-              icon={<FaDumbbell className="text-red-500" />}
-              title="Strength & Conditioning"
-              description="Essential weights and equipment for building strength and conditioning to complement your martial arts training."
-            />
-          </div>
-        </section>
-
-        {/* Testimonials */}
-        <section className="mb-20">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-            className="text-center mb-12"
+            WORLD-CLASS FACILITIES
+          </motion.h2>
+          <motion.p 
+            variants={fadeInUp} 
+            className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto text-center mb-12"
           >
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-3 transition-colors duration-300">What Our Members Say</h2>
-            <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto transition-colors duration-300">
-              Don't just take our word for it. Hear from the Strike Den community.
-            </p>
-          </motion.div>
+            Train in our state-of-the-art facility designed to support every aspect of your martial arts journey.
+          </motion.p>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <motion.div
+            variants={staggerContainer}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          >
+            <FacilityFeature
+              icon={<GiBoxingGlove />}
+              title="Training Areas"
+              description="Spacious, padded training areas for striking, grappling, and all types of martial arts practice in a safe environment."
+            />
+            <FacilityFeature
+              icon={<MdFitnessCenter />}
+              title="Conditioning Equipment"
+              description="Professional strength and conditioning equipment to enhance your performance and prevent injuries."
+            />
+            <FacilityFeature
+              icon={<FaUsers />}
+              title="Community Space"
+              description="Dedicated spaces for our community to connect, learn, and support each other's growth."
+            />
+            <FacilityFeature
+              icon={<MdSportsKabaddi />}
+              title="Sparring Zones"
+              description="Designated areas for technical sparring with proper safety equipment and supervision."
+            />
+            <FacilityFeature
+              icon={<MdSpa />}
+              title="Recovery Areas"
+              description="Facilities for stretching, cooling down, and recovery to help you maintain peak performance."
+            />
+            <FacilityFeature
+              icon={<GiShower />}
+              title="Modern Amenities"
+              description="Clean changing rooms, showers, and storage facilities for member convenience."
+            />
+          </motion.div>
+        </motion.section>
+        
+        {/* Testimonials Section */}
+        <motion.section 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={staggerContainer}
+          className="mb-24"
+        >
+          <motion.h2 
+            variants={fadeInUp} 
+            className="text-4xl md:text-5xl font-black text-gray-900 dark:text-white mb-8 text-center tracking-tighter"
+          >
+            MEMBER EXPERIENCES
+          </motion.h2>
+          <motion.p 
+            variants={fadeInUp} 
+            className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto text-center mb-12"
+          >
+            Hear from our community about their journey with Strike Den.
+          </motion.p>
+          
+          <motion.div
+            variants={staggerContainer}
+            className="grid grid-cols-1 md:grid-cols-3 gap-8"
+          >
             {testimonials.map((testimonial, index) => (
               <TestimonialCard key={index} testimonial={testimonial} />
             ))}
-          </div>
-        </section>
+          </motion.div>
+        </motion.section>
         
         {/* CTA Section */}
         <motion.section
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="text-center bg-gradient-to-r from-red-600 to-red-800 p-12 rounded-2xl shadow-xl"
+          className="bg-gray-900 relative overflow-hidden rounded-2xl"
         >
-          <h2 className="text-3xl font-bold text-white mb-4">Ready to Join Our Community?</h2>
-          <p className="text-white text-opacity-90 mb-8 max-w-2xl mx-auto">
-            Take the first step toward transforming your fitness journey. Join us at Strike Den today!
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a 
-              href="/classes" 
-              className="bg-white text-red-600 hover:bg-gray-100 px-8 py-4 rounded-lg font-semibold transition-colors duration-300 shadow-md"
-            >
-              View Our Classes
-            </a>
-            <a 
-              href="/contact" 
-              className="bg-transparent hover:bg-red-700 text-white border-2 border-white px-8 py-4 rounded-lg font-semibold transition-colors duration-300"
-            >
-              Contact Us
-            </a>
+          <div className="absolute inset-0 opacity-30">
+            <Image 
+              src="/images/cta-background.jpg" 
+              alt="Join Strike Den" 
+              fill 
+              className="object-cover"
+            />
+          </div>
+          
+          <div className="relative z-10 p-12 md:p-16">
+            <div className="max-w-4xl mx-auto text-center">
+              <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tighter">READY TO TRANSFORM YOUR LIFE?</h2>
+              <p className="text-xl text-white/80 mb-10">
+                Take the first step toward becoming a stronger, more confident version of yourself. Join us at Strike Den today!
+              </p>
+              <Link 
+                href="/contact" 
+                className="inline-block bg-red-600 hover:bg-red-700 text-white px-10 py-5 rounded-lg font-bold text-lg transition-colors duration-300"
+              >
+                GET STARTED TODAY
+              </Link>
+            </div>
           </div>
         </motion.section>
       </div>

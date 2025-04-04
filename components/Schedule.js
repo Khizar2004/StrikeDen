@@ -142,7 +142,6 @@ export default function Schedule({ initialClasses }) {
   if (error) {
     return (
       <div className="max-w-4xl mx-auto py-12 px-4 text-center">
-        <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">Weekly Schedule</h2>
         <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/30 rounded-lg p-6">
           <p className="text-red-600 dark:text-red-400">{error}</p>
           <button 
@@ -160,7 +159,6 @@ export default function Schedule({ initialClasses }) {
   if (isLoading) {
     return (
       <div className="max-w-4xl mx-auto py-12 px-4 text-center">
-        <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">Weekly Schedule</h2>
         <div className="flex justify-center items-center py-16">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>
         </div>
@@ -173,7 +171,6 @@ export default function Schedule({ initialClasses }) {
   if (!hasClasses) {
     return (
       <div className="max-w-4xl mx-auto py-12 px-4 text-center">
-        <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">Weekly Schedule</h2>
         <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-8">
           <p className="text-gray-600 dark:text-gray-400">No classes are currently scheduled for this week.</p>
           <p className="text-gray-500 dark:text-gray-500 mt-2 text-sm">Please check back later or contact us for more information.</p>
@@ -184,8 +181,6 @@ export default function Schedule({ initialClasses }) {
 
   return (
     <div className="max-w-4xl mx-auto py-12 px-4">
-      <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8 text-center">Weekly Schedule</h2>
-      
       <div className="space-y-2">
         {Object.keys(scheduleData).map((day) => (
           // Only show days that have classes
