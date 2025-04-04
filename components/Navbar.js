@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation';
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const [scrollY, setScrollY] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeLink, setActiveLink] = useState('/');
   const navRef = useRef(null);
@@ -20,7 +21,9 @@ export default function Navbar() {
   // Handle scroll effect
   useEffect(() => {
     const handleScroll = () => {
-      const isScrolled = window.scrollY > 10;
+      const currentScrollY = window.scrollY;
+      setScrollY(currentScrollY);
+      const isScrolled = currentScrollY > 10;
       if (isScrolled !== scrolled) {
         setScrolled(isScrolled);
       }
@@ -30,9 +33,21 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [scrolled]);
 
+  // Calculate opacity based on scroll position for smooth transition
+  const getOpacity = () => {
+    const baseOpacity = 30; // 30% when not scrolled
+    const maxExtraOpacity = 20; // Up to additional 20% when fully scrolled
+    const scrollThreshold = 100; // Scroll distance to reach max opacity
+    
+    const extraOpacity = Math.min(scrollY / scrollThreshold * maxExtraOpacity, maxExtraOpacity);
+    return baseOpacity + extraOpacity;
+  };
+
+  const opacityValue = getOpacity();
+  
   const navbarClasses = scrolled
-    ? 'fixed top-0 left-0 w-full bg-white/90 dark:bg-secondary-900/90 backdrop-blur-md z-50 shadow-sm border-b border-gray-100 dark:border-secondary-700/30'
-    : 'fixed top-0 left-0 w-full bg-white/80 dark:bg-secondary-900/80 backdrop-blur-sm z-50';
+    ? `fixed top-0 left-0 w-full bg-white/${Math.round(opacityValue)} dark:bg-secondary-900/${Math.round(opacityValue)} backdrop-blur-xl z-50 transition-all duration-300`
+    : `fixed top-0 left-0 w-full bg-white/30 dark:bg-secondary-900/30 backdrop-blur-lg z-50 transition-all duration-300`;
 
   const linkClasses = (path) => {
     const isActive = activeLink === path;
@@ -236,15 +251,15 @@ export default function Navbar() {
             animate="open"
             exit="closed"
             variants={mobileMenuVariants}
-            className="md:hidden bg-white dark:bg-secondary-800 border-t border-gray-100 dark:border-secondary-700/30 overflow-hidden"
+            className="md:hidden bg-white/40 dark:bg-secondary-800/40 backdrop-blur-lg overflow-hidden transition-all duration-300"
           >
             <div className="container mx-auto px-4 py-3 flex flex-col space-y-1">
               <motion.div variants={mobileItemVariants}>
                 <Link href="/" 
                   className={`block px-3 py-2.5 rounded-md transition-colors duration-200 ${
                     activeLink === '/' 
-                      ? 'text-primary-500 bg-primary-50 dark:bg-primary-900/10' 
-                      : 'text-gray-700 dark:text-white/90 hover:bg-gray-50 dark:hover:bg-secondary-700/50'
+                      ? 'text-primary-500 bg-primary-50/50 dark:bg-primary-900/10' 
+                      : 'text-gray-700 dark:text-white/90 hover:bg-gray-50/50 dark:hover:bg-secondary-700/30'
                   }`}
                 >
                   Home
@@ -254,8 +269,8 @@ export default function Navbar() {
                 <Link href="/about" 
                   className={`block px-3 py-2.5 rounded-md transition-colors duration-200 ${
                     activeLink === '/about' 
-                      ? 'text-primary-500 bg-primary-50 dark:bg-primary-900/10' 
-                      : 'text-gray-700 dark:text-white/90 hover:bg-gray-50 dark:hover:bg-secondary-700/50'
+                      ? 'text-primary-500 bg-primary-50/50 dark:bg-primary-900/10' 
+                      : 'text-gray-700 dark:text-white/90 hover:bg-gray-50/50 dark:hover:bg-secondary-700/30'
                   }`}
                 >
                   About
@@ -265,8 +280,8 @@ export default function Navbar() {
                 <Link href="/classes" 
                   className={`block px-3 py-2.5 rounded-md transition-colors duration-200 ${
                     activeLink === '/classes' 
-                      ? 'text-primary-500 bg-primary-50 dark:bg-primary-900/10' 
-                      : 'text-gray-700 dark:text-white/90 hover:bg-gray-50 dark:hover:bg-secondary-700/50'
+                      ? 'text-primary-500 bg-primary-50/50 dark:bg-primary-900/10' 
+                      : 'text-gray-700 dark:text-white/90 hover:bg-gray-50/50 dark:hover:bg-secondary-700/30'
                   }`}
                 >
                   Classes
@@ -276,8 +291,8 @@ export default function Navbar() {
                 <Link href="/trainers" 
                   className={`block px-3 py-2.5 rounded-md transition-colors duration-200 ${
                     activeLink === '/trainers' 
-                      ? 'text-primary-500 bg-primary-50 dark:bg-primary-900/10' 
-                      : 'text-gray-700 dark:text-white/90 hover:bg-gray-50 dark:hover:bg-secondary-700/50'
+                      ? 'text-primary-500 bg-primary-50/50 dark:bg-primary-900/10' 
+                      : 'text-gray-700 dark:text-white/90 hover:bg-gray-50/50 dark:hover:bg-secondary-700/30'
                   }`}
                 >
                   Trainers
@@ -287,8 +302,8 @@ export default function Navbar() {
                 <Link href="/contact" 
                   className={`block px-3 py-2.5 rounded-md transition-colors duration-200 ${
                     activeLink === '/contact' 
-                      ? 'text-primary-500 bg-primary-50 dark:bg-primary-900/10' 
-                      : 'text-gray-700 dark:text-white/90 hover:bg-gray-50 dark:hover:bg-secondary-700/50'
+                      ? 'text-primary-500 bg-primary-50/50 dark:bg-primary-900/10' 
+                      : 'text-gray-700 dark:text-white/90 hover:bg-gray-50/50 dark:hover:bg-secondary-700/30'
                   }`}
                 >
                   Contact
@@ -300,8 +315,8 @@ export default function Navbar() {
                 <Link href="/admin/login" 
                   className={`block px-3 py-2.5 rounded-md transition-colors duration-200 ${
                     activeLink === '/admin/login' 
-                      ? 'text-primary-500 bg-primary-50 dark:bg-primary-900/10' 
-                      : 'text-gray-700 dark:text-white/90 hover:bg-gray-50 dark:hover:bg-secondary-700/50'
+                      ? 'text-primary-500 bg-primary-50/50 dark:bg-primary-900/10' 
+                      : 'text-gray-700 dark:text-white/90 hover:bg-gray-50/50 dark:hover:bg-secondary-700/30'
                   }`}
                 >
                   <span className="flex items-center">
