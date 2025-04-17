@@ -99,7 +99,6 @@ const TestimonialCard = ({ testimonial }) => {
         </div>
         <div>
           <h4 className="font-bold text-gray-900 dark:text-white">{testimonial.name}</h4>
-          <p className="text-sm text-gray-500 dark:text-gray-400">{testimonial.title}</p>
         </div>
       </div>
     </motion.div>
@@ -143,22 +142,19 @@ export default function AboutPage() {
 
   const testimonials = [
     {
-      quote: "Strike Den completely transformed my approach to fitness. The coaches are world-class and the community is incredibly supportive.",
-      name: "Michael T.",
-      title: "Member since 2019",
-      image: "/images/placeholder-avatar.jpg"
+      quote: "Strike Den completely changed my fitness journey. The coaches are amazing, and the environment is genuinely comfortable and empowering for women.",
+      name: "Malaika Ahmed",
+      image: "/images/malaika.jpeg"
     },
     {
-      quote: "As someone who was intimidated by combat sports, I found Strike Den to be welcoming and encouraging. Now I can't imagine my life without it!",
-      name: "Jessica K.",
-      title: "Member since 2020",
-      image: "/images/placeholder-avatar.jpg"
+      quote: "StrikeDen has top-notch facilities and incredible coaches. It's an amazing place for beginners—lots of styles, all grounded in strong fundamentals.",
+      name: "Minhaal Haider, Team Fight Fortress",
+      image: "/images/minhaal.jpeg"
     },
     {
-      quote: "The technical instruction at Strike Den is unmatched. I've trained at gyms across the country, and this is by far the best experience I've had.",
-      name: "David L.",
-      title: "Professional Fighter",
-      image: "/images/placeholder-avatar.jpg"
+      quote: "StrikeDen's personalized coaching and top-tier facilities make all the difference. I'd recommend it to anyone looking to lose weight or just get fit.",
+      name: "Sharik Kazi",
+      image: "/images/sharik.jpeg"
     }
   ];
 
@@ -395,9 +391,9 @@ export default function AboutPage() {
               description="Facilities for stretching, cooling down, and recovery to help you maintain peak performance."
             />
             <FacilityFeature
-              icon={<GiShower />}
-              title="Modern Amenities"
-              description="Clean changing rooms, showers, and storage facilities for member convenience."
+              icon={<FaDumbbell />}
+              title="Heavy Bag Section"
+              description="Professional-grade heavy bags and equipment for developing striking power, technique and timing."
             />
           </motion.div>
         </motion.section>
