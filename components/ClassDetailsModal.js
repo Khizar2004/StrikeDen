@@ -2,6 +2,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { useRef, useEffect } from "react";
+import Link from "next/link";
 
 export default function ClassDetailsModal({ isOpen, onClose, classData }) {
   const modalRef = useRef();
@@ -123,11 +124,18 @@ export default function ClassDetailsModal({ isOpen, onClose, classData }) {
                 </p>
               )}
               
-              {/* Action button */}
-              <div className="mt-8 flex justify-center">
+              {/* Action buttons */}
+              <div className="mt-8 flex justify-center space-x-4">
+                <Link href="/contact">
+                  <button
+                    className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition-colors"
+                  >
+                    Join Now
+                  </button>
+                </Link>
                 <button
                   onClick={onClose}
-                  className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition-colors"
+                  className="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-bold rounded-lg transition-colors"
                 >
                   Close
                 </button>
