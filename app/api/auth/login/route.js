@@ -5,15 +5,56 @@ import { cookies } from 'next/headers';
 import { connectDB } from '@/lib/dbConnect';
 import Admin from '@/lib/Admin';
 
-// Secret for JWT token (should be moved to environment variables)
-const JWT_SECRET = process.env.JWT_SECRET || 'strike-den-secure-jwt-secret';
+// Get JWT secret from environment variables
+const JWT_SECRET = process.env.JWT_SECRET;
+
+// Track login attempts for rate limiting
+const loginAttempts = new Map();
 
 export async function POST(request) {
   try {
-    await connectDB();
-    const { username, password, isReset } = await request.json();
+    // Check if JWT_SECRET is properly configured
+    if (!JWT_SECRET) {
+      console.error('JWT_SECRET is not configured in environment variables');
+      return NextResponse.json(
+        { success: false, message: 'Server configuration error' },
+        { status: 500 }
+      );
+    }
 
-    console.log('Login attempt:', { username, isReset });
+    await connectDB();
+    
+    // Get client IP for rate limiting
+    // Note: In production, you should use a proper request IP detection
+    // that accounts for proxies and load balancers
+    const ip = request.headers.get('x-forwarded-for') || 'unknown-ip';
+    
+    // Implement basic rate limiting
+    const now = Date.now();
+    const recentAttempts = loginAttempts.get(ip) || [];
+    
+    // Remove attempts older than 15 minutes
+    const fifteenMinutes = 15 * 60 * 1000;
+    const recentAttemptsCleaned = recentAttempts.filter(
+      timestamp => now - timestamp < fifteenMinutes
+    );
+    
+    // Check if too many attempts
+    if (recentAttemptsCleaned.length >= 5) {
+      return NextResponse.json(
+        { success: false, message: 'Too many login attempts. Please try again later.' },
+        { status: 429 }
+      );
+    }
+    
+    // Add current attempt
+    recentAttemptsCleaned.push(now);
+    loginAttempts.set(ip, recentAttemptsCleaned);
+    
+    const { username, password } = await request.json();
+
+    // Log attempt but avoid logging passwords or other sensitive info
+    console.log('Login attempt:', { username: username?.slice(0, 3) + '***' });
 
     if (!username || !password) {
       return NextResponse.json(
@@ -23,118 +64,70 @@ export async function POST(request) {
     }
 
     // Get admin user from database
-    // For first-time setup, create a default admin user if none exists
-    let admin = await Admin.findOne({ username });
+    const admin = await Admin.findOne({ username });
     
     if (!admin) {
-      // Check if this is the first admin being created
-      const adminCount = await Admin.countDocuments();
-      
-      if (adminCount === 0 && username === 'admin') {
-        // Create default admin user for first-time setup
-        const hashedPassword = await bcrypt.hash(password, 10);
-        admin = await Admin.create({
-          username: 'admin',
-          password: hashedPassword,
-          isAdmin: true
-        });
-        
-        console.log('Created default admin user:', { username: admin.username, isAdmin: admin.isAdmin });
-      } else {
-        console.log('Invalid login attempt - username not found:', username);
-        return NextResponse.json(
-          { success: false, message: 'Invalid credentials' },
-          { status: 401 }
-        );
-      }
-    } else if (isReset && username === 'admin') {
-      // Special case for resetting admin password during setup
-      console.log('Resetting admin password');
-      
-      // Generate hashed password
-      const hashedPassword = await bcrypt.hash(password, 10);
-      
-      // Update the password directly in the database for reliability
-      const result = await Admin.updateOne(
-        { username: 'admin' },
-        { $set: { password: hashedPassword } }
+      console.log('Invalid login attempt - username not found');
+      return NextResponse.json(
+        { success: false, message: 'Invalid credentials' },
+        { status: 401 }
       );
-      
-      console.log('Password reset result:', result);
-      
-      // Reload the admin with the new password
-      admin = await Admin.findOne({ username });
-      
-      // Skip password comparison since we just set it
-      // Create JWT token
-      const token = jwt.sign(
-        { id: admin._id, username: admin.username, isAdmin: admin.isAdmin },
-        JWT_SECRET,
-        { expiresIn: '1d' }
-      );
-
-      // Set HTTP-only cookie
-      cookies().set('admin_token', token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        maxAge: 86400, // 1 day in seconds
-        path: '/'
-      });
-
-      console.log('User successfully reset password and logged in:', username);
-      
-      return NextResponse.json({
-        success: true,
-        message: 'Password reset and login successful',
-        user: {
-          id: admin._id,
-          username: admin.username,
-          isAdmin: admin.isAdmin
-        }
-      });
     }
 
-    // Only compare passwords if not in reset mode
-    if (!isReset) {
-      // Compare passwords
-      let isMatch = false;
-      try {
-        isMatch = await bcrypt.compare(password, admin.password);
-      } catch (err) {
-        console.error('Password comparison error:', err);
-        return NextResponse.json(
-          { success: false, message: 'Authentication error' },
-          { status: 500 }
-        );
-      }
-      
-      if (!isMatch) {
-        console.log('Invalid login attempt - password mismatch for user:', username);
-        return NextResponse.json(
-          { success: false, message: 'Invalid credentials. If this is your first time logging in, set "Reset Password" to true.' },
-          { status: 401 }
-        );
-      }
+    // Compare passwords
+    let isMatch = false;
+    try {
+      isMatch = await bcrypt.compare(password, admin.password);
+    } catch (err) {
+      console.error('Password comparison error');
+      return NextResponse.json(
+        { success: false, message: 'Authentication error' },
+        { status: 500 }
+      );
+    }
+    
+    if (!isMatch) {
+      console.log('Invalid login attempt - password mismatch');
+      return NextResponse.json(
+        { success: false, message: 'Invalid credentials' },
+        { status: 401 }
+      );
     }
 
-    // Create JWT token
+    // Update last login timestamp
+    admin.lastLogin = new Date();
+    await admin.save();
+
+    // Create JWT token with short expiration
     const token = jwt.sign(
-      { id: admin._id, username: admin.username, isAdmin: admin.isAdmin },
+      { 
+        id: admin._id, 
+        username: admin.username, 
+        isAdmin: admin.isAdmin,
+        // Add a unique token ID that can be revoked if needed
+        jti: require('crypto').randomBytes(16).toString('hex') 
+      },
       JWT_SECRET,
-      { expiresIn: '1d' }
+      { expiresIn: '4h' } // Shorter expiration time for better security
     );
 
-    // Set HTTP-only cookie
+    // Set HTTP-only cookie with better security options
     cookies().set('admin_token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
-      maxAge: 86400, // 1 day in seconds
-      path: '/'
+      maxAge: 4 * 60 * 60, // 4 hours in seconds
+      path: '/',
+      // Add domain restriction in production
+      ...(process.env.NODE_ENV === 'production' && {
+        domain: process.env.COOKIE_DOMAIN || undefined
+      })
     });
 
-    console.log('User successfully logged in:', username);
+    console.log('User successfully logged in');
+    
+    // Clear login attempts after successful login
+    loginAttempts.delete(ip);
     
     return NextResponse.json({
       success: true,

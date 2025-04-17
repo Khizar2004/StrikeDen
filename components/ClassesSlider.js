@@ -3,16 +3,20 @@ import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
+import ClassDetailsModal from './ClassDetailsModal';
 
 export default function ClassesSlider() {
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [width, setWidth] = useState(0);
-  const [dragStartX, setDragStartX] = useState(0);
-  const [dragPosition, setDragPosition] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+  const [selectedClass, setSelectedClass] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const sliderRef = useRef(null);
   const contentRef = useRef(null);
+  const dragStartTime = useRef(0);
+  const dragDistance = useRef(0);
+  const dragStartPos = useRef(0);
 
   // Fetch classes data
   useEffect(() => {
@@ -58,21 +62,51 @@ export default function ClassesSlider() {
 
   const handleDragStart = (e, info) => {
     setIsDragging(true);
-    setDragStartX(info.point.x - dragPosition);
+    dragStartTime.current = Date.now();
+    dragStartPos.current = info.point.x;
+    
+    // Disable pointer events on links during drag
+    document.querySelectorAll('.class-card-link').forEach(link => {
+      link.style.pointerEvents = 'none';
+    });
   };
 
-  const handleDragEnd = () => {
-    setIsDragging(false);
+  const handleDragEnd = (e, info) => {
+    // Calculate drag distance and time
+    const dragTime = Date.now() - dragStartTime.current;
+    dragDistance.current = Math.abs(info.point.x - dragStartPos.current);
+    
+    setTimeout(() => {
+      setIsDragging(false);
+      
+      // Re-enable pointer events on links after drag
+      document.querySelectorAll('.class-card-link').forEach(link => {
+        link.style.pointerEvents = 'auto';
+      });
+    }, 100);
   };
 
-  const handleDrag = (e, info) => {
-    let newPosition = info.point.x - dragStartX;
-    
-    // Add constraints
-    if (newPosition > 0) newPosition = 0;
-    if (newPosition < -width) newPosition = -width;
-    
-    setDragPosition(newPosition);
+  // Prevent default behavior on mousedown to avoid link drag issues
+  const handleMouseDown = (e) => {
+    // Prevent default only if it's a primary button click (left click)
+    if (e.button === 0) {
+      e.preventDefault();
+    }
+  };
+
+  // Handle class card click to show modal
+  const handleClassClick = (e, classItem) => {
+    // Only open modal if not dragging significantly
+    if (!isDragging && dragDistance.current < 10) {
+      e.preventDefault();
+      setSelectedClass(classItem);
+      setIsModalOpen(true);
+    }
+  };
+
+  // Close modal
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
   };
 
   // Error handler for image loading
@@ -134,18 +168,22 @@ export default function ClassesSlider() {
           ref={sliderRef}
           className="cursor-grab overflow-hidden"
           whileTap={{ cursor: "grabbing" }}
+          onMouseDown={handleMouseDown}
         >
           <motion.div 
             ref={contentRef}
             className="flex"
-            style={{ x: dragPosition }}
             drag="x"
             dragConstraints={{ right: 0, left: -width }}
-            dragElastic={0.1}
-            dragTransition={{ bounceStiffness: 600, bounceDamping: 20 }}
+            dragTransition={{ 
+              power: 0.35,
+              timeConstant: 300,
+              modifyTarget: target => Math.round(target / 50) * 50 
+            }}
             onDragStart={handleDragStart}
-            onDrag={handleDrag}
             onDragEnd={handleDragEnd}
+            dragElastic={0.1}
+            dragMomentum={true}
           >
             {classes.map((item) => (
               <motion.div 
@@ -154,7 +192,10 @@ export default function ClassesSlider() {
                 whileHover={{ scale: isDragging ? 1 : 1.02 }}
                 transition={{ duration: 0.3 }}
               >
-                <Link href={`/classes/${item.slug}`} className="block h-full w-full relative">
+                <div 
+                  className="class-card-link block h-full w-full relative cursor-pointer"
+                  onClick={(e) => handleClassClick(e, item)}
+                >
                   <div className="absolute inset-0 bg-gray-900 opacity-40 dark:opacity-60 z-10"></div>
                   <div className="relative h-full w-full bg-gray-800">
                     <Image 
@@ -164,6 +205,7 @@ export default function ClassesSlider() {
                       className="object-cover"
                       sizes="(max-width: 768px) 90vw, (max-width: 1200px) 40vw, 33vw"
                       onError={handleImageError}
+                      draggable="false"
                     />
                   </div>
                   <div className="absolute bottom-5 left-0 right-0 text-center z-20">
@@ -176,7 +218,7 @@ export default function ClassesSlider() {
                       </p>
                     )}
                   </div>
-                </Link>
+                </div>
               </motion.div>
             ))}
           </motion.div>
@@ -199,10 +241,17 @@ export default function ClassesSlider() {
             transition={{ delay: 1, duration: 0.6 }}
             className="text-center text-sm text-gray-500 dark:text-gray-400 mt-4 italic"
           >
-            Click and drag to explore more classes
+            Drag to explore more classes
           </motion.p>
         )}
       </div>
+
+      {/* Class Details Modal */}
+      <ClassDetailsModal 
+        isOpen={isModalOpen} 
+        onClose={handleCloseModal} 
+        classData={selectedClass}
+      />
     </div>
   );
 } 
