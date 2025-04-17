@@ -73,7 +73,7 @@ export default function ImageUpload({ onImageUploaded, initialImage = null }) {
       const formData = new FormData();
       formData.append('file', file);
 
-      const response = await fetch('/api/upload', {
+      const response = await fetch('/api/upload/blob', {
         method: 'POST',
         body: formData,
       });
@@ -92,18 +92,15 @@ export default function ImageUpload({ onImageUploaded, initialImage = null }) {
         throw new Error(data.error || `Upload failed with status: ${response.status}`);
       }
       
-      if (data.success && data.filePath) {
-        setUploadedPath(data.filePath);
-        onImageUploaded(data.filePath);
+      if (data.success && data.url) {
+        setUploadedPath(data.url);
+        onImageUploaded(data.url);
       } else {
-        throw new Error(data.error || 'No file path returned from server');
+        throw new Error(data.error || 'No file URL returned from server');
       }
     } catch (err) {
       console.error('Error uploading image:', err);
       setError(err.message || 'Failed to upload image');
-      
-      // Don't set the preview as the image path - that's incorrect
-      // We'll keep the last valid path if there was one
     } finally {
       setIsUploading(false);
     }
