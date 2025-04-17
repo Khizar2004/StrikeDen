@@ -2,11 +2,20 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import jwt from 'jsonwebtoken';
 
-// Secret for JWT token (should be moved to environment variables)
-const JWT_SECRET = process.env.JWT_SECRET || 'strike-den-secure-jwt-secret';
+// Get JWT secret from environment variables
+const JWT_SECRET = process.env.JWT_SECRET;
 
 export async function GET() {
   try {
+    // Check if JWT_SECRET is properly configured
+    if (!JWT_SECRET) {
+      console.error('JWT_SECRET is not configured in environment variables');
+      return NextResponse.json(
+        { success: false, message: 'Server configuration error' },
+        { status: 500 }
+      );
+    }
+    
     // Get the token from the cookies
     const token = (await cookies()).get('admin_token')?.value;
     

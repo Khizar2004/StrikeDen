@@ -119,10 +119,19 @@ export default function AdminPage() {
   const enrichedSchedules = useMemo(() => {
     if (!schedules.length || !trainers.length) return [];
     
-    return schedules.map(schedule => ({
-      ...schedule,
-      trainer: trainers.find(t => t._id === schedule.trainer)
-    }));
+    return schedules.map(schedule => {
+      // Check if trainer is already a populated object or just an ID
+      if (schedule.trainer && typeof schedule.trainer === 'object' && schedule.trainer._id) {
+        return schedule; // Already populated, no need to enrich
+      } else {
+        // Find the trainer in our local state
+        const trainer = trainers.find(t => t._id === schedule.trainer);
+        return {
+          ...schedule,
+          trainer: trainer || { name: 'Unknown Trainer' } // Fallback if trainer not found
+        };
+      }
+    });
   }, [schedules, trainers]);
 
   // Show loading state while data is being fetched

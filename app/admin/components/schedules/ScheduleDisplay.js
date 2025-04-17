@@ -3,7 +3,17 @@
 // Helper function to format time
 const formatTime = (timeString) => {
   if (!timeString) return 'N/A';
-  return timeString;
+  
+  try {
+    // Format from 24-hour to 12-hour with AM/PM
+    const [hours, minutes] = timeString.split(':');
+    const hour = parseInt(hours, 10);
+    const ampm = hour >= 12 ? 'PM' : 'AM';
+    const hour12 = hour % 12 || 12;
+    return `${hour12}:${minutes} ${ampm}`;
+  } catch (e) {
+    return timeString;
+  }
 };
 
 // Days of week for organizing schedules
@@ -34,7 +44,7 @@ export default function ScheduleDisplay({ schedules, onDelete, isLoading }) {
   
   if (isLoading) {
     return (
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 p-6">
         <div className="text-center py-8">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-red-600"></div>
           <p className="mt-4 text-gray-500 dark:text-gray-400">Loading schedule...</p>
@@ -47,42 +57,49 @@ export default function ScheduleDisplay({ schedules, onDelete, isLoading }) {
     return (
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 p-8 text-center">
         <div className="flex flex-col items-center justify-center py-8">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-gray-300 dark:text-gray-600 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-gray-300 dark:text-gray-600 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
           </svg>
-          <p className="text-gray-500 dark:text-gray-400 font-medium">No classes scheduled yet.</p>
-          <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">Use the form to add your first class.</p>
+          <p className="text-gray-500 dark:text-gray-400 font-medium">No classes scheduled yet</p>
+          <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">Use the form to add your first class</p>
         </div>
       </div>
     );
   }
   
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-      <div className="border-b border-gray-200 dark:border-gray-700 px-6 py-4">
-        <h3 className="text-lg font-medium text-gray-900 dark:text-white">Weekly Schedule</h3>
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden transition-all duration-300 hover:shadow-lg">
+      <div className="border-b border-gray-200 dark:border-gray-700 px-6 py-4 bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-900">
+        <h3 className="text-lg font-medium text-gray-900 dark:text-white flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+          Weekly Schedule
+        </h3>
       </div>
       
-      <div className="px-6 py-4">
-        <div className="divide-y divide-gray-200 dark:divide-gray-700">
+      <div className="px-6 py-5">
+        <div className="space-y-6">
           {DAYS_OF_WEEK.map((day) => (
-            <div key={day.id} className="py-4 first:pt-0 last:pb-0">
-              <h4 className="text-md font-medium text-gray-900 dark:text-white mb-3">
+            <div key={day.id} className="group">
+              <h4 className="text-md font-medium text-gray-900 dark:text-white mb-3 flex items-center">
+                <span className="w-8 h-8 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mr-2 text-red-600 dark:text-red-400 text-sm">{day.label.charAt(0)}</span>
                 {day.label}
               </h4>
               
-              <div className="space-y-3">
+              <div className="space-y-3 ml-10">
                 {schedulesByDay[day.id].length > 0 ? (
                   schedulesByDay[day.id].map((schedule) => (
                     <div 
                       key={schedule._id} 
-                      className="bg-gray-50 dark:bg-gray-700/30 rounded-lg border border-gray-100 dark:border-gray-700 overflow-hidden"
+                      className="bg-gray-50 dark:bg-gray-700/30 rounded-lg border border-gray-100 dark:border-gray-700 overflow-hidden transition-all duration-200 hover:shadow-md hover:border-red-200 dark:hover:border-red-900/40"
                     >
                       <div className="flex p-4">
+                        <div className="w-1 self-stretch bg-red-500 rounded-full mr-3"></div>
                         <div className="flex-1">
-                          <div className="flex items-center mb-1">
+                          <div className="flex items-center mb-2">
                             <h5 className="text-base font-medium text-gray-900 dark:text-white">
-                              {schedule.className}
+                              {schedule.className || schedule.classType}
                             </h5>
                             {schedule.classType && (
                               <span className="ml-2 px-2 py-0.5 text-xs rounded-full bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300">
@@ -90,29 +107,33 @@ export default function ScheduleDisplay({ schedules, onDelete, isLoading }) {
                               </span>
                             )}
                           </div>
-                          <div className="flex flex-wrap items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
+                          <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
                             <div className="flex items-center">
-                              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                               </svg>
                               <span className="font-medium">{formatTime(schedule.startTimeString)} - {formatTime(schedule.endTimeString)}</span>
                             </div>
                             <div className="flex items-center">
-                              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                               </svg>
-                              <span>{schedule.trainer?.name || 'Unknown Trainer'}</span>
+                              <span>
+                                {schedule.trainer && typeof schedule.trainer === 'object' 
+                                  ? schedule.trainer.name 
+                                  : 'Unknown Trainer'}
+                              </span>
                             </div>
                           </div>
                           {schedule.description && (
-                            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-700/30 p-2 rounded">
+                            <p className="mt-3 text-sm text-gray-500 dark:text-gray-400 bg-white/50 dark:bg-gray-800/50 p-3 rounded-md border border-gray-100 dark:border-gray-700">
                               {schedule.description}
                             </p>
                           )}
                         </div>
                         <button
                           onClick={() => onDelete(schedule._id)}
-                          className="ml-4 flex-shrink-0 p-1.5 rounded-full text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 focus:outline-none transition-colors"
+                          className="ml-2 flex-shrink-0 p-2 rounded-full text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 focus:outline-none transition-all duration-200 transform hover:scale-105"
                           aria-label="Delete class"
                         >
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -123,7 +144,9 @@ export default function ScheduleDisplay({ schedules, onDelete, isLoading }) {
                     </div>
                   ))
                 ) : (
-                  <p className="text-sm text-gray-500 dark:text-gray-400 italic">No classes scheduled</p>
+                  <div className="text-sm text-gray-500 dark:text-gray-400 italic py-3 px-4 bg-gray-50 dark:bg-gray-700/20 rounded-lg border border-dashed border-gray-200 dark:border-gray-700">
+                    No classes scheduled
+                  </div>
                 )}
               </div>
             </div>

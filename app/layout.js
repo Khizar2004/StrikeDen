@@ -1,18 +1,20 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, Roboto_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "../components/Navbar";
 import 'react-toastify/dist/ReactToastify.css';
 import { ThemeProvider } from "../components/ThemeProvider";
 import ToastContainerWrapper from "../components/ToastContainerWrapper";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// Using Inter font as a replacement for Geist, with similar modern sans-serif characteristics
+const inter = Inter({
+  variable: "--font-geist-sans", // Keeping the same variable name for compatibility
   subsets: ["latin"],
   display: 'swap',
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+// Using Roboto Mono as a replacement for Geist Mono
+const robotoMono = Roboto_Mono({
+  variable: "--font-geist-mono", // Keeping the same variable name for compatibility
   subsets: ["latin"],
   display: 'swap',
 });
@@ -33,7 +35,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${inter.variable} ${robotoMono.variable}`} suppressHydrationWarning>
       <body className="min-h-screen flex flex-col bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-white transition-colors duration-300">
         <ThemeProvider>
           <Navbar />

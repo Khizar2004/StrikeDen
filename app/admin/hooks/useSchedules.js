@@ -75,8 +75,10 @@ export default function useSchedules() {
       setIsSubmitting(true);
       setError(null);
       
-      // Log request for debugging
+      // Enhanced debugging logs
       console.log("Sending schedule data:", scheduleData);
+      console.log("Trainer ID selected:", scheduleData.trainer);
+      console.log("Trainer field type:", typeof scheduleData.trainer);
       
       const response = await fetch("/api/schedules", {
         method: "POST",
