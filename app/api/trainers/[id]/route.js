@@ -1,5 +1,6 @@
 import { connectDB } from "@/lib/dbConnect";
 import Trainer from "@/lib/Trainer";
+import Schedule from "@/lib/Schedule";
 import { ObjectId } from "mongodb";
 
 export const dynamic = "force-dynamic";
@@ -91,21 +92,31 @@ export async function DELETE(req, { params }) {
       );
     }
 
-    const deletedTrainer = await Trainer.findByIdAndDelete(params.id);
+    // Find the trainer first to make sure it exists
+    const trainer = await Trainer.findById(params.id);
     
-    if (!deletedTrainer) {
+    if (!trainer) {
       return Response.json(
         { success: false, error: "Trainer not found" },
         { status: 404 }
       );
     }
 
+    // Find and delete all schedules that reference this trainer
+    const deletedSchedules = await Schedule.deleteMany({ trainer: params.id });
+    console.log(`Deleted ${deletedSchedules.deletedCount} schedule entries for trainer ${params.id}`);
+
+    // Now delete the trainer
+    await Trainer.findByIdAndDelete(params.id);
+
     return Response.json({
       success: true,
-      message: "Trainer deleted successfully"
+      message: "Trainer and associated schedules deleted successfully",
+      deletedSchedulesCount: deletedSchedules.deletedCount
     });
     
   } catch (error) {
+    console.error("Error in trainer deletion:", error);
     return Response.json(
       { success: false, error: "Server error" },
       { status: 500 }
