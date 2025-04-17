@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['plus.unsplash.com', 'images.unsplash.com', 'unsplash.com', 'example.com', 'cdn.vox-cdn.com', 'images.aeonmedia.co'],
+    domains: ['plus.unsplash.com', 'images.unsplash.com', 'unsplash.com', 'example.com', 'cdn.vox-cdn.com', 'images.aeonmedia.co', 'public.blob.vercel-storage.com'],
     remotePatterns: [
       {
         protocol: 'https',
@@ -18,6 +18,10 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'images.aeonmedia.co',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.blob.vercel-storage.com',
       },
     ],
   },
