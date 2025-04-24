@@ -19,18 +19,12 @@ export default function useSchedules() {
     fetchSchedules();
   }, []);
 
-  // Helper function to safely parse JSON or handle HTML error responses
+  // Helper function to safely parse JSON response
   const safelyParseJSON = async (response) => {
-    const contentType = response.headers.get('content-type');
-    
-    // Check if response is actually JSON
-    if (contentType && contentType.includes('application/json')) {
+    try {
       return await response.json();
-    } else {
-      // Handle HTML or other non-JSON responses
-      const text = await response.text();
-      const truncatedText = text.substring(0, 100) + (text.length > 100 ? '...' : '');
-      throw new Error(`Expected JSON but got: ${truncatedText}`);
+    } catch (e) {
+      return { message: 'Invalid server response' };
     }
   };
 
@@ -72,48 +66,57 @@ export default function useSchedules() {
    */
   const addSchedule = async (scheduleData) => {
     try {
-      setIsSubmitting(true);
-      setError(null);
-      
-      // Enhanced debugging logs
-      console.log("Sending schedule data:", scheduleData);
-      console.log("Trainer ID selected:", scheduleData.trainer);
-      console.log("Trainer field type:", typeof scheduleData.trainer);
-      
-      const response = await fetch("/api/schedules", {
-        method: "POST",
+      const response = await fetch('/api/schedules', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(scheduleData),
       });
 
-      // Log response status for debugging
-      console.log(`Response status: ${response.status} ${response.statusText}`);
-      
       const data = await safelyParseJSON(response);
-      
-      // Log actual response
-      console.log("Response data:", data);
-      
+
+      // Handle validation errors
       if (!response.ok) {
-        throw new Error(data.message || `Error ${response.status}: ${response.statusText}`);
+        let errorMessage = 'Failed to add schedule';
+        
+        if (data.errors) {
+          // Handle specific validation errors
+          if (data.errors.missingFields) {
+            errorMessage = `Missing required fields: ${data.errors.missingFields.join(', ')}`;
+          } else if (data.errors.timeFormat) {
+            errorMessage = 'Invalid time format. Please use 24-hour format (HH:mm)';
+          } else if (data.errors.dayOfWeek) {
+            errorMessage = 'Invalid day of week selected';
+          } else if (data.errors.classType) {
+            errorMessage = 'Invalid class type selected';
+          } else if (data.errors.overlap) {
+            errorMessage = 'This schedule overlaps with an existing schedule';
+          }
+        }
+
+        toast.error(errorMessage);
+        throw new Error(errorMessage);
       }
-      
+
+      // Handle success
       if (data.success) {
-        toast.success("Class added to schedule successfully");
-        await fetchSchedules(); // Refresh the schedules list
-        return true;
+        setSchedules(prev => [...prev, data.data]);
+        toast.success('Schedule added successfully');
+        return data.data;
       } else {
-        throw new Error(data.message || "Failed to add class to schedule");
+        throw new Error(data.message || 'Failed to add schedule');
       }
     } catch (error) {
-      console.error("Error adding schedule:", error);
-      toast.error(`Error: ${error.message}`);
-      setError(error.message);
-      return false;
-    } finally {
-      setIsSubmitting(false);
+      // Only show toast for non-validation errors (validation errors already handled)
+      if (!error.message.includes('Missing required fields') && 
+          !error.message.includes('Invalid time format') && 
+          !error.message.includes('Invalid day') && 
+          !error.message.includes('Invalid class type') &&
+          !error.message.includes('overlaps')) {
+        toast.error(error.message);
+      }
+      throw error;
     }
   };
 
@@ -159,6 +162,69 @@ export default function useSchedules() {
     }
   };
 
+  const updateSchedule = async (scheduleId, updatedData) => {
+    try {
+      const response = await fetch(`/api/schedules/${scheduleId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedData),
+      });
+
+      const data = await safelyParseJSON(response);
+
+      // Handle validation errors
+      if (!response.ok) {
+        let errorMessage = 'Failed to update schedule';
+        
+        if (data.errors) {
+          // Handle specific validation errors
+          if (data.errors.missingFields) {
+            errorMessage = `Missing required fields: ${data.errors.missingFields.join(', ')}`;
+          } else if (data.errors.timeFormat) {
+            errorMessage = 'Invalid time format. Please use 24-hour format (HH:mm)';
+          } else if (data.errors.dayOfWeek) {
+            errorMessage = 'Invalid day of week selected';
+          } else if (data.errors.classType) {
+            errorMessage = 'Invalid class type selected';
+          } else if (data.errors.overlap) {
+            errorMessage = 'This schedule overlaps with an existing schedule';
+          } else if (data.errors.notFound) {
+            errorMessage = 'Schedule not found';
+          }
+        }
+
+        toast.error(errorMessage);
+        throw new Error(errorMessage);
+      }
+
+      // Handle success
+      if (data.success) {
+        setSchedules(prev => 
+          prev.map(schedule => 
+            schedule.id === scheduleId ? data.data : schedule
+          )
+        );
+        toast.success('Schedule updated successfully');
+        return data.data;
+      } else {
+        throw new Error(data.message || 'Failed to update schedule');
+      }
+    } catch (error) {
+      // Only show toast for non-validation errors (validation errors already handled)
+      if (!error.message.includes('Missing required fields') && 
+          !error.message.includes('Invalid time format') && 
+          !error.message.includes('Invalid day') && 
+          !error.message.includes('Invalid class type') &&
+          !error.message.includes('overlaps') &&
+          !error.message.includes('not found')) {
+        toast.error(error.message);
+      }
+      throw error;
+    }
+  };
+
   return {
     schedules,
     isLoading,
@@ -168,5 +234,6 @@ export default function useSchedules() {
     fetchSchedules,
     addSchedule,
     deleteSchedule,
+    updateSchedule,
   };
 } 

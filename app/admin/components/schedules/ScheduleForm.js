@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import useClasses from "../../hooks/useClasses";
 
 // Helper function to format time
 const formatTime = (timeString) => {
@@ -28,42 +29,57 @@ const DAYS_OF_WEEK = [
   { value: "sunday", label: "Sunday" },
 ];
 
-// Define valid class types to match the model's enum validation
-const CLASS_TYPES = [
-  "Boxing",
-  "Brazilian Jiu-Jitsu",
-  "Muay Thai",
-  "Wrestling",
-  "MMA",
-  "Conditioning",
-  "Kickboxing",
-  "Taekwondo",
-  "Judo"
-];
-
 /**
  * Form component for adding or editing class schedules
  */
 export default function ScheduleForm({ trainers, onSubmit, isLoading }) {
+  // Fetch offered classes from the database
+  const { classes, isLoading: classesLoading } = useClasses();
+  
   const [scheduleData, setScheduleData] = useState({
     classType: "",
     dayOfWeek: "monday",
     startTimeString: "",
     endTimeString: "",
     trainer: "",
-    description: ""
   });
   
+  const [error, setError] = useState("");
+
+  const validateTimes = (start, end) => {
+    if (!start || !end) return true;
+    return start < end;
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setScheduleData(prev => ({
       ...prev,
       [name]: value
     }));
+    
+    // Clear any existing errors when user makes changes
+    setError("");
+    
+    // Validate times when either time field changes
+    if (name === "startTimeString" || name === "endTimeString") {
+      const start = name === "startTimeString" ? value : scheduleData.startTimeString;
+      const end = name === "endTimeString" ? value : scheduleData.endTimeString;
+      
+      if (start && end && !validateTimes(start, end)) {
+        setError("End time must be after start time");
+      }
+    }
   };
   
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    // Validate times before submission
+    if (!validateTimes(scheduleData.startTimeString, scheduleData.endTimeString)) {
+      setError("End time must be after start time");
+      return;
+    }
     
     // For backward compatibility, set the className as the classType
     const dataToSubmit = {
@@ -98,12 +114,18 @@ export default function ScheduleForm({ trainers, onSubmit, isLoading }) {
             value={scheduleData.classType}
             onChange={handleChange}
             className="w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50 bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200"
+            disabled={classesLoading}
           >
-            <option value="">Select a class type</option>
-            {CLASS_TYPES.map(type => (
-              <option key={type} value={type}>{type}</option>
+            <option value="">{classesLoading ? "Loading classes..." : "Select a class type"}</option>
+            {classes && classes.map(classItem => (
+              <option key={classItem._id} value={classItem.title}>{classItem.title}</option>
             ))}
           </select>
+          {classes && classes.length === 0 && !classesLoading && (
+            <p className="mt-1 text-sm text-red-500">
+              No offered classes found. Please add classes in the "Offered Classes" section first.
+            </p>
+          )}
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -174,27 +196,22 @@ export default function ScheduleForm({ trainers, onSubmit, isLoading }) {
             ))}
           </select>
         </div>
-        
-        <div>
-          <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            Description <span className="text-gray-400 text-xs font-normal">(optional)</span>
-          </label>
-          <textarea
-            id="description"
-            name="description"
-            rows="3"
-            value={scheduleData.description}
-            onChange={handleChange}
-            placeholder="Brief description of the class"
-            className="w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50 bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200"
-          ></textarea>
-        </div>
       </div>
       
       <div className="px-6 py-4 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+        {error && (
+          <div className="mb-4 p-3 rounded-md bg-red-50 dark:bg-red-900/50 text-red-700 dark:text-red-200 text-sm">
+            <p className="flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+              </svg>
+              {error}
+            </p>
+          </div>
+        )}
         <button
           type="submit"
-          disabled={isLoading}
+          disabled={isLoading || !!error}
           className="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0"
         >
           {isLoading ? (
