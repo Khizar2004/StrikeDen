@@ -4,6 +4,7 @@ import Navbar from "../components/Navbar";
 import 'react-toastify/dist/ReactToastify.css';
 import { ThemeProvider } from "../components/ThemeProvider";
 import ToastContainerWrapper from "../components/ToastContainerWrapper";
+import { Analytics } from '@vercel/analytics/react';
 
 // Using Inter font as a replacement for Geist, with similar modern sans-serif characteristics
 const inter = Inter({
@@ -209,6 +210,7 @@ export default function RootLayout({ children }) {
             </div>
           </footer>
           <ToastContainerWrapper />
+          <Analytics />
         </ThemeProvider>
       </body>
     </html>

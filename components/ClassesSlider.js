@@ -64,6 +64,7 @@ export default function ClassesSlider() {
     setIsDragging(true);
     dragStartTime.current = Date.now();
     dragStartPos.current = info.point.x;
+    dragDistance.current = 0;  // Reset drag distance
     
     // Disable pointer events on links during drag
     document.querySelectorAll('.class-card-link').forEach(link => {
@@ -76,6 +77,7 @@ export default function ClassesSlider() {
     const dragTime = Date.now() - dragStartTime.current;
     dragDistance.current = Math.abs(info.point.x - dragStartPos.current);
     
+    // Only reset isDragging after a short delay to ensure click handling works properly
     setTimeout(() => {
       setIsDragging(false);
       
@@ -83,7 +85,7 @@ export default function ClassesSlider() {
       document.querySelectorAll('.class-card-link').forEach(link => {
         link.style.pointerEvents = 'auto';
       });
-    }, 100);
+    }, 50);  // Reduced from 100ms to 50ms for better responsiveness
   };
 
   // Prevent default behavior on mousedown to avoid link drag issues
@@ -96,8 +98,9 @@ export default function ClassesSlider() {
 
   // Handle class card click to show modal
   const handleClassClick = (e, classItem) => {
-    // Only open modal if not dragging significantly
-    if (!isDragging && dragDistance.current < 10) {
+    // Increase drag threshold and check drag time
+    const dragTime = Date.now() - dragStartTime.current;
+    if (!isDragging || (dragDistance.current < 20 && dragTime < 200)) {
       e.preventDefault();
       setSelectedClass(classItem);
       setIsModalOpen(true);
@@ -176,13 +179,13 @@ export default function ClassesSlider() {
             drag="x"
             dragConstraints={{ right: 0, left: -width }}
             dragTransition={{ 
-              power: 0.35,
-              timeConstant: 300,
-              modifyTarget: target => Math.round(target / 50) * 50 
+              power: 0.25,  // Reduced from 0.35
+              timeConstant: 400,  // Increased from 300
+              modifyTarget: target => Math.round(target / 100) * 100  // Increased from 50 to 100
             }}
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
-            dragElastic={0.1}
+            dragElastic={0.05}  // Reduced from 0.1
             dragMomentum={true}
           >
             {classes.map((item) => (
