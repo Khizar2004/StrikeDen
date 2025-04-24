@@ -297,18 +297,6 @@ export default function Home() {
                       <p className="text-gray-300 mb-6 line-clamp-2">
                         {classItem.shortDescription || 'Join our expert instructors and master this discipline.'}
                       </p>
-                      <Link href={`/classes/${classItem._id}`} className="inline-flex items-center text-white border-b-2 border-red-500 pb-1 font-medium group-hover:border-white transition-colors duration-300">
-                        Learn More
-                        <svg 
-                          xmlns="http://www.w3.org/2000/svg" 
-                          className="h-5 w-5 ml-1 group-hover:translate-x-1 transition-transform duration-300" 
-                          fill="none" 
-                          viewBox="0 0 24 24" 
-                          stroke="currentColor"
-                        >
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                      </Link>
                     </div>
                   </div>
                 </motion.div>
