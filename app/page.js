@@ -81,6 +81,14 @@ export default function Home() {
   useEffect(() => {
     fetchTrainers();
     fetchClasses();
+    
+    // Force play the video element
+    const videoElement = document.querySelector('#hero-video');
+    if (videoElement) {
+      videoElement.play().catch(error => {
+        console.log("Video autoplay was prevented:", error);
+      });
+    }
   }, []);
 
   if (!mounted) {
@@ -95,13 +103,16 @@ export default function Home() {
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-black/60 z-10"></div>
           <video 
+            id="hero-video"
             autoPlay 
             loop 
             muted 
             playsInline
+            preload="auto"
             className="w-full h-full object-cover"
           >
             <source src="/hero-video.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
           </video>
         </div>
         
