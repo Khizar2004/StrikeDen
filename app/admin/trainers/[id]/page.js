@@ -1,10 +1,11 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import { toast } from 'react-toastify';
 import LoadingSpinner from '@/components/LoadingSpinner';
 
-export default function EditTrainer({ params }) {
+export default function EditTrainer() {
+  const params = useParams();
   const trainerId = params.id;
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);

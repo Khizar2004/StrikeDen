@@ -237,7 +237,7 @@ export default function AboutPage() {
           <div className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-900 rounded-3xl relative overflow-hidden">
             <div className="absolute inset-0 opacity-20">
               <Image 
-                src="/images/cta-background.jpg" 
+                src="/images/group2.jpg" 
                 alt="Mission background" 
                 fill 
                 className="object-cover"

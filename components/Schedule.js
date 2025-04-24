@@ -227,11 +227,6 @@ export default function Schedule({ initialClasses }) {
                             <p className="text-sm text-gray-500 dark:text-gray-400">
                               Instructor: {classItem.trainer?.name || "Unknown"}
                             </p>
-                            {classItem.classType && (
-                              <span className="inline-block mt-1 px-2 py-1 bg-primary-100 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400 text-xs rounded-full">
-                                {classItem.classType}
-                              </span>
-                            )}
                           </div>
                           <div className="mt-2 sm:mt-0 px-3 py-1 bg-primary-100 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400 rounded text-sm font-medium">
                             {classItem.startTime} - {classItem.endTime}

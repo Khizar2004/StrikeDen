@@ -6,19 +6,21 @@ import { ObjectId } from "mongodb";
 export const dynamic = "force-dynamic";
 
 // GET SINGLE TRAINER
-export async function GET(req, context) {
-  const { params } = context;
+export async function GET(request, { params }) {
   try {
     await connectDB();
     
-    if (!ObjectId.isValid(params.id)) {
+    // Extract id after awaiting params
+    const id = params.id;
+    
+    if (!ObjectId.isValid(id)) {
       return Response.json(
         { success: false, error: "Invalid trainer ID" },
         { status: 400 }
       );
     }
 
-    const trainer = await Trainer.findById(params.id);
+    const trainer = await Trainer.findById(id);
     if (!trainer) {
       return Response.json(
         { success: false, error: "Trainer not found" },
@@ -26,9 +28,13 @@ export async function GET(req, context) {
       );
     }
 
-    return Response.json({ success: true, data: trainer });
+    return Response.json({
+      success: true,
+      data: trainer
+    });
     
   } catch (error) {
+    console.error("Error fetching trainer:", error);
     return Response.json(
       { success: false, error: "Server error" },
       { status: 500 }
@@ -37,13 +43,15 @@ export async function GET(req, context) {
 }
 
 // UPDATE TRAINER
-export async function PUT(req, context) {
-  const { params } = context;
+export async function PUT(request, { params }) {
   try {
     await connectDB();
-    const body = await req.json();
+    const body = await request.json();
+    
+    // Extract id after awaiting params
+    const id = params.id;
 
-    if (!ObjectId.isValid(params.id)) {
+    if (!ObjectId.isValid(id)) {
       return Response.json(
         { success: false, error: "Invalid trainer ID" },
         { status: 400 }
@@ -51,7 +59,7 @@ export async function PUT(req, context) {
     }
 
     const updatedTrainer = await Trainer.findByIdAndUpdate(
-      params.id,
+      id,
       body,
       { new: true, runValidators: true }
     );
@@ -73,6 +81,7 @@ export async function PUT(req, context) {
         { status: 400 }
       );
     }
+    console.error("Error updating trainer:", error);
     return Response.json(
       { success: false, error: "Server error" },
       { status: 500 }
@@ -81,11 +90,14 @@ export async function PUT(req, context) {
 }
 
 // DELETE TRAINER
-export async function DELETE(req, { params }) {
+export async function DELETE(request, { params }) {
   try {
     await connectDB();
+    
+    // Extract id after awaiting params
+    const id = params.id;
 
-    if (!ObjectId.isValid(params.id)) {
+    if (!ObjectId.isValid(id)) {
       return Response.json(
         { success: false, error: "Invalid trainer ID" },
         { status: 400 }
@@ -93,7 +105,7 @@ export async function DELETE(req, { params }) {
     }
 
     // Find the trainer first to make sure it exists
-    const trainer = await Trainer.findById(params.id);
+    const trainer = await Trainer.findById(id);
     
     if (!trainer) {
       return Response.json(
@@ -103,11 +115,11 @@ export async function DELETE(req, { params }) {
     }
 
     // Find and delete all schedules that reference this trainer
-    const deletedSchedules = await Schedule.deleteMany({ trainer: params.id });
-    console.log(`Deleted ${deletedSchedules.deletedCount} schedule entries for trainer ${params.id}`);
+    const deletedSchedules = await Schedule.deleteMany({ trainer: id });
+    console.log(`Deleted ${deletedSchedules.deletedCount} schedule entries for trainer ${id}`);
 
     // Now delete the trainer
-    await Trainer.findByIdAndDelete(params.id);
+    await Trainer.findByIdAndDelete(id);
 
     return Response.json({
       success: true,

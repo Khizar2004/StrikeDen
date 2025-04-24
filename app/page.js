@@ -275,7 +275,7 @@ export default function Home() {
                   variants={fadeInUp} 
                   className="group"
                 >
-                  <div className="relative overflow-hidden rounded-xl shadow-xl h-96">
+                  <div className="relative overflow-hidden rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 h-96 transform transition-all duration-300 hover:shadow-2xl">
                     <Image 
                       src={classItem.image || `/images/default-class.jpg`} 
                       alt={classItem.title} 
@@ -286,15 +286,15 @@ export default function Home() {
                         e.target.src = "/images/default-class.jpg";
                       }}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent"></div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent"></div>
                     <div className="absolute bottom-0 left-0 p-8 w-full">
-                      <span className="text-red-500 text-sm uppercase tracking-wider font-bold">
+                      <span className="inline-block px-3 py-1 bg-red-600 text-white text-xs uppercase tracking-wider font-bold rounded-full mb-3">
                         {classItem.category || 'Featured Class'}
                       </span>
                       <h3 className="text-3xl font-bold text-white mt-2 mb-3 group-hover:text-red-400 transition-colors duration-300">
                         {classItem.title}
                       </h3>
-                      <p className="text-gray-300 mb-6 line-clamp-2">
+                      <p className="text-gray-300 mb-4 line-clamp-2">
                         {classItem.shortDescription || 'Join our expert instructors and master this discipline.'}
                       </p>
                     </div>

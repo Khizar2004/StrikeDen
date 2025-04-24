@@ -8,7 +8,8 @@ import { createSuccessResponse, createErrorResponse, handleApiError } from "@/li
 export async function GET(request, { params }) {
   try {
     await connectDB();
-    const { id } = params;
+    // Extract id after awaiting params
+    const id = params.id;
     
     const schedule = await Schedule.findById(id).populate('trainer');
     
@@ -37,7 +38,8 @@ export async function DELETE(request, { params }) {
   
   try {
     await connectDB();
-    const { id } = params;
+    // Extract id after awaiting params
+    const id = params.id;
     
     const schedule = await Schedule.findByIdAndDelete(id);
     
@@ -70,7 +72,8 @@ export async function PUT(request, { params }) {
   
   try {
     await connectDB();
-    const { id } = params;
+    // Extract id after awaiting params
+    const id = params.id;
     
     const body = await request.json();
     

@@ -196,28 +196,28 @@ export default function ClassesSlider() {
                 transition={{ duration: 0.3 }}
               >
                 <div 
-                  className="class-card-link block h-full w-full relative cursor-pointer overflow-hidden rounded-xl"
+                  className="class-card-link block h-full w-full relative cursor-pointer overflow-hidden rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 transform transition-transform duration-500 hover:shadow-xl"
                   onClick={(e) => handleClassClick(e, item)}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent z-10"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent z-10"></div>
                   <div className="relative h-full w-full">
                     <Image 
                       src={item.image || "/images/default-class.jpg"}
                       alt={item.title}
                       fill
-                      className="object-cover w-full h-full"
+                      className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-110"
                       sizes="(max-width: 768px) 90vw, (max-width: 1200px) 40vw, 33vw"
                       onError={handleImageError}
                       draggable="false"
                       priority
                     />
                   </div>
-                  <div className="absolute bottom-8 left-0 right-0 text-center z-20 px-6">
-                    <h3 className="text-4xl md:text-5xl font-black text-white drop-shadow-lg">
+                  <div className="absolute bottom-0 left-0 right-0 z-20 p-6 flex flex-col items-center">
+                    <h3 className="text-4xl md:text-5xl font-black text-white drop-shadow-lg text-center mb-2">
                       {item.title}
                     </h3>
                     {item.shortDescription && (
-                      <p className="text-gray-200 text-lg mt-3">
+                      <p className="text-gray-200 text-lg mt-1 mb-3 text-center line-clamp-2">
                         {item.shortDescription}
                       </p>
                     )}

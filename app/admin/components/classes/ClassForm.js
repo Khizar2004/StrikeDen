@@ -11,15 +11,35 @@ export default function ClassForm({ initialData = {}, onSubmit, isLoading }) {
     title: initialData.title || "",
     image: initialData.image || "",
     description: initialData.description || "",
-    shortDescription: initialData.shortDescription || ""
+    shortDescription: initialData.shortDescription || "",
+    pricing: initialData.pricing || {
+      walkIn: 0,
+      weekly: 0,
+      monthly: 0,
+      annual: 0
+    }
   });
+  
+  const [imagePreview, setImagePreview] = useState(initialData.image || "");
   
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setClassData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    
+    if (name.startsWith('pricing.')) {
+      const pricingField = name.split('.')[1];
+      setClassData(prev => ({
+        ...prev,
+        pricing: {
+          ...prev.pricing,
+          [pricingField]: parseFloat(value) || 0
+        }
+      }));
+    } else {
+      setClassData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
   };
   
   const handleImageUploaded = (imagePath) => {
@@ -97,6 +117,85 @@ export default function ClassForm({ initialData = {}, onSubmit, isLoading }) {
               className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               rows="4"
             ></textarea>
+          </div>
+          
+          {/* Pricing Section */}
+          <div className="mb-6">
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Pricing</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="pricing.walkIn" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Walk-in Price (PKR)
+                </label>
+                <div className="relative">
+                  <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500 dark:text-gray-400">₨</span>
+                  <input
+                    type="number"
+                    id="pricing.walkIn"
+                    name="pricing.walkIn"
+                    min="0"
+                    step="0.01"
+                    value={classData.pricing.walkIn}
+                    onChange={handleChange}
+                    className="pl-8 w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  />
+                </div>
+              </div>
+              <div>
+                <label htmlFor="pricing.weekly" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Weekly Price (PKR)
+                </label>
+                <div className="relative">
+                  <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500 dark:text-gray-400">₨</span>
+                  <input
+                    type="number"
+                    id="pricing.weekly"
+                    name="pricing.weekly"
+                    min="0"
+                    step="0.01"
+                    value={classData.pricing.weekly}
+                    onChange={handleChange}
+                    className="pl-8 w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  />
+                </div>
+              </div>
+              <div>
+                <label htmlFor="pricing.monthly" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Monthly Price (PKR)
+                </label>
+                <div className="relative">
+                  <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500 dark:text-gray-400">₨</span>
+                  <input
+                    type="number"
+                    id="pricing.monthly"
+                    name="pricing.monthly"
+                    min="0"
+                    step="0.01"
+                    value={classData.pricing.monthly}
+                    onChange={handleChange}
+                    className="pl-8 w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  />
+                </div>
+              </div>
+              <div>
+                <label htmlFor="pricing.annual" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  Annual Price (PKR)
+                </label>
+                <div className="relative">
+                  <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500 dark:text-gray-400">₨</span>
+                  <input
+                    type="number"
+                    id="pricing.annual"
+                    name="pricing.annual"
+                    min="0"
+                    step="0.01"
+                    value={classData.pricing.annual}
+                    onChange={handleChange}
+                    className="pl-8 w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

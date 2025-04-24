@@ -68,10 +68,22 @@ export default function ClassesList({ classes, onDelete, isLoading }) {
                   </svg>
                 </div>
                 
-                {cls.shortDescription && (
-                  <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
-                    {cls.shortDescription}
-                  </p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 truncate max-w-md">
+                  {cls.shortDescription || 'No description provided'}
+                </p>
+                {cls.pricing && (
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {cls.pricing.walkIn > 0 && (
+                      <span className="inline-block px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md">
+                        Walk-in: ₨{cls.pricing.walkIn.toLocaleString()}
+                      </span>
+                    )}
+                    {cls.pricing.monthly > 0 && (
+                      <span className="inline-block px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md">
+                        Monthly: ₨{cls.pricing.monthly.toLocaleString()}
+                      </span>
+                    )}
+                  </div>
                 )}
               </div>
             </div>

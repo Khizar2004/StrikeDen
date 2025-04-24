@@ -85,6 +85,7 @@ export default function ScheduleForm({ trainers, onSubmit, isLoading }) {
     const dataToSubmit = {
       ...scheduleData,
       className: scheduleData.classType,
+      capacity: 20, // Add default capacity without showing it in the UI
     };
     
     onSubmit(dataToSubmit);

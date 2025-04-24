@@ -78,6 +78,7 @@ export async function POST(request) {
       startTimeString: data.startTimeString,
       endTimeString: data.endTimeString,
       trainer: data.trainer,
+      capacity: data.capacity || 20, // Set default capacity if not provided
     });
 
     const schedule = await newSchedule.save();

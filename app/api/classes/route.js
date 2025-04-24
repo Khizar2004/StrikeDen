@@ -1,24 +1,19 @@
 import { NextResponse } from 'next/server';
-import { connectToDatabase } from '@/lib/mongodb';
+import { connectDB } from '@/lib/dbConnect';
 import { ObjectId } from 'mongodb';
 import { adminAuthMiddleware } from "@/lib/middleware";
+import Class from '@/lib/Class';
 
 export async function GET() {
   try {
-    const { db } = await connectToDatabase();
+    await connectDB();
     
     // Get all classes from the database
-    const classes = await db.collection('classes').find({}).toArray();
-    
-    // Transform _id from ObjectId to string for JSON serialization
-    const formattedClasses = classes.map(cls => ({
-      ...cls,
-      _id: cls._id.toString()
-    }));
+    const classes = await Class.find({}).lean();
     
     return NextResponse.json({
       success: true,
-      classes: formattedClasses
+      classes
     });
   } catch (error) {
     console.error('Error fetching classes:', error);
@@ -30,106 +25,96 @@ export async function GET() {
 }
 
 export async function POST(request) {
-  // Check admin authentication
+  // Check admin authorization first
   const authResponse = await adminAuthMiddleware(request);
   if (authResponse) return authResponse;
   
   try {
-    const { db } = await connectToDatabase();
-    const { title, description, shortDescription, image } = await request.json();
+    await connectDB();
     
-    // Validate required fields
+    const { title, description, shortDescription, image, pricing } = await request.json();
+    
     if (!title) {
-      return NextResponse.json(
-        { success: false, error: 'Title is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ 
+        success: false, 
+        message: "Class title is required" 
+      }, { status: 400 });
     }
     
-    // Create new class document
-    const newClass = {
+    const newClass = await Class.create({
       title,
       description: description || '',
       shortDescription: shortDescription || '',
       image: image || '',
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
-    
-    const result = await db.collection('classes').insertOne(newClass);
-    
-    return NextResponse.json({
-      success: true,
-      class: {
-        ...newClass,
-        _id: result.insertedId.toString()
+      pricing: pricing || {
+        walkIn: 0,
+        weekly: 0,
+        monthly: 0,
+        annual: 0
       }
     });
+    
+    return NextResponse.json({ 
+      success: true, 
+      message: "Class created successfully",
+      class: newClass
+    });
   } catch (error) {
-    console.error('Error creating class:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to create class' },
-      { status: 500 }
-    );
+    console.error("Error creating class:", error);
+    return NextResponse.json({ 
+      success: false, 
+      message: error.message || "Error creating class" 
+    }, { status: 500 });
   }
 }
 
 export async function PUT(request) {
-  // Check admin authentication
+  // Check admin authorization first
   const authResponse = await adminAuthMiddleware(request);
   if (authResponse) return authResponse;
   
   try {
-    const { db } = await connectToDatabase();
-    const { _id, title, description, shortDescription, image } = await request.json();
+    await connectDB();
+    
+    const { _id, title, description, shortDescription, image, pricing } = await request.json();
     
     if (!_id) {
-      return NextResponse.json(
-        { success: false, error: 'Class ID is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ 
+        success: false, 
+        message: "Class ID is required" 
+      }, { status: 400 });
     }
     
-    // Update class document
     const updateData = {
-      $set: {
-        updatedAt: new Date()
-      }
+      $set: {}
     };
     
-    // Only include fields that are provided
-    if (title) updateData.$set.title = title;
+    if (title !== undefined) updateData.$set.title = title;
     if (description !== undefined) updateData.$set.description = description;
     if (shortDescription !== undefined) updateData.$set.shortDescription = shortDescription;
     if (image !== undefined) updateData.$set.image = image;
+    if (pricing !== undefined) updateData.$set.pricing = pricing;
     
-    const result = await db.collection('classes').updateOne(
-      { _id: new ObjectId(_id) },
-      updateData
-    );
+    const updatedClass = await Class.findByIdAndUpdate(_id, updateData, { new: true });
     
-    if (result.matchedCount === 0) {
-      return NextResponse.json(
-        { success: false, error: 'Class not found' },
-        { status: 404 }
-      );
+    if (!updatedClass) {
+      return NextResponse.json({ 
+        success: false, 
+        message: "Class not found" 
+      }, { status: 404 });
     }
     
-    const updatedClass = await db.collection('classes').findOne({ _id: new ObjectId(_id) });
-    
-    return NextResponse.json({
-      success: true,
-      class: {
-        ...updatedClass,
-        _id: updatedClass._id.toString()
-      }
+    return NextResponse.json({ 
+      success: true, 
+      message: "Class updated successfully",
+      class: updatedClass
     });
   } catch (error) {
-    console.error('Error updating class:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to update class' },
-      { status: 500 }
-    );
+    console.error("Error updating class:", error);
+    return NextResponse.json({ 
+      success: false, 
+      message: error.message || "Error updating class" 
+    }, { status: 500 });
   }
 }
 
@@ -139,7 +124,7 @@ export async function DELETE(request) {
   if (authResponse) return authResponse;
   
   try {
-    const { db } = await connectToDatabase();
+    await connectDB();
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
     
@@ -150,9 +135,9 @@ export async function DELETE(request) {
       );
     }
     
-    const result = await db.collection('classes').deleteOne({ _id: new ObjectId(id) });
+    const result = await Class.findByIdAndDelete(id);
     
-    if (result.deletedCount === 0) {
+    if (!result) {
       return NextResponse.json(
         { success: false, error: 'Class not found' },
         { status: 404 }

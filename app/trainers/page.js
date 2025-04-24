@@ -225,18 +225,18 @@ export default function TrainersPage() {
                     
                     <div className="mt-8 pt-8 border-t border-gray-100 dark:border-gray-700">
                       <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Class Schedule</h3>
-                      {selectedTrainer.schedule ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          {selectedTrainer.schedule.map((session, index) => (
-                            <div key={index} className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg">
-                              <p className="font-bold text-gray-900 dark:text-white">{session.class}</p>
-                              <p className="text-gray-500 dark:text-gray-400">{session.day} at {session.time}</p>
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <p className="text-gray-500 dark:text-gray-400">Check our weekly schedule for classes with {selectedTrainer.name}</p>
-                      )}
+                      <p className="text-gray-500 dark:text-gray-400 mb-4">
+                        Check out {selectedTrainer.name}'s weekly classes:
+                      </p>
+                      <Link 
+                        href={`/trainers/${selectedTrainer._id}`}
+                        className="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+                      >
+                        <span>View Schedule</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </Link>
                     </div>
                   </div>
                 </motion.div>

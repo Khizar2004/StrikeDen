@@ -179,7 +179,7 @@ export default function ClassesPage() {
           <motion.div variants={fadeInUp} className="order-1 md:order-2 relative">
             <div className="absolute -top-4 -right-4 w-24 h-24 bg-red-600 rounded-xl -z-10"></div>
             <Image
-              src="/images/gym-story.jpg"
+              src="/images/group1.jpg"
               alt="Personalized Training"
               width={600}
               height={400}
