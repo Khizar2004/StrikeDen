@@ -191,32 +191,33 @@ export default function ClassesSlider() {
             {classes.map((item) => (
               <motion.div 
                 key={item._id}
-                className="min-w-[270px] sm:min-w-[350px] md:min-w-[400px] lg:min-w-[420px] h-[500px] p-4 relative"
+                className="min-w-[270px] sm:min-w-[350px] md:min-w-[400px] lg:min-w-[420px] h-[500px] relative px-2"
                 whileHover={{ scale: isDragging ? 1 : 1.02 }}
                 transition={{ duration: 0.3 }}
               >
                 <div 
-                  className="class-card-link block h-full w-full relative cursor-pointer"
+                  className="class-card-link block h-full w-full relative cursor-pointer overflow-hidden rounded-xl"
                   onClick={(e) => handleClassClick(e, item)}
                 >
-                  <div className="absolute inset-0 bg-gray-900 opacity-40 dark:opacity-60 z-10"></div>
-                  <div className="relative h-full w-full bg-gray-800">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent z-10"></div>
+                  <div className="relative h-full w-full">
                     <Image 
                       src={item.image || "/images/default-class.jpg"}
                       alt={item.title}
                       fill
-                      className="object-cover"
+                      className="object-cover w-full h-full"
                       sizes="(max-width: 768px) 90vw, (max-width: 1200px) 40vw, 33vw"
                       onError={handleImageError}
                       draggable="false"
+                      priority
                     />
                   </div>
-                  <div className="absolute bottom-5 left-0 right-0 text-center z-20">
+                  <div className="absolute bottom-8 left-0 right-0 text-center z-20 px-6">
                     <h3 className="text-4xl md:text-5xl font-black text-white drop-shadow-lg">
                       {item.title}
                     </h3>
                     {item.shortDescription && (
-                      <p className="text-white text-lg mt-2 px-4">
+                      <p className="text-gray-200 text-lg mt-3">
                         {item.shortDescription}
                       </p>
                     )}

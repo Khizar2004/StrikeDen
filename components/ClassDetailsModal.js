@@ -75,15 +75,16 @@ export default function ClassDetailsModal({ isOpen, onClose, classData }) {
             className="bg-white dark:bg-gray-800 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
           >
             {/* Class Image */}
-            <div className="relative w-full aspect-[16/9]">
+            <div className="relative w-full aspect-[16/9] bg-black">
               <Image
                 src={classData.image || "/images/default-class.jpg"}
                 alt={classData.title}
                 fill
-                className="object-contain bg-gray-900"
+                className="object-cover"
                 sizes="(max-width: 768px) 100vw, 768px"
+                priority
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent pointer-events-none"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent pointer-events-none"></div>
               
               {/* Close button */}
               <button
