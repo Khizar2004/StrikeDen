@@ -9,7 +9,6 @@ import ImageUpload from "../common/ImageUpload";
 export default function ClassForm({ initialData = {}, onSubmit, isLoading }) {
   const [classData, setClassData] = useState({
     title: initialData.title || "",
-    slug: initialData.slug || "",
     image: initialData.image || "",
     description: initialData.description || "",
     shortDescription: initialData.shortDescription || ""
@@ -28,16 +27,6 @@ export default function ClassForm({ initialData = {}, onSubmit, isLoading }) {
       ...prev,
       image: imagePath
     }));
-  };
-  
-  const generateSlug = () => {
-    if (classData.title) {
-      const slug = classData.title.toLowerCase().replace(/\s+/g, '-');
-      setClassData(prev => ({
-        ...prev,
-        slug
-      }));
-    }
   };
   
   const handleSubmit = (e) => {
@@ -68,36 +57,6 @@ export default function ClassForm({ initialData = {}, onSubmit, isLoading }) {
               placeholder="e.g. Boxing Fundamentals"
               className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
             />
-          </div>
-          
-          <div>
-            <label htmlFor="slug" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              URL Slug <span className="text-red-500">*</span>
-              <span className="ml-1 text-xs text-gray-500">(used in page URL)</span>
-            </label>
-            <div className="mt-1 flex rounded-md shadow-sm">
-              <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 sm:text-sm">
-                /classes/
-              </span>
-              <input
-                type="text"
-                id="slug"
-                name="slug"
-                required
-                value={classData.slug}
-                onChange={handleChange}
-                placeholder="boxing-fundamentals"
-                className="flex-1 min-w-0 block w-full rounded-none rounded-r-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-              />
-              <button
-                type="button"
-                onClick={generateSlug}
-                className="ml-3 inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-              >
-                Generate
-              </button>
-            </div>
-            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">Use hyphens instead of spaces</p>
           </div>
           
           <div>

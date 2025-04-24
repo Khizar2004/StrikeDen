@@ -277,7 +277,7 @@ export default function Home() {
                 >
                   <div className="relative overflow-hidden rounded-xl shadow-xl h-96">
                     <Image 
-                      src={classItem.image || `/images/${classItem.slug || 'default'}-class.jpg`} 
+                      src={classItem.image || `/images/default-class.jpg`} 
                       alt={classItem.title} 
                       fill
                       className="object-cover transition-transform duration-700 group-hover:scale-110"
@@ -297,7 +297,7 @@ export default function Home() {
                       <p className="text-gray-300 mb-6 line-clamp-2">
                         {classItem.shortDescription || 'Join our expert instructors and master this discipline.'}
                       </p>
-                      <Link href={`/classes/${classItem.slug || classItem._id}`} className="inline-flex items-center text-white border-b-2 border-red-500 pb-1 font-medium group-hover:border-white transition-colors duration-300">
+                      <Link href={`/classes/${classItem._id}`} className="inline-flex items-center text-white border-b-2 border-red-500 pb-1 font-medium group-hover:border-white transition-colors duration-300">
                         Learn More
                         <svg 
                           xmlns="http://www.w3.org/2000/svg" 

@@ -50,18 +50,12 @@ export default function useClasses() {
     try {
       setIsSubmitting(true);
       
-      // Ensure the slug is properly formatted
-      const formattedData = {
-        ...classData,
-        slug: classData.slug.trim().toLowerCase().replace(/\s+/g, '-')
-      };
-      
       const response = await fetch("/api/classes", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formattedData),
+        body: JSON.stringify(classData),
       });
 
       const data = await response.json();

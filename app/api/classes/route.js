@@ -36,21 +36,12 @@ export async function POST(request) {
   
   try {
     const { db } = await connectToDatabase();
-    const { title, description, shortDescription, image, slug } = await request.json();
+    const { title, description, shortDescription, image } = await request.json();
     
     // Validate required fields
-    if (!title || !slug) {
+    if (!title) {
       return NextResponse.json(
-        { success: false, error: 'Title and slug are required' },
-        { status: 400 }
-      );
-    }
-    
-    // Check if slug is already in use
-    const existingClass = await db.collection('classes').findOne({ slug });
-    if (existingClass) {
-      return NextResponse.json(
-        { success: false, error: 'A class with this slug already exists' },
+        { success: false, error: 'Title is required' },
         { status: 400 }
       );
     }
@@ -61,7 +52,6 @@ export async function POST(request) {
       description: description || '',
       shortDescription: shortDescription || '',
       image: image || '',
-      slug,
       createdAt: new Date(),
       updatedAt: new Date()
     };
@@ -91,7 +81,7 @@ export async function PUT(request) {
   
   try {
     const { db } = await connectToDatabase();
-    const { _id, title, description, shortDescription, image, slug } = await request.json();
+    const { _id, title, description, shortDescription, image } = await request.json();
     
     if (!_id) {
       return NextResponse.json(
@@ -112,19 +102,6 @@ export async function PUT(request) {
     if (description !== undefined) updateData.$set.description = description;
     if (shortDescription !== undefined) updateData.$set.shortDescription = shortDescription;
     if (image !== undefined) updateData.$set.image = image;
-    if (slug) {
-      // Check if updated slug conflicts with another class
-      if (slug !== (await db.collection('classes').findOne({ _id: new ObjectId(_id) }))?.slug) {
-        const existingClass = await db.collection('classes').findOne({ slug });
-        if (existingClass) {
-          return NextResponse.json(
-            { success: false, error: 'A class with this slug already exists' },
-            { status: 400 }
-          );
-        }
-      }
-      updateData.$set.slug = slug;
-    }
     
     const result = await db.collection('classes').updateOne(
       { _id: new ObjectId(_id) },
