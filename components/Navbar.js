@@ -112,6 +112,13 @@ export default function Navbar() {
     >
       <div className="container mx-auto px-4 flex justify-between items-center h-16">
         <Link href="/" className="text-xl font-semibold tracking-tight flex items-center">
+          <div className="mr-2 h-8 w-8 relative overflow-hidden">
+            <img 
+              src="/images/logo.jpg" 
+              alt="StrikeDen Logo" 
+              className="h-full w-full object-cover"
+            />
+          </div>
           <motion.span 
             className="text-primary-500"
             initial={{ opacity: 0, x: -5 }}
