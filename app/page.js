@@ -35,7 +35,6 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [isClassesLoading, setIsClassesLoading] = useState(true);
   const heroRef = useRef(null);
-  const videoRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: heroRef,
     offset: ["start start", "end start"],
@@ -82,99 +81,6 @@ export default function Home() {
   useEffect(() => {
     fetchTrainers();
     fetchClasses();
-    
-    // FORCE video to play with multiple aggressive attempts
-    const forceVideoPlay = async () => {
-      if (!videoRef.current) return;
-      
-      // Define a function to attempt playing
-      const attemptPlay = async () => {
-        try {
-          // Set video to the beginning
-          videoRef.current.currentTime = 0;
-          // Ensure it's muted (necessary for autoplay)
-          videoRef.current.muted = true;
-          // Set playsinline (important for iOS)
-          videoRef.current.playsInline = true;
-          // Force play
-          await videoRef.current.play();
-          console.log("Video is now playing!");
-        } catch (error) {
-          console.error("Failed to play video:", error);
-          return false;
-        }
-        return true;
-      };
-      
-      // Initial attempt
-      let success = await attemptPlay();
-      
-      // If failed, try multiple times with delays
-      if (!success) {
-        // Try 5 more times with increasing delays
-        for (let i = 0; i < 5 && !success; i++) {
-          await new Promise(resolve => setTimeout(resolve, 300 * (i + 1)));
-          success = await attemptPlay();
-        }
-      }
-      
-      // Add event listeners to handle visibility and page focus
-      document.addEventListener('visibilitychange', () => {
-        if (document.visibilityState === 'visible' && videoRef.current) {
-          videoRef.current.play().catch(e => console.error("Visibility play failed:", e));
-        }
-      });
-      
-      window.addEventListener('focus', () => {
-        if (videoRef.current) {
-          videoRef.current.play().catch(e => console.error("Focus play failed:", e));
-        }
-      });
-      
-      // Add scroll event to play video when user scrolls
-      const scrollHandler = () => {
-        if (videoRef.current && videoRef.current.paused) {
-          videoRef.current.play().catch(e => console.error("Scroll play failed:", e));
-          // Remove listener after successful attempt
-          if (!videoRef.current.paused) {
-            window.removeEventListener('scroll', scrollHandler);
-          }
-        }
-      };
-      
-      window.addEventListener('scroll', scrollHandler);
-      
-      // Try playing on any user interaction with the page
-      const interactionEvents = ['click', 'touchstart', 'keydown', 'mousedown'];
-      
-      const interactionHandler = () => {
-        if (videoRef.current && videoRef.current.paused) {
-          videoRef.current.play().catch(e => {});
-          
-          // If playing now, remove all interaction listeners
-          if (!videoRef.current.paused) {
-            interactionEvents.forEach(event => {
-              document.removeEventListener(event, interactionHandler);
-            });
-          }
-        }
-      };
-      
-      interactionEvents.forEach(event => {
-        document.addEventListener(event, interactionHandler);
-      });
-    };
-    
-    // Start forcing video play
-    forceVideoPlay();
-    
-    // Add a fallback timeout attempt after everything has settled
-    setTimeout(() => {
-      if (videoRef.current && videoRef.current.paused) {
-        videoRef.current.play().catch(e => console.error("Timeout play failed:", e));
-      }
-    }, 2000);
-    
   }, []);
 
   if (!mounted) {
@@ -189,19 +95,13 @@ export default function Home() {
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-black/60 z-10"></div>
           <video 
-            ref={videoRef}
             autoPlay 
             loop 
             muted 
             playsInline
-            preload="auto"
-            defaultMuted
-            webkit-playsinline="true"
             className="w-full h-full object-cover"
-            style={{ objectFit: 'cover' }}
           >
             <source src="/hero-video.mp4" type="video/mp4" />
-            Your browser does not support the video tag.
           </video>
         </div>
         
