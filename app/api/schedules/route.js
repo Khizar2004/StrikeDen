@@ -71,16 +71,16 @@ export async function POST(request) {
     }
 
     // Create the schedule
-    const schedule = await Schedule.create({
+    const newSchedule = new Schedule({
       className: data.className,
       classType: data.classType,
       dayOfWeek: data.dayOfWeek.toLowerCase(),
       startTimeString: data.startTimeString,
       endTimeString: data.endTimeString,
       trainer: data.trainer,
-      description: data.description || '',
-      capacity: data.capacity || 20
     });
+
+    const schedule = await newSchedule.save();
 
     return NextResponse.json({ success: true, data: schedule });
   } catch (error) {

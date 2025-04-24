@@ -112,24 +112,22 @@ export default function ScheduleDisplay({ schedules, onDelete, isLoading }) {
                               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                               </svg>
-                              <span className="font-medium">{formatTime(schedule.startTimeString)} - {formatTime(schedule.endTimeString)}</span>
+                              <div className="text-sm text-gray-500 dark:text-gray-400">
+                                {formatTime(schedule.startTimeString)} - {formatTime(schedule.endTimeString)}
+                              </div>
                             </div>
                             <div className="flex items-center">
                               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                               </svg>
-                              <span>
-                                {schedule.trainer && typeof schedule.trainer === 'object' 
-                                  ? schedule.trainer.name 
-                                  : 'Unknown Trainer'}
-                              </span>
+                              <div className="text-sm text-gray-500 dark:text-gray-400">
+                                {schedule.trainer?.name || 'No trainer assigned'}
+                              </div>
+                            </div>
+                            <div className="text-xs text-gray-400 dark:text-gray-500">
+                              {schedule.classType}
                             </div>
                           </div>
-                          {schedule.description && (
-                            <p className="mt-3 text-sm text-gray-500 dark:text-gray-400 bg-white/50 dark:bg-gray-800/50 p-3 rounded-md border border-gray-100 dark:border-gray-700">
-                              {schedule.description}
-                            </p>
-                          )}
                         </div>
                         <button
                           onClick={() => onDelete(schedule._id)}
