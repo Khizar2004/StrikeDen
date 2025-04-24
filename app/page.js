@@ -167,7 +167,7 @@ export default function Home() {
       </section>
       
       {/* Training Programs Section */}
-      <section className="py-24 px-4">
+      <section className="py-24 px-4 bg-white dark:bg-gray-900">
         <div className="max-w-7xl mx-auto">
           <motion.div 
             initial="hidden"
@@ -236,7 +236,7 @@ export default function Home() {
       </section>
       
       {/* Classes Preview Section */}
-      <section className="py-24 px-4 bg-gray-900">
+      <section className="py-24 px-4 bg-white dark:bg-gray-900">
         <div className="max-w-7xl mx-auto">
           <motion.div 
             initial="hidden"
@@ -245,10 +245,10 @@ export default function Home() {
             variants={staggerContainer}
             className="text-center mb-16"
           >
-            <motion.h2 variants={fadeInUp} className="text-5xl md:text-6xl font-black text-white mb-6 tracking-tighter">
+            <motion.h2 variants={fadeInUp} className="text-5xl md:text-6xl font-black text-gray-900 dark:text-white mb-6 tracking-tighter">
               FEATURED CLASSES
             </motion.h2>
-            <motion.p variants={fadeInUp} className="text-xl text-gray-300 max-w-3xl mx-auto">
+            <motion.p variants={fadeInUp} className="text-xl text-gray-700 dark:text-gray-300 max-w-3xl mx-auto">
               Explore our diverse range of classes designed to challenge and transform you
             </motion.p>
           </motion.div>

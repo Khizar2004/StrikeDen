@@ -313,7 +313,7 @@ export default function ContactPage() {
             
             <FAQItem 
               question="Is there a free trial available?" 
-              answer="Absolutely! We offer a 3-day free trial so you can experience our classes and facilities. This includes access to any three classes of your choice. Simply fill out the contact form or call us to schedule your free trial."
+              answer="Absolutely! We offer a demo class so you can experience our classes and facilities. Simply contact us to schedule your free trial."
               delay={0.4}
             />
           </div>
