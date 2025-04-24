@@ -35,6 +35,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [isClassesLoading, setIsClassesLoading] = useState(true);
   const heroRef = useRef(null);
+  const videoRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: heroRef,
     offset: ["start start", "end start"],
@@ -82,13 +83,44 @@ export default function Home() {
     fetchTrainers();
     fetchClasses();
     
-    // Force play the video element
-    const videoElement = document.querySelector('#hero-video');
-    if (videoElement) {
-      videoElement.play().catch(error => {
-        console.log("Video autoplay was prevented:", error);
-      });
-    }
+    // Attempt to play the video automatically
+    const playVideo = async () => {
+      if (videoRef.current) {
+        try {
+          // Add a small delay to ensure DOM is fully loaded
+          await new Promise(resolve => setTimeout(resolve, 100));
+          await videoRef.current.play();
+        } catch (error) {
+          console.log("Initial autoplay was prevented:", error);
+          
+          // Try again after user has interacted with the page
+          const attemptPlayOnInteraction = () => {
+            videoRef.current.play()
+              .then(() => {
+                document.removeEventListener('click', attemptPlayOnInteraction);
+              })
+              .catch(e => console.log("Still couldn't play video:", e));
+          };
+          
+          document.addEventListener('click', attemptPlayOnInteraction, { once: true });
+        }
+      }
+    };
+    
+    playVideo();
+    
+    // Set up visibility change listener to handle tab switching
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && videoRef.current) {
+        videoRef.current.play().catch(err => console.log("Couldn't play on visibility change:", err));
+      }
+    };
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, []);
 
   if (!mounted) {
@@ -103,7 +135,7 @@ export default function Home() {
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-black/60 z-10"></div>
           <video 
-            id="hero-video"
+            ref={videoRef}
             autoPlay 
             loop 
             muted 
