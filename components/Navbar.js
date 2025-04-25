@@ -317,6 +317,32 @@ export default function Navbar() {
                 </Link>
               </motion.div>
               
+              {/* Privacy Policy Link for Mobile */}
+              <motion.div variants={mobileItemVariants}>
+                <Link href="/privacy" 
+                  className={`block px-3 py-2.5 rounded-md transition-colors duration-200 ${
+                    activeLink === '/privacy' 
+                      ? 'text-primary-500 bg-primary-50/50 dark:bg-primary-900/10' 
+                      : 'text-gray-700 dark:text-white/90 hover:bg-gray-50/50 dark:hover:bg-secondary-700/30'
+                  }`}
+                >
+                  Privacy Policy
+                </Link>
+              </motion.div>
+              
+              {/* Gym Rules Link for Mobile */}
+              <motion.div variants={mobileItemVariants}>
+                <Link href="/rules" 
+                  className={`block px-3 py-2.5 rounded-md transition-colors duration-200 ${
+                    activeLink === '/rules' 
+                      ? 'text-primary-500 bg-primary-50/50 dark:bg-primary-900/10' 
+                      : 'text-gray-700 dark:text-white/90 hover:bg-gray-50/50 dark:hover:bg-secondary-700/30'
+                  }`}
+                >
+                  Gym Rules
+                </Link>
+              </motion.div>
+              
               {/* Admin Link for Mobile */}
               <motion.div variants={mobileItemVariants}>
                 <Link href="/admin/login" 

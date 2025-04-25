@@ -150,6 +150,18 @@ export default function RootLayout({ children }) {
                         Trainers
                       </a>
                     </li>
+                    <li>
+                      <a href="/privacy" className="text-gray-600 hover:text-red-600 dark:text-gray-300 dark:hover:text-red-500 transition-colors duration-200 flex items-center group">
+                        <span className="mr-2 text-red-500 transition-transform duration-200 group-hover:translate-x-1">›</span>
+                        Privacy Policy
+                      </a>
+                    </li>
+                    <li>
+                      <a href="/rules" className="text-gray-600 hover:text-red-600 dark:text-gray-300 dark:hover:text-red-500 transition-colors duration-200 flex items-center group">
+                        <span className="mr-2 text-red-500 transition-transform duration-200 group-hover:translate-x-1">›</span>
+                        Gym Rules
+                      </a>
+                    </li>
                   </ul>
                 </div>
                 
