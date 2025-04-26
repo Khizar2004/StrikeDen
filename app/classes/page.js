@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useTheme } from "../../components/ThemeProvider";
 import Schedule from "../../components/Schedule";
 import ClassesSlider from "../../components/ClassesSlider";
+import { trackFacebookEvent, FB_EVENTS } from '../../lib/facebook';
 
 // Animation variants
 const fadeInUp = {
@@ -31,6 +32,24 @@ export default function ClassesPage() {
   const [scheduleData, setScheduleData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Track class signup interest
+  const handleClassSignupClick = (className) => {
+    trackFacebookEvent(FB_EVENTS.COMPLETE_REGISTRATION, {
+      content_name: className || 'Class Registration',
+      content_category: 'Class Signup',
+      status: 'interested'
+    });
+  };
+
+  // Track page view when component mounts
+  useEffect(() => {
+    trackFacebookEvent(FB_EVENTS.VIEW_CONTENT, {
+      content_name: 'Classes Page',
+      content_category: 'Training Programs',
+      content_type: 'product_group',
+    });
+  }, []);
 
   // Fetch schedule data
   useEffect(() => {
@@ -185,6 +204,33 @@ export default function ClassesPage() {
               height={400}
               className="rounded-xl shadow-xl object-cover w-full h-80 md:h-96"
             />
+          </motion.div>
+        </motion.div>
+        
+        {/* Add a Call-to-Action at the end of the page */}
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={staggerContainer}
+          className="mt-24 text-center pb-8"
+        >
+          <motion.h2 variants={fadeInUp} className="text-4xl font-black mb-6">
+            READY TO <span className="text-red-600">START</span> YOUR JOURNEY?
+          </motion.h2>
+          <motion.p variants={fadeInUp} className="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
+            Join our community today and transform your fitness level with expert guidance.
+          </motion.p>
+          <motion.div variants={fadeInUp}>
+            <a 
+              href="https://api.whatsapp.com/send/?phone=923372629350&text=Hi!%20I%27m%20interested%20in%20joining%20classes%20at%20Strike%20Den.&type=phone_number&app_absent=0" 
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => handleClassSignupClick('WhatsApp Signup')}
+              className="inline-flex items-center bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-lg font-bold text-lg transition-colors duration-300"
+            >
+              SIGN UP FOR CLASSES
+            </a>
           </motion.div>
         </motion.div>
       </div>

@@ -6,6 +6,7 @@ import { useTheme } from "../../components/ThemeProvider";
 import { FaMapMarkerAlt, FaPhone, FaClock, FaFacebookF, FaInstagram, FaWhatsapp } from "react-icons/fa";
 import { MdEmail, MdAccessTime } from "react-icons/md";
 import dynamic from 'next/dynamic';
+import { trackFacebookEvent, FB_EVENTS } from '../../lib/facebook';
 
 // Animation variants
 const fadeInUp = {
@@ -133,6 +134,14 @@ const FAQItem = ({ question, answer, delay }) => {
 
 export default function ContactPage() {
   const { theme, mounted } = useTheme();
+  
+  // Track WhatsApp contact click
+  const handleWhatsAppClick = () => {
+    trackFacebookEvent(FB_EVENTS.CONTACT, {
+      content_name: 'WhatsApp Contact',
+      content_category: 'Contact',
+    });
+  };
   
   if (!mounted) {
     return null;
@@ -344,6 +353,7 @@ export default function ContactPage() {
               href="https://api.whatsapp.com/send/?phone=923372629350&text=Hi!%20I%27m%20interested%20in%20joining%20Strike%20Den.&type=phone_number&app_absent=0" 
               target="_blank"
               rel="noopener noreferrer"
+              onClick={handleWhatsAppClick}
               className="inline-flex items-center bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-lg font-bold text-lg transition-colors duration-300"
             >
               <FaWhatsapp className="mr-2 text-xl" />

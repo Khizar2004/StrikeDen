@@ -6,6 +6,8 @@ import { ThemeProvider } from "../components/ThemeProvider";
 import ToastContainerWrapper from "../components/ToastContainerWrapper";
 import { Analytics } from '@vercel/analytics/react';
 import Script from 'next/script';
+import { useEffect } from 'react';
+import { trackFacebookEvent, FB_EVENTS } from '../lib/facebook';
 
 // Using Inter font as a replacement for Geist, with similar modern sans-serif characteristics
 const inter = Inter({
@@ -36,6 +38,13 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
+  // Track PageView when the component mounts (client-side only)
+  useEffect(() => {
+    // The PageView for Pixel is already handled by the script
+    // This will handle the server-side Conversions API 
+    trackFacebookEvent(FB_EVENTS.PAGE_VIEW);
+  }, []);
+
   return (
     <html lang="en" className={`${inter.variable} ${robotoMono.variable}`} suppressHydrationWarning>
       <head>
