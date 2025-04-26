@@ -369,22 +369,22 @@ export default function Home() {
                   <motion.div key={trainer._id || index} variants={fadeInUp}>
                     <Link href={`/trainers/${trainer._id}`} className="block">
                       <div className="relative overflow-hidden rounded-xl shadow-lg group cursor-pointer">
-                        <Image 
-                          src={trainer.image || "/images/placeholder-trainer.jpg"} 
-                          alt={trainer.name} 
-                          width={300} 
-                          height={400} 
-                          className="w-full aspect-[3/4] object-cover transition-transform duration-500 group-hover:scale-110"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent opacity-100"></div>
-                        <div className="absolute bottom-0 left-0 p-6 w-full">
-                          <h3 className="text-2xl font-bold text-white">{trainer.name}</h3>
-                          <p className="text-red-400 font-medium mb-2">{trainer.specialization}</p>
-                          <p className="text-gray-300 text-sm line-clamp-2">
-                            {trainer.bio || `Expert instructor with years of experience.`}
-                          </p>
-                        </div>
+                      <Image 
+                        src={trainer.image || "/images/placeholder-trainer.jpg"} 
+                        alt={trainer.name} 
+                        width={300} 
+                        height={400} 
+                        className="w-full aspect-[3/4] object-cover transition-transform duration-500 group-hover:scale-110"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent opacity-100"></div>
+                      <div className="absolute bottom-0 left-0 p-6 w-full">
+                        <h3 className="text-2xl font-bold text-white">{trainer.name}</h3>
+                        <p className="text-red-400 font-medium mb-2">{trainer.specialization}</p>
+                        <p className="text-gray-300 text-sm line-clamp-2">
+                          {trainer.bio || `Expert instructor with years of experience.`}
+                        </p>
                       </div>
+                    </div>
                     </Link>
                   </motion.div>
                 ))}
