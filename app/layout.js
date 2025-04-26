@@ -1,5 +1,3 @@
-"use client";
-
 import { Inter, Roboto_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "../components/Navbar";
@@ -7,9 +5,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import { ThemeProvider } from "../components/ThemeProvider";
 import ToastContainerWrapper from "../components/ToastContainerWrapper";
 import { Analytics } from '@vercel/analytics/react';
-import Script from 'next/script';
-import { useEffect } from 'react';
-import { trackFacebookEvent, FB_EVENTS } from '../lib/facebook';
+import FacebookTracker from './FacebookTracker';
+import { metadata } from './metadata';
 
 // Using Inter font as a replacement for Geist, with similar modern sans-serif characteristics
 const inter = Inter({
@@ -25,56 +22,14 @@ const robotoMono = Roboto_Mono({
   display: 'swap',
 });
 
-export const metadata = {
-  title: "Strike Den MMA | Premier MMA Gym in Karachi",
-  description: "Strike Den offers world-class MMA training with expert coaches, state-of-the-art facilities, and a supportive community. Join us for boxing, kickboxing, and MMA classes in Karachi.",
-  keywords: ["MMA gym", "boxing classes", "kickboxing", "martial arts", "fitness", "Karachi", "Pakistan"],
-  openGraph: {
-    title: "Strike Den MMA | Premier MMA Gym in Karachi",
-    description: "Train with the best coaches in a state-of-the-art MMA facility",
-    url: "https://strikeden.com",
-    siteName: "Strike Den MMA",
-    locale: "en_US",
-    type: "website",
-  },
-};
+// Re-export the metadata
+export { metadata };
 
 export default function RootLayout({ children }) {
-  // Track PageView when the component mounts (client-side only)
-  useEffect(() => {
-    // The PageView for Pixel is already handled by the script
-    // This will handle the server-side Conversions API 
-    trackFacebookEvent(FB_EVENTS.PAGE_VIEW);
-  }, []);
-
   return (
     <html lang="en" className={`${inter.variable} ${robotoMono.variable}`} suppressHydrationWarning>
       <head>
-        {/* Meta Pixel Code */}
-        <Script id="facebook-pixel" strategy="afterInteractive">
-          {`
-            !function(f,b,e,v,n,t,s)
-            {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-            n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-            if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-            n.queue=[];t=b.createElement(e);t.async=!0;
-            t.src=v;s=b.getElementsByTagName(e)[0];
-            s.parentNode.insertBefore(t,s)}(window, document,'script',
-            'https://connect.facebook.net/en_US/fbevents.js');
-            fbq('init', '${process.env.NEXT_PUBLIC_FB_PIXEL_ID}');
-            fbq('track', 'PageView');
-          `}
-        </Script>
-        <noscript>
-          <img 
-            height="1" 
-            width="1" 
-            style={{ display: 'none' }}
-            src={`https://www.facebook.com/tr?id=${process.env.NEXT_PUBLIC_FB_PIXEL_ID}&ev=PageView&noscript=1`}
-            alt=""
-          />
-        </noscript>
-        {/* End Meta Pixel Code */}
+        <FacebookTracker />
       </head>
       <body className="min-h-screen flex flex-col bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-white transition-colors duration-300">
         <ThemeProvider>
