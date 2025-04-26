@@ -1,3 +1,5 @@
+"use client";
+
 import { Inter, Roboto_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "../components/Navbar";
