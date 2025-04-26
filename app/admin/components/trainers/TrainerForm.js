@@ -165,20 +165,6 @@ export default function TrainerForm({ initialData = {}, onSubmit, isLoading }) {
             onImageUploaded={handleImageUploaded} 
             initialImage={trainerData.image}
           />
-          {/* Alternate option for direct URL input */}
-          <div className="mt-2">
-            <label className="block text-xs font-medium text-gray-500 dark:text-gray-400">
-              Or enter image URL directly:
-            </label>
-            <input
-              type="text"
-              name="image"
-              value={trainerData.image}
-              onChange={handleChange}
-              placeholder="e.g., /uploads/image.jpg"
-              className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
-            />
-          </div>
         </div>
         
         <div>

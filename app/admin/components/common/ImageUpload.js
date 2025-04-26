@@ -192,7 +192,7 @@ export default function ImageUpload({ onImageUploaded, initialImage = null }) {
                 strokeLinejoin="round"
               />
             </svg>
-            <div className="flex text-sm text-gray-600 dark:text-gray-400">
+            <div className="flex justify-center text-sm text-gray-600 dark:text-gray-400">
               <label
                 htmlFor="file-upload"
                 className="relative cursor-pointer bg-white dark:bg-gray-700 rounded-md font-medium text-red-600 dark:text-red-400 hover:text-red-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-red-500"
@@ -202,13 +202,11 @@ export default function ImageUpload({ onImageUploaded, initialImage = null }) {
                   id="file-upload"
                   name="file-upload"
                   type="file"
-                  accept="image/jpeg,image/png,image/gif,image/webp"
                   className="sr-only"
+                  accept="image/*"
                   onChange={handleFileChange}
-                  disabled={isUploading}
                 />
               </label>
-              <p className="pl-1">or drag and drop</p>
             </div>
             <p className="text-xs text-gray-500 dark:text-gray-400">
               PNG, JPG, GIF up to 5MB
@@ -218,7 +216,7 @@ export default function ImageUpload({ onImageUploaded, initialImage = null }) {
       </div>
 
       {error && (
-        <div className="text-red-500 text-sm mt-2 p-2 bg-red-50 dark:bg-red-950 rounded">{error}</div>
+        <p className="mt-2 text-sm text-red-600 dark:text-red-500">{error}</p>
       )}
       
       {uploadedPath && (

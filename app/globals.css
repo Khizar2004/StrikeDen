@@ -225,6 +225,7 @@
     border border-primary-600 shadow-red-glow;
     position: relative;
     overflow: hidden;
+    z-index: 1;
   }
   
   .btn-primary::before {
@@ -232,6 +233,7 @@
     @apply absolute inset-0 bg-gradient-to-r from-primary-600 to-primary-500;
     opacity: 0;
     transition: opacity 0.3s ease;
+    z-index: -2;
   }
   
   .btn-primary:hover::before {
@@ -242,6 +244,7 @@
     content: '';
     @apply absolute inset-0 bg-white opacity-0 transition-opacity duration-300;
     mix-blend-mode: overlay;
+    z-index: -1;
   }
   
   .btn-primary:hover::after {

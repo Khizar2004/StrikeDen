@@ -29,14 +29,6 @@ export default function PrivacyPage() {
           <p className="text-lg text-gray-300 mt-6 max-w-2xl mx-auto">
             Our commitment to protecting your privacy while providing exceptional martial arts training
           </p>
-          
-          <div className="mt-8 flex items-center justify-center text-gray-300">
-            <Link href="/" className="hover:text-white transition-colors duration-200">
-              Home
-            </Link>
-            <IoArrowForward className="mx-2" />
-            <span className="text-white">Privacy Policy</span>
-          </div>
         </div>
       </section>
       
