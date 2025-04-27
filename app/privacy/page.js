@@ -52,7 +52,7 @@ export default function PrivacyPage() {
                     Introduction
                   </h3>
                   <p className="text-gray-700 dark:text-gray-300">
-                    At Strike Den MMA ("we," "our," or "us"), we respect your privacy and are committed to transparency about the limited data we collect when you visit our website (strikeden.vercel.app).
+                    At Strike Den MMA ("we," "our," or "us"), we respect your privacy and are committed to transparency about the data we collect when you visit our website (strikeden.vercel.app).
                   </p>
                 </div>
                 
@@ -62,13 +62,13 @@ export default function PrivacyPage() {
                     Information We Collect
                   </h3>
                   <p className="text-gray-700 dark:text-gray-300 mb-4">
-                    We collect very minimal information through Vercel Analytics:
+                    We collect information through the following services:
                   </p>
                   <ul className="space-y-2">
                     <li className="flex items-start">
                       <span className="text-red-500 mr-2 mt-1">•</span>
                       <div>
-                        <strong className="text-gray-900 dark:text-white">Basic Analytics Data:</strong>
+                        <strong className="text-gray-900 dark:text-white">Vercel Analytics:</strong>
                         <span className="text-gray-700 dark:text-gray-300"> Anonymous usage statistics such as country of origin and browser type.</span>
                       </div>
                     </li>
@@ -79,10 +79,14 @@ export default function PrivacyPage() {
                         <span className="text-gray-700 dark:text-gray-300"> Information about how our website performs for different visitors to help us improve site speed and user experience.</span>
                       </div>
                     </li>
+                    <li className="flex items-start">
+                      <span className="text-red-500 mr-2 mt-1">•</span>
+                      <div>
+                        <strong className="text-gray-900 dark:text-white">Facebook Tracking:</strong>
+                        <span className="text-gray-700 dark:text-gray-300"> We use Facebook Pixel and Conversions API to collect data about your interactions with our website.</span>
+                      </div>
+                    </li>
                   </ul>
-                  <div className="mt-4 p-3 bg-green-50 dark:bg-green-900/20 rounded border border-green-100 dark:border-green-900/30 text-green-800 dark:text-green-400 text-sm">
-                    We do not collect or store any personally identifiable information such as names, email addresses, or phone numbers through our website.
-                  </div>
                 </div>
                 
                 <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
@@ -90,9 +94,35 @@ export default function PrivacyPage() {
                     <span className="bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 w-8 h-8 rounded-full flex items-center justify-center mr-3 text-sm font-bold">3</span>
                     How We Collect Information
                   </h3>
-                  <p className="text-gray-700 dark:text-gray-300">
-                    We use Vercel Analytics, a privacy-friendly analytics tool that provides us with basic, anonymous metrics about our website visitors. This data is aggregated and cannot be used to identify individual users.
+                  <p className="text-gray-700 dark:text-gray-300 mb-4">
+                    We use the following tools to collect information:
                   </p>
+                  <ul className="space-y-4">
+                    <li className="text-gray-700 dark:text-gray-300">
+                      <strong className="text-gray-900 dark:text-white">Vercel Analytics:</strong> A privacy-friendly analytics tool that provides us with basic, anonymous metrics about our website visitors. This data is aggregated and cannot be used to identify individual users.
+                    </li>
+                    <li className="text-gray-700 dark:text-gray-300">
+                      <strong className="text-gray-900 dark:text-white">Facebook Pixel and Conversions API:</strong> These tools collect information about your visits to our website and how you interact with it. This may include:
+                      <ul className="pl-6 mt-2 space-y-1">
+                        <li className="flex items-start">
+                          <span className="text-red-500 mr-2 mt-1">-</span>
+                          <span>Pages you visit</span>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="text-red-500 mr-2 mt-1">-</span>
+                          <span>Actions you take (such as viewing content or contacting us)</span>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="text-red-500 mr-2 mt-1">-</span>
+                          <span>Device information (browser type, operating system)</span>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="text-red-500 mr-2 mt-1">-</span>
+                          <span>IP address and location information</span>
+                        </li>
+                      </ul>
+                    </li>
+                  </ul>
                 </div>
                 
                 <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
@@ -101,7 +131,7 @@ export default function PrivacyPage() {
                     How We Use Your Information
                   </h3>
                   <p className="text-gray-700 dark:text-gray-300 mb-4">
-                    We use the limited data we collect to:
+                    We use the data we collect to:
                   </p>
                   <ul className="space-y-2">
                     <li className="flex items-center">
@@ -120,6 +150,14 @@ export default function PrivacyPage() {
                       <span className="text-red-500 mr-2">•</span>
                       <span className="text-gray-700 dark:text-gray-300">Analyze basic geographic distribution of our visitors</span>
                     </li>
+                    <li className="flex items-center">
+                      <span className="text-red-500 mr-2">•</span>
+                      <span className="text-gray-700 dark:text-gray-300">Measure the effectiveness of our marketing campaigns</span>
+                    </li>
+                    <li className="flex items-center">
+                      <span className="text-red-500 mr-2">•</span>
+                      <span className="text-gray-700 dark:text-gray-300">Optimize our advertising to reach people who might be interested in our services</span>
+                    </li>
                   </ul>
                 </div>
                 
@@ -128,9 +166,17 @@ export default function PrivacyPage() {
                     <span className="bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 w-8 h-8 rounded-full flex items-center justify-center mr-3 text-sm font-bold">5</span>
                     Cookies and Tracking Technologies
                   </h3>
-                  <p className="text-gray-700 dark:text-gray-300">
-                    Vercel Analytics uses lightweight, privacy-focused tracking that respects user privacy. It does not use cookies that require consent banners and only collects the minimum information needed to understand basic usage patterns.
+                  <p className="text-gray-700 dark:text-gray-300 mb-4">
+                    Our website uses various tracking technologies:
                   </p>
+                  <ul className="space-y-4">
+                    <li className="text-gray-700 dark:text-gray-300">
+                      <strong className="text-gray-900 dark:text-white">Vercel Analytics:</strong> Uses lightweight, privacy-focused tracking that respects user privacy. It does not use cookies that require consent banners.
+                    </li>
+                    <li className="text-gray-700 dark:text-gray-300">
+                      <strong className="text-gray-900 dark:text-white">Facebook Pixel:</strong> Uses cookies and similar technologies to track your actions on our website. These cookies enable Facebook to show you more relevant ads on their platform based on your interests and interactions with our site.
+                    </li>
+                  </ul>
                 </div>
                 
                 <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
@@ -138,9 +184,20 @@ export default function PrivacyPage() {
                     <span className="bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 w-8 h-8 rounded-full flex items-center justify-center mr-3 text-sm font-bold">6</span>
                     Data Sharing and Disclosure
                   </h3>
-                  <p className="text-gray-700 dark:text-gray-300">
-                    The anonymous analytics data is processed by Vercel, our hosting provider. We do not sell, trade, or otherwise transfer this information to external parties.
+                  <p className="text-gray-700 dark:text-gray-300 mb-4">
+                    We share data with the following third parties:
                   </p>
+                  <ul className="space-y-4">
+                    <li className="text-gray-700 dark:text-gray-300">
+                      <strong className="text-gray-900 dark:text-white">Vercel:</strong> Anonymous analytics data is processed by Vercel, our hosting provider.
+                    </li>
+                    <li className="text-gray-700 dark:text-gray-300">
+                      <strong className="text-gray-900 dark:text-white">Meta/Facebook:</strong> Information collected via Facebook Pixel and Conversions API is shared with Meta (Facebook) and is subject to Meta's Data Policy. This data helps us measure the effectiveness of our advertising and show you more relevant content.
+                    </li>
+                  </ul>
+                  <div className="mt-4 p-3 bg-amber-50 dark:bg-amber-900/20 rounded border border-amber-100 dark:border-amber-900/30 text-amber-800 dark:text-amber-400 text-sm">
+                    We do not sell your personal information to other third parties not listed above. Any data sharing is for the specific purposes outlined in this policy.
+                  </div>
                 </div>
                 
                 <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
@@ -149,7 +206,7 @@ export default function PrivacyPage() {
                     Data Security
                   </h3>
                   <p className="text-gray-700 dark:text-gray-300">
-                    Since we collect very minimal data that cannot identify individual users, the privacy risk is extremely low. Vercel maintains industry-standard security practices to protect any data collected through their analytics platform.
+                    We take reasonable precautions to protect your data. Our service providers (Vercel and Meta) maintain industry-standard security practices to protect any data collected through their platforms.
                   </p>
                 </div>
                 
@@ -159,7 +216,7 @@ export default function PrivacyPage() {
                     Your Privacy Rights
                   </h3>
                   <p className="text-gray-700 dark:text-gray-300 mb-4">
-                    Since we do not collect personally identifiable information, most data protection regulations around individual data access or deletion do not apply. However, we respect your privacy choices, including:
+                    You have several options to control your privacy when using our website:
                   </p>
                   <ul className="space-y-2">
                     <li className="flex items-center">
@@ -168,11 +225,15 @@ export default function PrivacyPage() {
                     </li>
                     <li className="flex items-center">
                       <span className="text-red-500 mr-2">•</span>
-                      <span className="text-gray-700 dark:text-gray-300">Using browser extensions that block analytics</span>
+                      <span className="text-gray-700 dark:text-gray-300">Using browser extensions that block analytics and tracking cookies</span>
                     </li>
                     <li className="flex items-center">
                       <span className="text-red-500 mr-2">•</span>
-                      <span className="text-gray-700 dark:text-gray-300">Using VPN services if you prefer not to share your country of origin</span>
+                      <span className="text-gray-700 dark:text-gray-300">Adjusting your Facebook ad preferences at <a href="https://www.facebook.com/adpreferences" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">facebook.com/adpreferences</a></span>
+                    </li>
+                    <li className="flex items-center">
+                      <span className="text-red-500 mr-2">•</span>
+                      <span className="text-gray-700 dark:text-gray-300">Using VPN services if you prefer not to share your location information</span>
                     </li>
                   </ul>
                 </div>
@@ -183,7 +244,7 @@ export default function PrivacyPage() {
                     Children's Privacy
                   </h3>
                   <p className="text-gray-700 dark:text-gray-300">
-                    Our website is not intended for children under 13 years of age, though the anonymous analytics we collect pose minimal privacy concerns for users of any age.
+                    Our website is not intended for children under 13 years of age. We do not knowingly collect personally identifiable information from children under 13.
                   </p>
                 </div>
                 
@@ -203,7 +264,7 @@ export default function PrivacyPage() {
                     Contact Us
                   </h3>
                   <p className="text-gray-700 dark:text-gray-300 mb-4">
-                    If you have questions about our minimal data collection practices, you can reach us at:
+                    If you have questions about our privacy practices, you can reach us at:
                   </p>
                   <div className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg text-gray-700 dark:text-gray-300">
                     <p className="flex items-center mb-2">
@@ -249,7 +310,7 @@ export default function PrivacyPage() {
             href="/contact"
             className="btn-primary text-lg px-8 py-4"
           >
-            Contact Us
+            Contact Us <IoArrowForward className="ml-2 inline" />
           </Link>
         </div>
       </section>
