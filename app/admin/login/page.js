@@ -73,6 +73,11 @@ export default function AdminLogin() {
       const data = await res.json();
       
       if (data.success) {
+        // Store CSRF token in sessionStorage for future requests
+        if (data.csrfToken) {
+          sessionStorage.setItem('csrfToken', data.csrfToken);
+        }
+        
         toast.success('Login successful');
         router.push('/admin');
       } else {
@@ -270,7 +275,7 @@ export default function AdminLogin() {
           </form>
         )}
       </div>
-      <ToastContainer position="top-right" />
+      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 }

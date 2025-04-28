@@ -72,10 +72,11 @@ export default function ImageUpload({ onImageUploaded, initialImage = null }) {
 
       const formData = new FormData();
       formData.append('file', file);
-
+      
       const response = await fetch('/api/upload/blob', {
         method: 'POST',
         body: formData,
+        credentials: 'include' // Keep cookies for authentication
       });
 
       // Handle non-JSON responses gracefully

@@ -4,12 +4,18 @@ import bcrypt from 'bcryptjs';
 import { cookies } from 'next/headers';
 import { connectDB } from '@/lib/dbConnect';
 import Admin from '@/lib/Admin';
+import { rateLimit } from '@/lib/redis';
+import { createCsrfToken } from '@/lib/csrf';
 
 // Get JWT secret from environment variables
 const JWT_SECRET = process.env.JWT_SECRET;
 
-// Track login attempts for rate limiting
-const loginAttempts = new Map();
+// Helper to sanitize inputs
+function sanitizeInput(input) {
+  if (typeof input !== 'string') return '';
+  // Basic sanitation to prevent NoSQL injection
+  return input.trim().replace(/[{}<>[\]\\\/]/g, '');
+}
 
 export async function POST(request) {
   try {
@@ -29,30 +35,35 @@ export async function POST(request) {
     // that accounts for proxies and load balancers
     const ip = request.headers.get('x-forwarded-for') || 'unknown-ip';
     
-    // Implement basic rate limiting
-    const now = Date.now();
-    const recentAttempts = loginAttempts.get(ip) || [];
+    // Implement Redis-based rate limiting
+    const rateLimitResult = await rateLimit({
+      key: `login:${ip}`,
+      limit: 5,
+      duration: 900 // 15 minutes in seconds
+    });
     
-    // Remove attempts older than 15 minutes
-    const fifteenMinutes = 15 * 60 * 1000;
-    const recentAttemptsCleaned = recentAttempts.filter(
-      timestamp => now - timestamp < fifteenMinutes
-    );
-    
-    // Check if too many attempts
-    if (recentAttemptsCleaned.length >= 5) {
+    // Check if rate limit was exceeded
+    if (!rateLimitResult.success) {
       return NextResponse.json(
-        { success: false, message: 'Too many login attempts. Please try again later.' },
-        { status: 429 }
+        { 
+          success: false, 
+          message: 'Too many login attempts. Please try again later.',
+          retryAfter: rateLimitResult.remaining
+        },
+        { 
+          status: 429,
+          headers: {
+            'Retry-After': '900'
+          }
+        }
       );
     }
     
-    // Add current attempt
-    recentAttemptsCleaned.push(now);
-    loginAttempts.set(ip, recentAttemptsCleaned);
+    const requestData = await request.json();
+    // Sanitize inputs to prevent injection attacks
+    const username = sanitizeInput(requestData.username);
+    const password = requestData.password; // Don't sanitize password, but don't log it either
     
-    const { username, password } = await request.json();
-
     // Log attempt but avoid logging passwords or other sensitive info
     console.log('Login attempt:', { username: username?.slice(0, 3) + '***' });
 
@@ -98,6 +109,9 @@ export async function POST(request) {
     admin.lastLogin = new Date();
     await admin.save();
 
+    // Generate a unique session ID
+    const sessionId = require('crypto').randomBytes(16).toString('hex');
+    
     // Create JWT token with short expiration
     const token = jwt.sign(
       { 
@@ -105,14 +119,15 @@ export async function POST(request) {
         username: admin.username, 
         isAdmin: admin.isAdmin,
         // Add a unique token ID that can be revoked if needed
-        jti: require('crypto').randomBytes(16).toString('hex') 
+        jti: sessionId
       },
       JWT_SECRET,
       { expiresIn: '4h' } // Shorter expiration time for better security
     );
 
     // Set HTTP-only cookie with better security options
-    cookies().set('admin_token', token, {
+    const cookieStore = await cookies();
+    cookieStore.set('admin_token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
@@ -124,10 +139,10 @@ export async function POST(request) {
       })
     });
 
-    console.log('User successfully logged in');
+    // Generate CSRF token for this session
+    const csrfToken = await createCsrfToken(sessionId);
     
-    // Clear login attempts after successful login
-    loginAttempts.delete(ip);
+    console.log('User successfully logged in');
     
     return NextResponse.json({
       success: true,
@@ -136,7 +151,8 @@ export async function POST(request) {
         id: admin._id,
         username: admin.username,
         isAdmin: admin.isAdmin
-      }
+      },
+      csrfToken
     });
   } catch (error) {
     console.error('Login error:', error);

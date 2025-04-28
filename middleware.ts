@@ -12,11 +12,24 @@ export function middleware(request: NextRequest) {
   headers.set('X-Content-Type-Options', 'nosniff');
   headers.set('X-Frame-Options', 'DENY');
   headers.set('X-XSS-Protection', '1; mode=block');
+  headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
   
-  // Content Security Policy - Customize based on your needs
+  // More restrictive Content Security Policy
   headers.set(
     'Content-Security-Policy',
-    "default-src 'self'; script-src 'self' 'unsafe-inline' https://connect.facebook.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://graph.facebook.com;"
+    [
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-inline' https://connect.facebook.net", // Consider removing unsafe-inline in the future
+      "style-src 'self' 'unsafe-inline'", // Consider removing unsafe-inline in the future
+      "img-src 'self' data: https://graph.facebook.com https://*.blob.vercel-storage.com https://*.unsplash.com",
+      "font-src 'self' data:",
+      "connect-src 'self' https://graph.facebook.com https://*.vercel-storage.com",
+      "frame-ancestors 'none'",
+      "form-action 'self'",
+      "base-uri 'self'",
+      "object-src 'none'"
+    ].join('; ')
   );
   
   // Set strict transport security header in production
@@ -54,7 +67,7 @@ export function middleware(request: NextRequest) {
       
       // Standard CORS headers
       headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-      headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+      headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-CSRF-Token');
       headers.set('Access-Control-Max-Age', '86400');
       
       // Handle OPTIONS requests for CORS preflight
