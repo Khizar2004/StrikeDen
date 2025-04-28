@@ -10,6 +10,10 @@ import { createCsrfToken } from '@/lib/csrf';
 // Get JWT secret from environment variables
 const JWT_SECRET = process.env.JWT_SECRET;
 
+// Track login attempts for rate limiting as a fallback
+// This will only be used if Redis fails or is unavailable
+const loginAttempts = new Map();
+
 // Helper to sanitize inputs
 function sanitizeInput(input) {
   if (typeof input !== 'string') return '';
@@ -35,12 +39,38 @@ export async function POST(request) {
     // that accounts for proxies and load balancers
     const ip = request.headers.get('x-forwarded-for') || 'unknown-ip';
     
-    // Implement Redis-based rate limiting
-    const rateLimitResult = await rateLimit({
-      key: `login:${ip}`,
-      limit: 5,
-      duration: 900 // 15 minutes in seconds
-    });
+    // Try Redis-based rate limiting, fall back to in-memory if it fails
+    let rateLimitResult;
+    try {
+      rateLimitResult = await rateLimit({
+        key: `login:${ip}`,
+        limit: 5,
+        duration: 900 // 15 minutes in seconds
+      });
+    } catch (err) {
+      // Redis failed, use in-memory fallback
+      console.warn('Redis rate limiting failed, using in-memory fallback');
+      const now = Date.now();
+      const recentAttempts = loginAttempts.get(ip) || [];
+      
+      // Remove attempts older than 15 minutes
+      const fifteenMinutes = 15 * 60 * 1000;
+      const recentAttemptsCleaned = recentAttempts.filter(
+        timestamp => now - timestamp < fifteenMinutes
+      );
+      
+      // Check if too many attempts
+      rateLimitResult = {
+        success: recentAttemptsCleaned.length < 5,
+        current: recentAttemptsCleaned.length,
+        limit: 5,
+        remaining: Math.max(0, 5 - recentAttemptsCleaned.length)
+      };
+      
+      // Add current attempt
+      recentAttemptsCleaned.push(now);
+      loginAttempts.set(ip, recentAttemptsCleaned);
+    }
     
     // Check if rate limit was exceeded
     if (!rateLimitResult.success) {
@@ -139,8 +169,14 @@ export async function POST(request) {
       })
     });
 
-    // Generate CSRF token for this session
-    const csrfToken = await createCsrfToken(sessionId);
+    // Try to generate CSRF token, don't fail if it doesn't work
+    let csrfToken;
+    try {
+      csrfToken = await createCsrfToken(sessionId);
+    } catch (err) {
+      console.warn('CSRF token generation failed:', err);
+      // Continue without CSRF token
+    }
     
     console.log('User successfully logged in');
     
@@ -152,7 +188,7 @@ export async function POST(request) {
         username: admin.username,
         isAdmin: admin.isAdmin
       },
-      csrfToken
+      ...(csrfToken && { csrfToken })
     });
   } catch (error) {
     console.error('Login error:', error);
