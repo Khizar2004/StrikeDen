@@ -66,12 +66,22 @@ export default function useSchedules() {
    */
   const addSchedule = async (scheduleData) => {
     try {
+      setIsSubmitting(true);
+      
+      // Get CSRF token from session storage if available
+      const csrfToken = sessionStorage.getItem('csrfToken');
+      
       const response = await fetch('/api/schedules', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          ...(csrfToken ? { 'X-CSRF-Token': csrfToken } : {})
         },
-        body: JSON.stringify(scheduleData),
+        credentials: 'include', // Include cookies for authentication
+        body: JSON.stringify({
+          ...scheduleData,
+          ...(csrfToken ? { csrfToken } : {}) // Include token in body as fallback
+        }),
       });
 
       const data = await safelyParseJSON(response);
@@ -80,7 +90,9 @@ export default function useSchedules() {
       if (!response.ok) {
         let errorMessage = 'Failed to add schedule';
         
-        if (data.errors) {
+        if (response.status === 403) {
+          errorMessage = 'Session expired or unauthorized. Please try logging out and back in.';
+        } else if (data.errors) {
           // Handle specific validation errors
           if (data.errors.missingFields) {
             errorMessage = `Missing required fields: ${data.errors.missingFields.join(', ')}`;
@@ -117,6 +129,8 @@ export default function useSchedules() {
         toast.error(error.message);
       }
       throw error;
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -131,9 +145,16 @@ export default function useSchedules() {
       
       console.log(`Deleting schedule with ID: ${id}`);
       
+      // Get CSRF token from session storage if available
+      const csrfToken = sessionStorage.getItem('csrfToken');
+      
       // Use the RESTful route instead of query parameters
       const response = await fetch(`/api/schedules/${id}`, {
         method: "DELETE",
+        headers: {
+          ...(csrfToken ? { 'X-CSRF-Token': csrfToken } : {})
+        },
+        credentials: 'include' // Include cookies for authentication
       });
 
       console.log(`Delete response status: ${response.status} ${response.statusText}`);
@@ -164,12 +185,20 @@ export default function useSchedules() {
 
   const updateSchedule = async (scheduleId, updatedData) => {
     try {
+      // Get CSRF token from session storage if available
+      const csrfToken = sessionStorage.getItem('csrfToken');
+      
       const response = await fetch(`/api/schedules/${scheduleId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          ...(csrfToken ? { 'X-CSRF-Token': csrfToken } : {})
         },
-        body: JSON.stringify(updatedData),
+        credentials: 'include', // Include cookies for authentication
+        body: JSON.stringify({
+          ...updatedData,
+          ...(csrfToken ? { csrfToken } : {}) // Include token in body as fallback
+        }),
       });
 
       const data = await safelyParseJSON(response);
@@ -178,7 +207,9 @@ export default function useSchedules() {
       if (!response.ok) {
         let errorMessage = 'Failed to update schedule';
         
-        if (data.errors) {
+        if (response.status === 403) {
+          errorMessage = 'Session expired or unauthorized. Please try logging out and back in.';
+        } else if (data.errors) {
           // Handle specific validation errors
           if (data.errors.missingFields) {
             errorMessage = `Missing required fields: ${data.errors.missingFields.join(', ')}`;
