@@ -62,7 +62,7 @@ export async function POST(request) {
     }
 
     // Validate class type
-    const validClassTypes = ['Boxing', 'Brazilian Jiu-Jitsu', 'Muay Thai', 'Wrestling', 'MMA', 'Conditioning', 'Kickboxing', 'Taekwondo', 'Judo'];
+    const validClassTypes = ['Boxing', 'Brazilian Jiu-Jitsu', 'Muay Thai', 'Wrestling', 'MMA', 'MMA Advanced', 'Conditioning', 'Kickboxing', 'Taekwondo', 'Judo'];
     if (!validClassTypes.includes(data.classType)) {
       return NextResponse.json({
         success: false,
