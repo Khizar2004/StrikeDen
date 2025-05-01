@@ -203,7 +203,7 @@ export default function AboutPage() {
                   It was raw, unrefined, and built on the belief that hard work trumps all. Despite the early doubts, Sikander and his students stayed committed.
                 </p>
                 <p>
-                  Two years of relentless effort, dedication, and grit later, Strike Den is now a fully operational MMA facility, equipped with everything you'd expect from a top-tier gym. It's proof that when you're driven by passion and perseverance, a small beginning can turn into something truly extraordinary.
+                  Started in 2022, Strike Den is now a fully operational MMA facility, equipped with everything you'd expect from a top-tier gym. It's proof that when you're driven by passion and perseverance, a small beginning can turn into something truly extraordinary.
                 </p>
               </div>
               <div className="mt-8">
