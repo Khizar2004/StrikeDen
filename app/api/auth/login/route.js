@@ -50,16 +50,16 @@ export async function POST(request) {
     } catch (err) {
       // Redis failed, use in-memory fallback
       console.warn('Redis rate limiting failed, using in-memory fallback');
-      const now = Date.now();
-      const recentAttempts = loginAttempts.get(ip) || [];
-      
-      // Remove attempts older than 15 minutes
-      const fifteenMinutes = 15 * 60 * 1000;
-      const recentAttemptsCleaned = recentAttempts.filter(
-        timestamp => now - timestamp < fifteenMinutes
-      );
-      
-      // Check if too many attempts
+    const now = Date.now();
+    const recentAttempts = loginAttempts.get(ip) || [];
+    
+    // Remove attempts older than 15 minutes
+    const fifteenMinutes = 15 * 60 * 1000;
+    const recentAttemptsCleaned = recentAttempts.filter(
+      timestamp => now - timestamp < fifteenMinutes
+    );
+    
+    // Check if too many attempts
       rateLimitResult = {
         success: recentAttemptsCleaned.length < 5,
         current: recentAttemptsCleaned.length,
@@ -93,7 +93,7 @@ export async function POST(request) {
     // Sanitize inputs to prevent injection attacks
     const username = sanitizeInput(requestData.username);
     const password = requestData.password; // Don't sanitize password, but don't log it either
-    
+
     // Log attempt but avoid logging passwords or other sensitive info
     console.log('Login attempt:', { username: username?.slice(0, 3) + '***' });
 
@@ -141,7 +141,7 @@ export async function POST(request) {
 
     // Generate a unique session ID
     const sessionId = require('crypto').randomBytes(16).toString('hex');
-    
+
     // Create JWT token with short expiration
     const token = jwt.sign(
       { 
@@ -177,7 +177,7 @@ export async function POST(request) {
       console.warn('CSRF token generation failed:', err);
       // Continue without CSRF token
     }
-    
+
     console.log('User successfully logged in');
     
     return NextResponse.json({

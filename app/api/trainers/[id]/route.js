@@ -6,12 +6,12 @@ import { ObjectId } from "mongodb";
 export const dynamic = "force-dynamic";
 
 // GET SINGLE TRAINER
-export async function GET(request, { params }) {
+export async function GET(request, context) {
   try {
     await connectDB();
     
-    // Extract id after awaiting params
-    const id = params.id;
+    // Get the ID safely
+    const { id } = context.params || {};
     
     if (!ObjectId.isValid(id)) {
       return Response.json(
@@ -43,13 +43,13 @@ export async function GET(request, { params }) {
 }
 
 // UPDATE TRAINER
-export async function PUT(request, { params }) {
+export async function PUT(request, context) {
   try {
     await connectDB();
     const body = await request.json();
     
-    // Extract id after awaiting params
-    const id = params.id;
+    // Get the ID safely
+    const { id } = context.params || {};
 
     if (!ObjectId.isValid(id)) {
       return Response.json(
@@ -90,12 +90,12 @@ export async function PUT(request, { params }) {
 }
 
 // DELETE TRAINER
-export async function DELETE(request, { params }) {
+export async function DELETE(request, context) {
   try {
     await connectDB();
     
-    // Extract id after awaiting params
-    const id = params.id;
+    // Get the ID safely
+    const { id } = context.params || {};
 
     if (!ObjectId.isValid(id)) {
       return Response.json(

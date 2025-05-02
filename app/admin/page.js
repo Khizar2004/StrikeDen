@@ -37,6 +37,19 @@ const formatTime = (timeString) => {
 export default function AdminPage() {
   const { theme, mounted } = useTheme();
   const [activeTab, setActiveTab] = useState("trainers");
+  const router = useRouter();
+  
+  // Check URL parameters for tab selection
+  useEffect(() => {
+    // Only run in browser environment
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const tabParam = params.get('tab');
+      if (tabParam && ['trainers', 'schedules', 'offeredClasses'].includes(tabParam)) {
+        setActiveTab(tabParam);
+      }
+    }
+  }, []);
   
   // Initialize hooks
   const { isAuth, isLoading: isAuthLoading, handleLogout } = useAuth();

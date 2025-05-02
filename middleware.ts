@@ -20,11 +20,14 @@ export function middleware(request: NextRequest) {
     'Content-Security-Policy',
     [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' https://connect.facebook.net", // Consider removing unsafe-inline in the future
+      // Add unsafe-eval for development mode
+      process.env.NODE_ENV === 'development' 
+        ? "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://connect.facebook.net"
+        : "script-src 'self' 'unsafe-inline' https://connect.facebook.net", // Consider removing unsafe-inline in the future
       "style-src 'self' 'unsafe-inline'", // Consider removing unsafe-inline in the future
       "img-src 'self' data: https://graph.facebook.com https://*.blob.vercel-storage.com https://*.unsplash.com",
       "font-src 'self' data:",
-      "connect-src 'self' https://graph.facebook.com https://*.vercel-storage.com",
+      "connect-src 'self' https://graph.facebook.com https://www.facebook.com https://*.facebook.com https://*.vercel-storage.com",
       "frame-ancestors 'none'",
       "form-action 'self'",
       "base-uri 'self'",

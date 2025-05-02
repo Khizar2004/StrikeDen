@@ -7,11 +7,11 @@ import { NextResponse } from "next/server";
 export const dynamic = "force-dynamic";
 
 // GET schedules for a specific trainer by ID
-export async function GET(request, { params }) {
+export async function GET(request, context) {
   try {
     await connectDB();
-    // Extract id property from params
-    const id = params.id;
+    // Get the ID directly from context
+    const id = context.params.id;
     
     if (!ObjectId.isValid(id)) {
       return NextResponse.json(

@@ -61,14 +61,14 @@ export async function POST(request) {
     // Parse form data
     const formData = await request.formData();
     const file = formData.get('file');
-    
+
     if (!file) {
       return NextResponse.json(
         { success: false, error: 'No file uploaded' },
         { status: 400 }
       );
     }
-    
+
     // Validate the file
     const validation = validateFile(file);
     if (!validation.valid) {
@@ -77,7 +77,7 @@ export async function POST(request) {
         { status: 400 }
       );
     }
-
+    
     // Get file data and generate unique filename
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);

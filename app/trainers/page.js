@@ -157,7 +157,7 @@ export default function TrainersPage() {
                   transition={{ duration: 0.5 }}
                   className="bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden"
                 >
-                  <div className="relative h-[40vh]">
+                  <div className="relative h-[90vh]">
                     <Image
                       src={selectedTrainer.image || "/images/placeholder-trainer.jpg"}
                       alt={selectedTrainer.name}
