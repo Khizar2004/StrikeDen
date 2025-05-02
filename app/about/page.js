@@ -31,36 +31,42 @@ const staggerContainer = {
 // Team member card component
 const TeamMemberCard = ({ member }) => {
   return (
-    <motion.div
-      variants={fadeInUp}
-      className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300"
+    <Link 
+      href={`/trainers/${member.id}`}
+      className="block group"
     >
-      <div className="relative h-64 w-full">
-        <Image
-          src={member.image || "/images/placeholder-trainer.jpg"}
-          alt={member.name}
-          fill
-          className="object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent"></div>
-        <div className="absolute bottom-0 left-0 p-6 w-full">
-          <h3 className="text-2xl font-bold text-white mb-1">{member.name}</h3>
-          <p className="text-red-400 font-medium">{member.role || member.specialization}</p>
-        </div>
-      </div>
-      <div className="p-6">
-        <p className="text-gray-700 dark:text-gray-300 text-sm mb-4">{member.bio}</p>
-        {member.certifications && member.certifications.length > 0 && (
-          <div className="flex flex-wrap gap-2">
-            {member.certifications.map((cert, index) => (
-              <span key={index} className="bg-gray-100 dark:bg-gray-700 text-xs text-gray-700 dark:text-gray-300 px-3 py-1 rounded-full">
-                {cert}
-              </span>
-            ))}
+      <motion.div
+        variants={fadeInUp}
+        className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-xl transition-all duration-300 cursor-pointer transform group-hover:scale-[1.02] group-hover:shadow-2xl"
+      >
+        <div className="relative h-96 w-full overflow-hidden">
+          <Image
+            src={member.image || "/images/placeholder-trainer.jpg"}
+            alt={member.name}
+            fill
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent"></div>
+          <div className="absolute bottom-0 left-0 p-6 w-full">
+            <h3 className="text-2xl font-bold text-white mb-1 group-hover:text-red-400 transition-colors duration-300">{member.name}</h3>
+            <p className="text-red-400 font-medium">{member.role || member.specialization}</p>
           </div>
-        )}
-      </div>
-    </motion.div>
+          <div className="absolute inset-0 opacity-0 group-hover:opacity-10 bg-red-500 transition-opacity duration-300"></div>
+        </div>
+        <div className="p-6">
+          <p className="text-gray-700 dark:text-gray-300 text-sm mb-4">{member.bio}</p>
+          {member.certifications && member.certifications.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {member.certifications.map((cert, index) => (
+                <span key={index} className="bg-gray-100 dark:bg-gray-700 text-xs text-gray-700 dark:text-gray-300 px-3 py-1 rounded-full">
+                  {cert}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+      </motion.div>
+    </Link>
   );
 };
 
@@ -324,6 +330,7 @@ export default function AboutPage() {
                 <TeamMemberCard 
                   key={member._id || index} 
                   member={{
+                    id: member._id,
                     name: member.name,
                     role: member.specialization,
                     image: member.image || "/images/placeholder-trainer.jpg",
