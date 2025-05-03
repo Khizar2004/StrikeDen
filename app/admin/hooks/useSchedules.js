@@ -66,6 +66,7 @@ export default function useSchedules() {
    */
   const addSchedule = async (scheduleData) => {
     try {
+      console.log("Sending schedule data:", JSON.stringify(scheduleData, null, 2));
       const response = await fetch('/api/schedules', {
         method: 'POST',
         headers: {

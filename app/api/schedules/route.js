@@ -2,6 +2,7 @@ import { connectDB } from "@/lib/dbConnect";
 import Schedule from "@/lib/Schedule";
 import Member from "@/lib/Member";
 import Trainer from "@/lib/Trainer";
+import Class from "@/lib/Class";
 import { NextResponse } from 'next/server';
 import { adminAuthMiddleware } from "@/lib/middleware";
 
@@ -61,12 +62,15 @@ export async function POST(request) {
       }, { status: 400 });
     }
 
-    // Validate class type
-    const validClassTypes = ['Boxing', 'Brazilian Jiu-Jitsu', 'Muay Thai', 'Wrestling', 'MMA', 'MMA Advanced', 'Conditioning', 'Kickboxing', 'Taekwondo', 'Judo'];
+    // Dynamically validate class type against available classes
+    const offeredClasses = await Class.find({ active: true });
+    const validClassTypes = offeredClasses.map(c => c.title);
+    
     if (!validClassTypes.includes(data.classType)) {
+      console.log(`Invalid class type: "${data.classType}". Valid types are: ${validClassTypes.join(', ')}`);
       return NextResponse.json({
         success: false,
-        message: "Invalid class type. Must be one of: " + validClassTypes.join(', ')
+        message: `Invalid class type: "${data.classType}". Must be one of the offered classes.`
       }, { status: 400 });
     }
 
@@ -108,6 +112,19 @@ export async function PUT(req) {
     // If dayOfWeek is provided, ensure it's lowercase
     if (updateData.dayOfWeek) {
       updateData.dayOfWeek = updateData.dayOfWeek.toLowerCase();
+    }
+
+    // If classType is provided, validate it against offered classes
+    if (updateData.classType) {
+      const offeredClasses = await Class.find({ active: true });
+      const validClassTypes = offeredClasses.map(c => c.title);
+      
+      if (!validClassTypes.includes(updateData.classType)) {
+        return NextResponse.json({
+          success: false,
+          message: `Invalid class type: "${updateData.classType}". Must be one of the offered classes.`
+        }, { status: 400 });
+      }
     }
 
     const schedule = await Schedule.findByIdAndUpdate(
