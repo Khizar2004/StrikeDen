@@ -18,13 +18,6 @@ export async function GET() {
         
         // If a recovery key was generated (not provided via env), log it securely
         if (initResult.recoveryKey) {
-          // We avoid logging the actual key to server logs
-          // This will only show in the server console during development
-          console.log('===============================================');
-          console.log('IMPORTANT: ADMIN RECOVERY KEY GENERATED');
-          console.log('[Key not shown in logs for security reasons]');
-          console.log('This key is only returned once. Store it securely.');
-          console.log('===============================================');
           
           // Return the key in the response for ONE-TIME setup
           return NextResponse.json({

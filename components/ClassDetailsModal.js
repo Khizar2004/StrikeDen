@@ -54,9 +54,6 @@ export default function ClassDetailsModal({ isOpen, onClose, classData }) {
     };
   }, [isOpen]);
   
-  // For debugging
-  console.log("Modal should be visible:", { isOpen, classTitle: classData?.title });
-  
   return (
     <AnimatePresence>
       {isOpen && classData && (

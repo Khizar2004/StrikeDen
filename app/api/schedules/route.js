@@ -31,7 +31,6 @@ export async function POST(request) {
     await connectDB();
     
     const data = await request.json();
-    console.log("API received data:", data);
 
     // Validate required fields
     const requiredFields = ['className', 'classType', 'dayOfWeek', 'startTimeString', 'endTimeString', 'trainer'];
@@ -67,7 +66,6 @@ export async function POST(request) {
     const validClassTypes = offeredClasses.map(c => c.title);
     
     if (!validClassTypes.includes(data.classType)) {
-      console.log(`Invalid class type: "${data.classType}". Valid types are: ${validClassTypes.join(', ')}`);
       return NextResponse.json({
         success: false,
         message: `Invalid class type: "${data.classType}". Must be one of the offered classes.`
@@ -82,7 +80,7 @@ export async function POST(request) {
       startTimeString: data.startTimeString,
       endTimeString: data.endTimeString,
       trainer: data.trainer,
-      capacity: data.capacity || 20, // Set default capacity if not provided
+      capacity: data.capacity // Schema default will be used if not provided
     });
 
     const schedule = await newSchedule.save();
@@ -150,46 +148,5 @@ export async function PUT(req) {
   }
 }
 
-// The DELETE endpoint has been moved to the [id]/route.js file
-// Keeping this here for backward compatibility, but it should use the more RESTful approach
-export async function DELETE(request) {
-  // Check admin authentication
-  const authResponse = await adminAuthMiddleware(request);
-  if (authResponse) return authResponse;
-  
-  try {
-    await connectDB();
-    
-    // Extract id from URL query parameters
-    const url = new URL(request.url);
-    const id = url.searchParams.get('id');
-    
-    if (!id) {
-      return NextResponse.json({ 
-        success: false, 
-        message: "Schedule ID is required" 
-      }, { status: 400 });
-    }
-    
-    const result = await Schedule.findByIdAndDelete(id);
-    
-    if (!result) {
-      return NextResponse.json({ 
-        success: false, 
-        message: "Schedule not found" 
-      }, { status: 404 });
-    }
-    
-    return NextResponse.json({ 
-      success: true, 
-      message: "Schedule deleted successfully" 
-    });
-    
-  } catch (error) {
-    console.error("Error deleting schedule:", error);
-    return NextResponse.json({ 
-      success: false, 
-      message: error.message || "Failed to delete schedule"
-    }, { status: 500 });
-  }
-}
+// NOTE: DELETE operations should use the RESTful endpoint at /api/schedules/[id] instead
+// This endpoint has been removed to encourage proper REST API usage

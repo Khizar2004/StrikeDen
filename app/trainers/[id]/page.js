@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { useTheme } from '@/components/ThemeProvider';
 import Link from 'next/link';
+import { deduplicateSchedules, formatDayName } from '@/lib/utils';
 
 export default function TrainerProfile() {
   const { id } = useParams();
@@ -29,7 +30,8 @@ export default function TrainerProfile() {
           const scheduleData = await scheduleResponse.json();
           
           if (scheduleData.success) {
-            setSchedules(scheduleData.data);
+            // Apply deduplication logic from utils
+            setSchedules(deduplicateSchedules(scheduleData.data));
           }
         } else {
           setError("Failed to load trainer information");
@@ -44,11 +46,6 @@ export default function TrainerProfile() {
     
     if (id) fetchData();
   }, [id]);
-
-  // Format day name
-  const formatDayName = (day) => {
-    return day.charAt(0).toUpperCase() + day.slice(1);
-  };
 
   // Animation variants
   const fadeIn = {

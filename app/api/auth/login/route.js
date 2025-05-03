@@ -6,6 +6,7 @@ import { connectDB } from '@/lib/dbConnect';
 import Admin from '@/lib/Admin';
 import { rateLimit } from '@/lib/redis';
 import { createCsrfToken } from '@/lib/csrf';
+import { randomBytes } from 'crypto';
 
 // Get JWT secret from environment variables
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -94,8 +95,7 @@ export async function POST(request) {
     const username = sanitizeInput(requestData.username);
     const password = requestData.password; // Don't sanitize password, but don't log it either
 
-    // Log attempt but avoid logging passwords or other sensitive info
-    console.log('Login attempt:', { username: username?.slice(0, 3) + '***' });
+    // Login attempt logging removed for security
 
     if (!username || !password) {
       return NextResponse.json(
@@ -108,6 +108,7 @@ export async function POST(request) {
     const admin = await Admin.findOne({ username });
     
     if (!admin) {
+      // Log kept for security monitoring
       console.log('Invalid login attempt - username not found');
       return NextResponse.json(
         { success: false, message: 'Invalid credentials' },
@@ -128,6 +129,7 @@ export async function POST(request) {
     }
     
     if (!isMatch) {
+      // Log kept for security monitoring
       console.log('Invalid login attempt - password mismatch');
       return NextResponse.json(
         { success: false, message: 'Invalid credentials' },
@@ -139,8 +141,8 @@ export async function POST(request) {
     admin.lastLogin = new Date();
     await admin.save();
 
-    // Generate a unique session ID
-    const sessionId = require('crypto').randomBytes(16).toString('hex');
+    // Generate a unique session ID using ES module import
+    const sessionId = randomBytes(16).toString('hex');
 
     // Create JWT token with short expiration
     const token = jwt.sign(
@@ -178,7 +180,7 @@ export async function POST(request) {
       // Continue without CSRF token
     }
 
-    console.log('User successfully logged in');
+    // Success log removed
     
     return NextResponse.json({
       success: true,

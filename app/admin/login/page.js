@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 export default function AdminLogin() {
@@ -275,7 +275,6 @@ export default function AdminLogin() {
           </form>
         )}
       </div>
-      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 }

@@ -1,20 +1,6 @@
 "use client";
 
-// Helper function to format time
-const formatTime = (timeString) => {
-  if (!timeString) return 'N/A';
-  
-  try {
-    // Format from 24-hour to 12-hour with AM/PM
-    const [hours, minutes] = timeString.split(':');
-    const hour = parseInt(hours, 10);
-    const ampm = hour >= 12 ? 'PM' : 'AM';
-    const hour12 = hour % 12 || 12;
-    return `${hour12}:${minutes} ${ampm}`;
-  } catch (e) {
-    return timeString;
-  }
-};
+import { formatTime } from "@/lib/utils";
 
 // Days of week for organizing schedules
 const DAYS_OF_WEEK = [

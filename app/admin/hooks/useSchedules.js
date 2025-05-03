@@ -66,7 +66,6 @@ export default function useSchedules() {
    */
   const addSchedule = async (scheduleData) => {
     try {
-      console.log("Sending schedule data:", JSON.stringify(scheduleData, null, 2));
       const response = await fetch('/api/schedules', {
         method: 'POST',
         headers: {
@@ -130,17 +129,12 @@ export default function useSchedules() {
       setIsDeleting(true);
       setError(null);
       
-      console.log(`Deleting schedule with ID: ${id}`);
-      
       // Use the RESTful route instead of query parameters
       const response = await fetch(`/api/schedules/${id}`, {
         method: "DELETE",
       });
 
-      console.log(`Delete response status: ${response.status} ${response.statusText}`);
-      
       const data = await safelyParseJSON(response);
-      console.log("Delete response data:", data);
       
       if (!response.ok) {
         throw new Error(data.message || `Error ${response.status}: ${response.statusText}`);

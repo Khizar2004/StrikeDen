@@ -59,7 +59,7 @@ export async function POST(request) {
       access_token: process.env.FB_ACCESS_TOKEN
     };
 
-    console.log('Sending to Facebook:', JSON.stringify(payload));
+    console.log(`Sending Facebook event: ${eventName}`);
 
     // Send to Facebook Conversions API
     const response = await fetch(
@@ -76,7 +76,7 @@ export async function POST(request) {
     const result = await response.json();
     
     if (!response.ok) {
-      console.error('Facebook API error:', JSON.stringify(result));
+      console.error('Facebook API error:', result.error?.message || 'Unknown error');
       return NextResponse.json({ success: false, error: result }, { status: 500 });
     }
 

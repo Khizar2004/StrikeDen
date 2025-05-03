@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { deduplicateSchedules, formatDayName } from '@/lib/utils';
 
 export default function TrainerScheduleCard({ trainerId }) {
   const [schedules, setSchedules] = useState([]);
@@ -15,7 +16,8 @@ export default function TrainerScheduleCard({ trainerId }) {
         const data = await response.json();
         
         if (data.success) {
-          setSchedules(data.data);
+          // Apply deduplication function from utils
+          setSchedules(deduplicateSchedules(data.data));
         } else {
           setError("Could not load schedule");
         }
@@ -31,11 +33,6 @@ export default function TrainerScheduleCard({ trainerId }) {
       fetchSchedules();
     }
   }, [trainerId]);
-
-  // Format day name
-  const formatDayName = (day) => {
-    return day.charAt(0).toUpperCase() + day.slice(1);
-  };
 
   if (isLoading) {
     return (

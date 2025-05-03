@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { deduplicateSchedules, formatDayName, formatTime } from '@/lib/utils';
 
 export default function Schedule({ initialClasses }) {
   // State to track which days are expanded
@@ -24,8 +25,10 @@ export default function Schedule({ initialClasses }) {
         const data = await response.json();
         
         if (data.success) {
-          // Organize classes by day of the week
-          const classesByDay = organizeByDay(data.schedules);
+          // First deduplicate the schedules
+          const deduplicatedSchedules = deduplicateSchedules(data.schedules);
+          // Then organize classes by day of the week
+          const classesByDay = organizeByDay(deduplicatedSchedules);
           setScheduleData(classesByDay);
         } else {
           setError('Failed to load schedule data');
@@ -53,20 +56,7 @@ export default function Schedule({ initialClasses }) {
       sunday: []
     };
 
-    // Sort and filter out any duplicates
-    const seen = new Set();
-
     classes.forEach(classItem => {
-      // Create a unique key for this class based on properties that should make it unique
-      const classKey = `${classItem.dayOfWeek}-${classItem.className}-${classItem.trainer}-${classItem.startTimeString}`;
-      
-      // Skip if we've already seen this exact class
-      if (seen.has(classKey)) {
-        return;
-      }
-      
-      seen.add(classKey);
-      
       // Format the class item for display
       const formattedClass = {
         ...classItem,
@@ -100,22 +90,12 @@ export default function Schedule({ initialClasses }) {
     return days;
   };
 
-  // Format time to 12-hour format
-  const formatTime = (date) => {
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  };
-
   // Toggle expanded state for a day
   const toggleDay = (day) => {
     setExpandedDays(prev => ({
       ...prev,
       [day]: !prev[day]
     }));
-  };
-
-  // Format day name for display
-  const formatDayName = (day) => {
-    return day.charAt(0).toUpperCase() + day.slice(1);
   };
 
   // Animation variants

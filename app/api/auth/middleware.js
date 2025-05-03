@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import jwt from 'jsonwebtoken';
-import { validateToken } from '@/lib/csrf';
+import { validateToken, extractCsrfToken } from '@/lib/csrf';
 
 // Get JWT secret from environment variables
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -61,22 +61,24 @@ export async function csrfProtection(request) {
         { status: 403 }
       );
     }
-    
-    // Extract CSRF token from headers or body
-    let requestToken;
-    
-    // Try to get token from headers
-    requestToken = request.headers.get('x-csrf-token');
-    
-    // If not in headers, try to get from body if it's JSON
-    if (!requestToken) {
-      try {
-        const body = await request.json().catch(() => ({}));
-        requestToken = body.csrfToken;
-      } catch (e) {
-        // Non-JSON body or parse error, continue
-      }
+
+    // Clone request to get the JSON body for extraction
+    const requestClone = request.clone();
+    let jsonBody;
+    try {
+      jsonBody = await requestClone.json().catch(() => ({}));
+    } catch (e) {
+      jsonBody = {};
     }
+
+    // Create a compatible request object for extractCsrfToken
+    const compatRequest = {
+      headers: request.headers,
+      body: jsonBody
+    };
+    
+    // Extract CSRF token using the shared utility function
+    const requestToken = extractCsrfToken(compatRequest);
     
     // Verify CSRF token with full sessionId
     const isValidToken = await validateToken(sessionId, requestToken);
@@ -105,8 +107,23 @@ export async function validateCsrfRequest(request, options = {}) {
   const { sessionId: providedSessionId } = options;
   
   if (providedSessionId) {
-    // Get token from request headers
-    const requestToken = request.headers.get('x-csrf-token');
+    // Clone request to get the JSON body for extraction
+    const requestClone = request.clone();
+    let jsonBody;
+    try {
+      jsonBody = await requestClone.json().catch(() => ({}));
+    } catch (e) {
+      jsonBody = {};
+    }
+
+    // Create a compatible request object for extractCsrfToken
+    const compatRequest = {
+      headers: request.headers,
+      body: jsonBody
+    };
+    
+    // Use the shared token extraction utility
+    const requestToken = extractCsrfToken(compatRequest);
     return await validateToken(providedSessionId, requestToken);
   }
   

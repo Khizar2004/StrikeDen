@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useTheme } from '../../components/ThemeProvider';
 import { FaSun, FaMoon } from 'react-icons/fa';
+import { formatTime } from "@/lib/utils";
 
 // Import UI components
 import AdminSidebar from "./components/layout/AdminSidebar";
@@ -24,12 +25,6 @@ import useConfirmModal from "./hooks/useConfirmModal";
 
 // Move Tooltip to a separate component file
 import Tooltip from "./components/ui/Tooltip";
-
-// Helper function to format time
-const formatTime = (timeString) => {
-  if (!timeString) return 'N/A';
-  return timeString;
-};
 
 /**
  * Admin Dashboard Page
