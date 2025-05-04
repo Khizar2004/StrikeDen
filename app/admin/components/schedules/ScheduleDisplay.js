@@ -87,11 +87,6 @@ export default function ScheduleDisplay({ schedules, onDelete, isLoading }) {
                             <h5 className="text-base font-medium text-gray-900 dark:text-white">
                               {schedule.className || schedule.classType}
                             </h5>
-                            {schedule.classType && (
-                              <span className="ml-2 px-2 py-0.5 text-xs rounded-full bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300">
-                                {schedule.classType}
-                              </span>
-                            )}
                           </div>
                           <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
                             <div className="flex items-center">
@@ -109,9 +104,6 @@ export default function ScheduleDisplay({ schedules, onDelete, isLoading }) {
                               <div className="text-sm text-gray-500 dark:text-gray-400">
                                 {schedule.trainer?.name || 'No trainer assigned'}
                               </div>
-                            </div>
-                            <div className="text-xs text-gray-400 dark:text-gray-500">
-                              {schedule.classType}
                             </div>
                           </div>
                         </div>
