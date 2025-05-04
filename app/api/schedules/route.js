@@ -33,7 +33,7 @@ export async function POST(request) {
     const data = await request.json();
 
     // Validate required fields
-    const requiredFields = ['className', 'classType', 'dayOfWeek', 'startTimeString', 'endTimeString', 'trainer'];
+    const requiredFields = ['className', 'classType', 'dayOfWeek', 'startTimeString', 'endTimeString'];
     const missingFields = requiredFields.filter(field => !data[field]);
     
     if (missingFields.length > 0) {
@@ -79,7 +79,7 @@ export async function POST(request) {
       dayOfWeek: data.dayOfWeek.toLowerCase(),
       startTimeString: data.startTimeString,
       endTimeString: data.endTimeString,
-      trainer: data.trainer,
+      trainer: data.trainer || null,
       capacity: data.capacity // Schema default will be used if not provided
     });
 
