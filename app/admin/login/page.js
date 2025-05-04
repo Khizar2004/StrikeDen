@@ -177,9 +177,6 @@ export default function AdminLogin() {
                 className="w-full p-2 border rounded-lg text-black dark:text-white dark:bg-gray-700 dark:border-gray-600"
                 required
               />
-              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                Enter the recovery key provided during setup
-              </p>
             </div>
             
             <div className="mb-4">
