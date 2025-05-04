@@ -131,12 +131,18 @@ export default function AdminPage() {
       // Check if trainer is already a populated object or just an ID
       if (schedule.trainer && typeof schedule.trainer === 'object' && schedule.trainer._id) {
         return schedule; // Already populated, no need to enrich
+      } else if (!schedule.trainer) {
+        // No trainer assigned (null or undefined)
+        return {
+          ...schedule,
+          trainer: { name: 'No Instructor' }
+        };
       } else {
         // Find the trainer in our local state
         const trainer = trainers.find(t => t._id === schedule.trainer);
         return {
           ...schedule,
-          trainer: trainer || { name: 'Unknown Trainer' } // Fallback if trainer not found
+          trainer: trainer || { name: 'No Instructor' } // Fallback if trainer not found
         };
       }
     });

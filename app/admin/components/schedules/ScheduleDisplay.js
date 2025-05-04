@@ -102,7 +102,7 @@ export default function ScheduleDisplay({ schedules, onDelete, isLoading }) {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                               </svg>
                               <div className="text-sm text-gray-500 dark:text-gray-400">
-                                {schedule.trainer?.name || 'No trainer assigned'}
+                                {schedule.trainer?.name || 'No Instructor'}
                               </div>
                             </div>
                           </div>

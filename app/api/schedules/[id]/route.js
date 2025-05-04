@@ -83,6 +83,11 @@ export async function PUT(request, { params }) {
       body.dayOfWeek = body.dayOfWeek.toLowerCase();
     }
     
+    // If trainer is an empty string, set it to null
+    if (body.trainer === '') {
+      body.trainer = null;
+    }
+    
     // If classType is provided, validate it against offered classes
     if (body.classType) {
       const offeredClasses = await Class.find({ active: true });

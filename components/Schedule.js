@@ -26,7 +26,7 @@ export default function Schedule({ initialClasses }) {
         
         if (data.success) {
           // First deduplicate the schedules
-          const deduplicatedSchedules = deduplicateSchedules(data.schedules);
+          const deduplicatedSchedules = deduplicateSchedules(data.data);
           // Then organize classes by day of the week
           const classesByDay = organizeByDay(deduplicatedSchedules);
           setScheduleData(classesByDay);
@@ -205,7 +205,7 @@ export default function Schedule({ initialClasses }) {
                               {classItem.className}
                             </h4>
                             <p className="text-sm text-gray-500 dark:text-gray-400">
-                              Instructor: {classItem.trainer?.name || "Unknown"}
+                              {classItem.trainer ? `Instructor: ${classItem.trainer.name}` : "No Instructor"}
                             </p>
                           </div>
                           <div className="mt-2 sm:mt-0 px-3 py-1 bg-primary-100 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400 rounded text-sm font-medium">

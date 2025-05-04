@@ -73,6 +73,11 @@ export default function ScheduleForm({ trainers, onSubmit, isLoading }) {
       capacity: 20, // Add default capacity without showing it in the UI
     };
     
+    // If trainer is empty string, set it to null
+    if (dataToSubmit.trainer === "") {
+      dataToSubmit.trainer = null;
+    }
+    
     onSubmit(dataToSubmit);
   };
   
@@ -166,17 +171,16 @@ export default function ScheduleForm({ trainers, onSubmit, isLoading }) {
         
         <div>
           <label htmlFor="trainer" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            Trainer <span className="text-red-500">*</span>
+            Trainer
           </label>
           <select
             id="trainer"
             name="trainer"
-            required
             value={scheduleData.trainer}
             onChange={handleChange}
             className="w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50 bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors duration-200"
           >
-            <option value="">Select a trainer</option>
+            <option value="">Select a trainer (optional)</option>
             {trainers.map(trainer => (
               <option key={trainer._id} value={trainer._id}>{trainer.name}</option>
             ))}

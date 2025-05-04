@@ -133,7 +133,7 @@ export default function useSchedules() {
       const response = await fetch(`/api/schedules/${id}`, {
         method: "DELETE",
       });
-
+      
       const data = await safelyParseJSON(response);
       
       if (!response.ok) {
