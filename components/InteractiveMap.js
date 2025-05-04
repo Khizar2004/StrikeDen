@@ -19,7 +19,7 @@ const DefaultIcon = L.icon({
 export default function InteractiveMap() {
   const { theme } = useTheme();
   
-  // StrikeDen location coordinates in Karachi
+  // StrikeDen location coordinates
   const position = [24.7948238, 67.0494707]; // Latitude, Longitude
   
   useEffect(() => {

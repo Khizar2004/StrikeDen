@@ -52,7 +52,6 @@ export default function EditClass() {
     const { name, value, type, checked } = e.target;
     
     if (name.includes('.')) {
-      // Handle nested objects (e.g., pricing.walkIn)
       const [parent, child] = name.split('.');
       setClassData({
         ...classData,

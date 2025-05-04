@@ -22,8 +22,7 @@ export async function DELETE(request, { params }) {
       );
     }
 
-    // Rest of the code...
   } catch (error) {
-    // Error handling...
+
   }
 } 

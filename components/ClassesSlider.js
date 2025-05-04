@@ -85,12 +85,11 @@ export default function ClassesSlider() {
       document.querySelectorAll('.class-card-link').forEach(link => {
         link.style.pointerEvents = 'auto';
       });
-    }, 50);  // Reduced from 100ms to 50ms for better responsiveness
+    }, 50);  
   };
 
   // Prevent default behavior on mousedown to avoid link drag issues
   const handleMouseDown = (e) => {
-    // Prevent default only if it's a primary button click (left click)
     if (e.button === 0) {
       e.preventDefault();
     }
@@ -98,7 +97,6 @@ export default function ClassesSlider() {
 
   // Handle class card click to show modal
   const handleClassClick = (e, classItem) => {
-    // Increase drag threshold and check drag time
     const dragTime = Date.now() - dragStartTime.current;
     if (!isDragging || (dragDistance.current < 20 && dragTime < 200)) {
       e.preventDefault();
