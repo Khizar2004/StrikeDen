@@ -7,13 +7,12 @@ export default function ToastContainerWrapper() {
   const { theme } = useNextTheme();
   const [mounted, setMounted] = useState(false);
 
-  // After mounting, we can safely show the UI that depends on the theme
   useEffect(() => {
     setMounted(true);
   }, []);
 
   if (!mounted) {
-    return null; // Return nothing on the server side
+    return null;
   }
 
   return (

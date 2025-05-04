@@ -36,8 +36,6 @@ export async function POST(request) {
     await connectDB();
     
     // Get client IP for rate limiting
-    // Note: In production, you should use a proper request IP detection
-    // that accounts for proxies and load balancers
     const ip = request.headers.get('x-forwarded-for') || 'unknown-ip';
     
     // Try Redis-based rate limiting, fall back to in-memory if it fails
@@ -93,9 +91,7 @@ export async function POST(request) {
     const requestData = await request.json();
     // Sanitize inputs to prevent injection attacks
     const username = sanitizeInput(requestData.username);
-    const password = requestData.password; // Don't sanitize password, but don't log it either
-
-    // Login attempt logging removed for security
+    const password = requestData.password; 
 
     if (!username || !password) {
       return NextResponse.json(
@@ -179,8 +175,6 @@ export async function POST(request) {
       console.warn('CSRF token generation failed:', err);
       // Continue without CSRF token
     }
-
-    // Success log removed
     
     return NextResponse.json({
       success: true,

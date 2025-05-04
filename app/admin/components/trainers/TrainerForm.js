@@ -14,7 +14,7 @@ const SPECIALIZATIONS = [
   'Strength Training',
   'Boxing Coach',
   'MMA Coach',
-  'Custom' // Added custom option
+  'Custom' 
 ];
 
 /**

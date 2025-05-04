@@ -8,21 +8,18 @@ import { Analytics } from '@vercel/analytics/react';
 import FacebookTracker from './FacebookTracker';
 import { metadata } from './metadata';
 
-// Using Inter font as a replacement for Geist, with similar modern sans-serif characteristics
 const inter = Inter({
-  variable: "--font-geist-sans", // Keeping the same variable name for compatibility
+  variable: "--font-geist-sans", 
   subsets: ["latin"],
   display: 'swap',
 });
 
-// Using Roboto Mono as a replacement for Geist Mono
 const robotoMono = Roboto_Mono({
-  variable: "--font-geist-mono", // Keeping the same variable name for compatibility
+  variable: "--font-geist-mono", 
   subsets: ["latin"],
   display: 'swap',
 });
 
-// Re-export the metadata
 export { metadata };
 
 export default function RootLayout({ children }) {

@@ -126,7 +126,6 @@ export default function AboutPage() {
         const data = await response.json();
         
         if (data.success) {
-          // Use data.data since that's how the trainers API returns the data
           setTeamMembers(data.data || []);
         } else {
           setError("Failed to load trainers");

@@ -2,9 +2,6 @@
 
 import { useState } from "react";
 
-/**
- * Tooltip component that shows additional information on hover
- */
 export default function Tooltip({ text, children }) {
   const [isVisible, setIsVisible] = useState(false);
   

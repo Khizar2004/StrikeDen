@@ -147,6 +147,3 @@ export async function PUT(req) {
     );
   }
 }
-
-// NOTE: DELETE operations should use the RESTful endpoint at /api/schedules/[id] instead
-// This endpoint has been removed to encourage proper REST API usage
