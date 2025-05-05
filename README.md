@@ -35,6 +35,8 @@ When I saw they were still managing everything via WhatsApp and Instagram DMs, I
 
 ---
 
+> **Note:** All screenshots below are shown in dark mode, but every screen can be switched to light mode for user preference.
+
 ## Frontend Screenshots
 
 <details>
