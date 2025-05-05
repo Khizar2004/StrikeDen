@@ -12,7 +12,7 @@
 
 ## The Story Behind This Project
 
-I discovered StrikeDen in 2022 as an MMA student looking to get in shape—and found a family of dedicated fighters and coaches. After training there for four months, I had to leave for university, but stayed connected as the gym grew from a humble flat to a state-of-the-art facility in early 2024.
+I discovered StrikeDen in 2023 as an MMA student looking to get in shape—and found a family of dedicated fighters and coaches. After training there for four months, I had to leave for university, but stayed connected as the gym grew from a humble flat to a state-of-the-art facility in early 2024.
 
 When I saw they were still managing everything via WhatsApp and Instagram DMs, I volunteered my web-dev skills to give back. What began as a simple scheduling helper evolved into this full-featured platform, keeping me—and the entire StrikeDen community—closely connected no matter where I am.
 
