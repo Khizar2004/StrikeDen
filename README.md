@@ -160,5 +160,5 @@ StrikeDen/
 ---
 
 <p align="center">
-  Built with ❤️ by Khizar
+  Built with ❤️ by <a href="https://github.com/Khizar2004">Khizar</a>
 </p>
