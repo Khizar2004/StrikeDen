@@ -183,7 +183,7 @@ export default function ContactPage() {
           <motion.div variants={fadeInUp} className="bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden">
             <div className="h-48 relative">
               <Image 
-                src="/images/gym-story.jpg"
+                src="/images/group1.jpg"
                 alt="Strike Den Location"
                 fill
                 className="object-cover"
@@ -219,7 +219,14 @@ export default function ContactPage() {
           
           {/* Contact Card */}
           <motion.div variants={fadeInUp} className="bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden">
-            <div className="h-48 bg-gradient-to-br from-red-600 to-red-800 relative">
+            <div className="h-48 relative">
+              <Image 
+                src="/images/group2.jpg"
+                alt="Strike Den Contact"
+                fill
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
               <div className="absolute bottom-0 left-0 w-full p-6">
                 <div className="bg-white dark:bg-gray-900 rounded-full w-14 h-14 flex items-center justify-center mb-3">
                   <FaPhone className="text-red-600 dark:text-red-500 text-2xl" />
@@ -251,7 +258,14 @@ export default function ContactPage() {
           
           {/* Hours Card */}
           <motion.div variants={fadeInUp} className="bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden">
-            <div className="h-48 bg-gradient-to-br from-gray-900 to-gray-800 relative">
+            <div className="h-48 relative">
+              <Image 
+                src="/images/gym-story.jpg"
+                alt="Strike Den Training Hours"
+                fill
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
               <div className="absolute bottom-0 left-0 w-full p-6">
                 <div className="bg-white dark:bg-gray-900 rounded-full w-14 h-14 flex items-center justify-center mb-3">
                   <MdAccessTime className="text-red-600 dark:text-red-500 text-2xl" />
