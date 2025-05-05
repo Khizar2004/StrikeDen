@@ -89,9 +89,19 @@ export default function ClassesList({ classes, onDelete, isLoading }) {
                         Walk-in: ₨{cls.pricing.walkIn.toLocaleString()}
                       </span>
                     )}
+                    {cls.pricing.weekly > 0 && (
+                      <span className="inline-block px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md">
+                        Weekly: ₨{cls.pricing.weekly.toLocaleString()}
+                      </span>
+                    )}
                     {cls.pricing.monthly > 0 && (
                       <span className="inline-block px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md">
                         Monthly: ₨{cls.pricing.monthly.toLocaleString()}
+                      </span>
+                    )}
+                    {cls.pricing.annual > 0 && (
+                      <span className="inline-block px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md">
+                        Annual: ₨{cls.pricing.annual.toLocaleString()}
                       </span>
                     )}
                   </div>

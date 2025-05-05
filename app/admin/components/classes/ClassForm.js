@@ -125,7 +125,7 @@ export default function ClassForm({ initialData = {}, onSubmit, isLoading }) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label htmlFor="pricing.walkIn" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Walk-in Price (PKR)
+                  Walk-in Price (PKR) <span className="text-gray-400">(optional)</span>
                 </label>
                 <div className="relative">
                   <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500 dark:text-gray-400">₨</span>
@@ -143,7 +143,7 @@ export default function ClassForm({ initialData = {}, onSubmit, isLoading }) {
               </div>
               <div>
                 <label htmlFor="pricing.weekly" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Weekly Price (PKR)
+                  Weekly Price (PKR) <span className="text-gray-400">(optional)</span>
                 </label>
                 <div className="relative">
                   <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500 dark:text-gray-400">₨</span>
@@ -161,7 +161,7 @@ export default function ClassForm({ initialData = {}, onSubmit, isLoading }) {
               </div>
               <div>
                 <label htmlFor="pricing.monthly" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Monthly Price (PKR)
+                  Monthly Price (PKR) <span className="text-gray-400">(optional)</span>
                 </label>
                 <div className="relative">
                   <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500 dark:text-gray-400">₨</span>
@@ -179,7 +179,7 @@ export default function ClassForm({ initialData = {}, onSubmit, isLoading }) {
               </div>
               <div>
                 <label htmlFor="pricing.annual" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Annual Price (PKR)
+                  Annual Price (PKR) <span className="text-gray-400">(optional)</span>
                 </label>
                 <div className="relative">
                   <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500 dark:text-gray-400">₨</span>

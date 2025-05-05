@@ -180,7 +180,7 @@ export default function EditClass() {
           {/* Pricing - Walk-in */}
           <div className="col-span-2 md:col-span-1">
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Walk-in Price
+              Walk-in Price <span className="text-gray-400">(optional)</span>
             </label>
             <div className="relative">
               <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">₨</span>
@@ -198,7 +198,7 @@ export default function EditClass() {
           {/* Pricing - Weekly */}
           <div className="col-span-2 md:col-span-1">
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Weekly Price
+              Weekly Price <span className="text-gray-400">(optional)</span>
             </label>
             <div className="relative">
               <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">₨</span>
@@ -216,7 +216,7 @@ export default function EditClass() {
           {/* Pricing - Monthly */}
           <div className="col-span-2 md:col-span-1">
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Monthly Price
+              Monthly Price <span className="text-gray-400">(optional)</span>
             </label>
             <div className="relative">
               <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">₨</span>
@@ -234,7 +234,7 @@ export default function EditClass() {
           {/* Pricing - Annual */}
           <div className="col-span-2 md:col-span-1">
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Annual Price
+              Annual Price <span className="text-gray-400">(optional)</span>
             </label>
             <div className="relative">
               <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">₨</span>
