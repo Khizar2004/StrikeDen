@@ -31,7 +31,7 @@ When I saw they were still managing everything via WhatsApp and Instagram DMs, I
 - **Admin Dashboard**  
   Intuitive control panel for staff to manage classes, trainers, and content.  
 - **Location Maps**  
-  Integrated map helps newcomers find us in DHA Phase 6, Karachi.  
+  Integrated map helps newcomers find us.  
 
 ---
 
