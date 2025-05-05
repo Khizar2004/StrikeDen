@@ -320,20 +320,16 @@ function PaymentTerms() {
         <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
           <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 flex items-center">
             <span className="bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 w-8 h-8 rounded-full flex items-center justify-center mr-3 text-sm font-bold">1</span>
-            Missed Sessions Adjustment
+            Missed Sessions Policy
           </h3>
           <ul className="space-y-2 text-gray-700 dark:text-gray-300">
             <li className="flex items-start">
               <span className="text-blue-500 mr-2 mt-1">-</span>
-              <span>If you have paid for a month but are unable to attend any sessions, you may request to have your dues adjusted to the following month.</span>
+              <span> If you miss a session, we are not responsible.</span>
             </li>
             <li className="flex items-start">
               <span className="text-blue-500 mr-2 mt-1">-</span>
-              <span>This adjustment is only valid if you notify the instructor within the same month you are missing sessions.</span>
-            </li>
-            <li className="flex items-start">
-              <span className="text-blue-500 mr-2 mt-1">-</span>
-              <span>Adjustments will not be entertained if the instructor is not informed on time.</span>
+              <span>Students cannot make up for missed classes under any circumstances.</span>
             </li>
           </ul>
         </div>
