@@ -12,7 +12,7 @@
 
 ## The Story Behind This Project
 
-I discovered StrikeDen in 2022 as an MMA student looking to get in shape—and found a family of dedicated fighters and coaches. After training there for four months, I had to leave for university, but stayed connected as the gym grew from a humble flat to a state-of-the-art facility in early 2024.
+I discovered StrikeDen in 2023 as an MMA student looking to get in shape—and found a family of dedicated fighters and coaches. After training there for four months, I had to leave for university, but stayed connected as the gym grew from a humble flat to a state-of-the-art facility by late 2024.
 
 When I saw they were still managing everything via WhatsApp and Instagram DMs, I volunteered my web-dev skills to give back. What began as a simple scheduling helper evolved into this full-featured platform, keeping me—and the entire StrikeDen community—closely connected no matter where I am.
 
@@ -31,7 +31,7 @@ When I saw they were still managing everything via WhatsApp and Instagram DMs, I
 - **Admin Dashboard**  
   Intuitive control panel for staff to manage classes, trainers, and content.  
 - **Location Maps**  
-  Integrated map helps newcomers find us in DHA Phase 6, Karachi.  
+  Integrated map helps newcomers find us.  
 
 ---
 
@@ -150,15 +150,20 @@ StrikeDen/
 
 ---
 
-## Lessons I Learned
-- Balancing scope with user needs in real-world projects
-- Building secure, scalable applications with MongoDB + Next.js
-- Designing mobile-friendly admin UIs for non-technical users
-- Using Vercel Blob for flexible media storage
-- Managing real-time UX with optimistic updates and background syncing
+## Connect
+
+Got thoughts, feedback, or just want to say hey?  
+Shoot me an email at [khizaraamir2004@gmail.com](mailto:khizaraamir2004@gmail.com) — I’d love to hear from you!
+
+---
+
+## License
+
+This project is licensed under the MIT License.
 
 ---
 
 <p align="center">
-  Built with ❤️ by Khizar Aamir
+  Built with ❤️ by <a href="https://github.com/Khizar2004">Khizar</a>
 </p>
+
