@@ -49,7 +49,13 @@ const TeamMemberCard = ({ member }) => {
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent"></div>
         <div className="absolute bottom-0 left-0 p-6 w-full">
             <h3 className="text-2xl font-bold text-white mb-1 group-hover:text-red-400 transition-colors duration-300">{member.name}</h3>
-          <p className="text-red-400 font-medium">{member.role || member.specialization}</p>
+          <p className="text-red-400 font-medium">
+            {Array.isArray(member.role) 
+              ? member.role.join(', ') 
+              : member.role || Array.isArray(member.specialization) 
+                ? member.specialization.join(', ') 
+                : member.specialization}
+          </p>
         </div>
           <div className="absolute inset-0 opacity-0 group-hover:opacity-10 bg-red-500 transition-opacity duration-300"></div>
       </div>
