@@ -54,10 +54,31 @@ export default function TrainersList({ trainers, onDelete, isLoading }) {
               
               <div className="flex-1 min-w-0">
                 <h4 className="text-lg font-medium text-gray-900 dark:text-white">{trainer.name}</h4>
-                <p className="text-sm text-red-600 dark:text-red-400">{trainer.specialization}</p>
+                
+                {/* Display specializations */}
+                <div className="mt-1">
+                  <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Specializations</p>
+                  <div className="flex flex-wrap gap-2">
+                    {Array.isArray(trainer.specialization) ? (
+                      trainer.specialization.map((spec, index) => (
+                        <span
+                          key={index}
+                          className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+                        >
+                          {spec}
+                        </span>
+                      ))
+                    ) : (
+                      // Handle legacy data with single specialization
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
+                        {trainer.specialization}
+                      </span>
+                    )}
+                  </div>
+                </div>
                 
                 {trainer.experience && (
-                  <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                  <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                     <span className="font-medium">Experience:</span> {trainer.experience}
                   </p>
                 )}

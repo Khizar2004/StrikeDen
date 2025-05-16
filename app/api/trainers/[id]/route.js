@@ -57,6 +57,29 @@ export async function PUT(request, context) {
         { status: 400 }
       );
     }
+    
+    // Validate required fields
+    if (!body.name) {
+      return Response.json(
+        { success: false, error: "Trainer name is required" },
+        { status: 400 }
+      );
+    }
+    
+    // Validate specialization(s)
+    if (!body.specialization || 
+        (Array.isArray(body.specialization) && body.specialization.length === 0) ||
+        (!Array.isArray(body.specialization) && !body.specialization.trim())) {
+      return Response.json(
+        { success: false, error: "At least one specialization is required" },
+        { status: 400 }
+      );
+    }
+    
+    // Convert single specialization to array for consistency
+    if (!Array.isArray(body.specialization)) {
+      body.specialization = [body.specialization];
+    }
 
     const updatedTrainer = await Trainer.findByIdAndUpdate(
       id,

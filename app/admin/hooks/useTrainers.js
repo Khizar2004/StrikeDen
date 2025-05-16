@@ -34,8 +34,11 @@ const validateTrainer = (trainerData) => {
     return 'Name is required';
   }
   
-  if (!trainerData.specialization || trainerData.specialization.trim() === '') {
-    return 'Specialization is required';
+  // Check if specialization is an array and has at least one value
+  if (!trainerData.specialization || 
+      (Array.isArray(trainerData.specialization) && trainerData.specialization.length === 0) ||
+      (!Array.isArray(trainerData.specialization) && trainerData.specialization.trim() === '')) {
+    return 'At least one specialization is required';
   }
   
   if (trainerData.image && !isValidImageUrl(trainerData.image)) {

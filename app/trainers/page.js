@@ -139,7 +139,9 @@ export default function TrainersPage() {
                         {trainer.name}
                       </h3>
                       <p className={`text-sm ${selectedTrainer?._id === trainer._id ? 'text-white/90' : 'text-gray-500 dark:text-gray-400'}`}>
-                        {trainer.specialization}
+                        {Array.isArray(trainer.specialization) 
+                          ? trainer.specialization.join(', ') 
+                          : trainer.specialization}
                       </p>
                     </div>
                   </motion.div>
@@ -169,7 +171,19 @@ export default function TrainersPage() {
                       <div className="flex flex-col md:flex-row md:items-end md:justify-between">
                         <div>
                           <h2 className="text-4xl font-black text-white mb-2">{selectedTrainer.name}</h2>
-                          <p className="text-red-400 text-xl font-bold">{selectedTrainer.specialization}</p>
+                          <div className="flex flex-wrap gap-2 mb-3">
+                            {Array.isArray(selectedTrainer.specialization) 
+                              ? selectedTrainer.specialization.map((spec, index) => (
+                                  <span 
+                                    key={index} 
+                                    className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+                                  >
+                                    {spec}
+                                  </span>
+                                ))
+                              : <p className="text-red-400 text-xl font-bold">{selectedTrainer.specialization}</p>
+                            }
+                          </div>
                         </div>
                         <div className="flex mt-4 md:mt-0 space-x-3">
                           {selectedTrainer.socialMedia?.instagram && (

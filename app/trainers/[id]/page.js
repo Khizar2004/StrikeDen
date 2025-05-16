@@ -118,7 +118,19 @@ export default function TrainerProfile() {
               </div>
               <div className="text-center md:text-left">
                 <h1 className="text-4xl font-bold">{trainer.name}</h1>
-                <p className="text-xl text-white/80 mt-2">{trainer.specialization}</p>
+                <div className="flex flex-wrap gap-2 mt-2 justify-center md:justify-start">
+                  {Array.isArray(trainer.specialization) 
+                    ? trainer.specialization.map((spec, index) => (
+                        <span 
+                          key={index} 
+                          className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-white/20 text-white"
+                        >
+                          {spec}
+                        </span>
+                      ))
+                    : <p className="text-xl text-white/80">{trainer.specialization}</p>
+                  }
+                </div>
                 <div className="mt-4 text-white/70">
                   <p>Experience: {trainer.experience} years</p>
                 </div>

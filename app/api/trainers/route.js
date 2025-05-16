@@ -25,8 +25,20 @@ export async function POST(request) {
     const body = await request.json();
     
     // Validate required fields
-    if (!body.name || !body.specialization) {
-      return createErrorResponse("Missing required fields", 400);
+    if (!body.name) {
+      return createErrorResponse("Trainer name is required", 400);
+    }
+    
+    // Validate specialization(s)
+    if (!body.specialization || 
+        (Array.isArray(body.specialization) && body.specialization.length === 0) ||
+        (!Array.isArray(body.specialization) && !body.specialization.trim())) {
+      return createErrorResponse("At least one specialization is required", 400);
+    }
+    
+    // Convert single specialization to array for consistency
+    if (!Array.isArray(body.specialization)) {
+      body.specialization = [body.specialization];
     }
 
     // Validate image URL if present
