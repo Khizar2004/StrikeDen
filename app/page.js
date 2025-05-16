@@ -379,7 +379,11 @@ export default function Home() {
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent opacity-100"></div>
                       <div className="absolute bottom-0 left-0 p-6 w-full">
                         <h3 className="text-2xl font-bold text-white">{trainer.name}</h3>
-                        <p className="text-red-400 font-medium mb-2">{trainer.specialization}</p>
+                        <p className="text-red-400 font-medium mb-2">
+                          {Array.isArray(trainer.specialization) 
+                            ? trainer.specialization.join(', ') 
+                            : trainer.specialization}
+                        </p>
                         <p className="text-gray-300 text-sm line-clamp-2">
                           {trainer.bio || `Expert instructor with years of experience.`}
                         </p>
