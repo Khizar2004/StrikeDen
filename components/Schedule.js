@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { deduplicateSchedules, formatDayName, formatTime } from '@/lib/utils';
 
@@ -9,43 +9,10 @@ export default function Schedule({ initialClasses }) {
   const [scheduleData, setScheduleData] = useState({});
   const [isLoading, setIsLoading] = useState(!initialClasses);
   const [error, setError] = useState(null);
+  const [retryCount, setRetryCount] = useState(0);
 
-  // Fetch schedule data if not provided as props
-  useEffect(() => {
-    if (initialClasses) {
-      // If data is provided as props, use it directly
-      setScheduleData(organizeByDay(initialClasses));
-      return;
-    }
-
-    const fetchSchedule = async () => {
-      try {
-        setIsLoading(true);
-        const response = await fetch('/api/schedules');
-        const data = await response.json();
-        
-        if (data.success) {
-          // First deduplicate the schedules
-          const deduplicatedSchedules = deduplicateSchedules(data.data);
-          // Then organize classes by day of the week
-          const classesByDay = organizeByDay(deduplicatedSchedules);
-          setScheduleData(classesByDay);
-        } else {
-          setError('Failed to load schedule data');
-        }
-      } catch (err) {
-        console.error('Error fetching schedule:', err);
-        setError('Unable to load schedule. Please try again later.');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
-    fetchSchedule();
-  }, [initialClasses]);
-
-  // Function to organize classes by day of week
-  const organizeByDay = (classes) => {
+  // Function to organize classes by day of week with better error handling
+  const organizeByDay = useCallback((classes) => {
     const days = {
       monday: [],
       tuesday: [],
@@ -56,47 +23,158 @@ export default function Schedule({ initialClasses }) {
       sunday: []
     };
 
-    classes.forEach(classItem => {
-      // Format the class item for display
-      const formattedClass = {
-        ...classItem,
-        // Use the stored time strings directly
-        startTime: classItem.startTimeString,
-        endTime: classItem.endTimeString
-      };
-      
-      // Add to the appropriate day
-      if (days[classItem.dayOfWeek]) {
-        days[classItem.dayOfWeek].push(formattedClass);
+    if (!Array.isArray(classes)) {
+      console.warn('organizeByDay received non-array:', classes);
+      return days;
+    }
+
+    classes.forEach((classItem, index) => {
+      try {
+        // Validate required fields
+        if (!classItem || typeof classItem !== 'object') {
+          console.warn(`Invalid class item at index ${index}:`, classItem);
+          return;
+        }
+
+        if (!classItem.dayOfWeek || !classItem.startTimeString || !classItem.endTimeString) {
+          console.warn(`Missing required fields in class item at index ${index}:`, classItem);
+          return;
+        }
+
+        // Format the class item for display
+        const formattedClass = {
+          ...classItem,
+          id: classItem._id || classItem.id || `class-${index}`,
+          startTime: classItem.startTimeString,
+          endTime: classItem.endTimeString
+        };
+        
+        // Add to the appropriate day
+        if (days[classItem.dayOfWeek]) {
+          days[classItem.dayOfWeek].push(formattedClass);
+        } else {
+          console.warn(`Invalid day of week: ${classItem.dayOfWeek} for class:`, classItem);
+        }
+      } catch (err) {
+        console.error(`Error processing class item at index ${index}:`, err, classItem);
       }
     });
 
     // Sort classes within each day by start time
     Object.keys(days).forEach(day => {
       days[day].sort((a, b) => {
-        const timeA = a.startTime.split(':').map(Number);
-        const timeB = b.startTime.split(':').map(Number);
-        
-        // Compare hours first
-        if (timeA[0] !== timeB[0]) {
-          return timeA[0] - timeB[0];
+        try {
+          const timeA = a.startTime.split(':').map(Number);
+          const timeB = b.startTime.split(':').map(Number);
+          
+          // Compare hours first
+          if (timeA[0] !== timeB[0]) {
+            return timeA[0] - timeB[0];
+          }
+          
+          // If hours are equal, compare minutes
+          return timeA[1] - timeB[1];
+        } catch (err) {
+          console.error('Error sorting times:', err, a, b);
+          return 0;
         }
-        
-        // If hours are equal, compare minutes
-        return timeA[1] - timeB[1];
       });
     });
 
     return days;
-  };
+  }, []);
+
+  // Fetch schedule data if not provided as props with retry logic
+  const fetchSchedule = useCallback(async (attempt = 0) => {
+    const maxRetries = 2;
+    
+    try {
+      setIsLoading(true);
+      setError(null);
+      
+      const response = await fetch('/api/schedules', {
+        headers: {
+          'Cache-Control': 'no-cache',
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: Failed to fetch schedule`);
+      }
+      
+      const data = await response.json();
+      
+      if (data.success && Array.isArray(data.data)) {
+        // First deduplicate the schedules
+        const deduplicatedSchedules = deduplicateSchedules(data.data);
+        // Then organize classes by day of the week
+        const classesByDay = organizeByDay(deduplicatedSchedules);
+        setScheduleData(classesByDay);
+        setRetryCount(0);
+      } else {
+        throw new Error(data.message || 'Invalid schedule data format');
+      }
+    } catch (err) {
+      console.error(`Schedule fetch attempt ${attempt + 1} failed:`, err);
+      
+      if (attempt < maxRetries) {
+        const delay = Math.pow(2, attempt) * 300; 
+        setTimeout(() => {
+          setRetryCount(attempt + 1);
+          fetchSchedule(attempt + 1);
+        }, delay);
+      } else {
+        setError('Unable to load schedule. Please try again later.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  }, [organizeByDay]);
+
+  // Process initial classes or fetch from API
+  useEffect(() => {
+    if (initialClasses) {
+      try {
+        // If data is provided as props, use it directly
+        if (Array.isArray(initialClasses) && initialClasses.length >= 0) {
+          const deduplicatedSchedules = deduplicateSchedules(initialClasses);
+          const classesByDay = organizeByDay(deduplicatedSchedules);
+          setScheduleData(classesByDay);
+          setIsLoading(false);
+          setError(null);
+        } else {
+          console.warn('Invalid initialClasses provided:', initialClasses);
+          setError('Invalid schedule data provided');
+          setIsLoading(false);
+        }
+      } catch (err) {
+        console.error('Error processing initialClasses:', err);
+        setError('Error processing schedule data');
+        setIsLoading(false);
+      }
+    } else {
+      fetchSchedule();
+    }
+
+    // Cleanup function to prevent stale state
+    return () => {
+      setError(null);
+      setRetryCount(0);
+    };
+  }, [initialClasses, organizeByDay, fetchSchedule]);
 
   // Toggle expanded state for a day
-  const toggleDay = (day) => {
+  const toggleDay = useCallback((day) => {
     setExpandedDays(prev => ({
       ...prev,
       [day]: !prev[day]
     }));
-  };
+  }, []);
+
+  // Check if there are any classes scheduled using useMemo for performance
+  const hasClasses = useMemo(() => {
+    return Object.values(scheduleData).some(day => Array.isArray(day) && day.length > 0);
+  }, [scheduleData]);
 
   // Animation variants
   const contentVariants = {
@@ -118,6 +196,20 @@ export default function Schedule({ initialClasses }) {
     }
   };
 
+  // Manual retry function
+  const handleRetry = useCallback(() => {
+    setRetryCount(0);
+    if (initialClasses) {
+      // Re-process initial classes
+      const deduplicatedSchedules = deduplicateSchedules(initialClasses);
+      const classesByDay = organizeByDay(deduplicatedSchedules);
+      setScheduleData(classesByDay);
+      setError(null);
+    } else {
+      fetchSchedule();
+    }
+  }, [initialClasses, organizeByDay, fetchSchedule]);
+
   // If there's an error loading the schedule
   if (error) {
     return (
@@ -125,11 +217,16 @@ export default function Schedule({ initialClasses }) {
         <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/30 rounded-lg p-6">
           <p className="text-red-600 dark:text-red-400">{error}</p>
           <button 
-            onClick={() => window.location.reload()} 
+            onClick={handleRetry}
             className="mt-4 px-4 py-2 bg-primary-500 text-white rounded-md hover:bg-primary-600 transition-colors"
           >
             Try Again
           </button>
+          {retryCount > 0 && (
+            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+              Retry attempt: {retryCount}
+            </p>
+          )}
         </div>
       </div>
     );
@@ -139,15 +236,19 @@ export default function Schedule({ initialClasses }) {
   if (isLoading) {
     return (
       <div className="max-w-4xl mx-auto py-12 px-4 text-center">
-        <div className="flex justify-center items-center py-16">
+        <div className="flex flex-col justify-center items-center py-16">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>
+          {retryCount > 0 && (
+            <p className="mt-4 text-gray-500 dark:text-gray-400">
+              Loading... (Attempt {retryCount + 1})
+            </p>
+          )}
         </div>
       </div>
     );
   }
 
   // If no classes are scheduled
-  const hasClasses = Object.values(scheduleData).some(day => day.length > 0);
   if (!hasClasses) {
     return (
       <div className="max-w-4xl mx-auto py-12 px-4 text-center">
@@ -202,7 +303,7 @@ export default function Schedule({ initialClasses }) {
                         >
                           <div>
                             <h4 className="font-medium text-lg text-gray-900 dark:text-white">
-                              {classItem.className}
+                              {classItem.className || 'Untitled Class'}
                             </h4>
                             <p className="text-sm text-gray-500 dark:text-gray-400">
                               {classItem.trainer ? `Instructor: ${classItem.trainer.name}` : "No Instructor"}

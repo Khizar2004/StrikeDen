@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useTheme } from "../../components/ThemeProvider";
@@ -32,6 +32,8 @@ export default function ClassesPage() {
   const [scheduleData, setScheduleData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [retryCount, setRetryCount] = useState(0);
+  const [dataVersion, setDataVersion] = useState(0);
 
   // Track class signup interest
   const handleClassSignupClick = (className) => {
@@ -51,30 +53,61 @@ export default function ClassesPage() {
     });
   }, []);
 
-  // Fetch schedule data
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      
-      try {
-        const response = await fetch('/api/schedules');
-        const data = await response.json();
-        
-        if (data.success) {
-          setScheduleData(data.data || []);
-        } else {
-          setError("Failed to load class data. Please try again later.");
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setError("Failed to load class data. Please try again later.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  // Fetch schedule data with retry logic
+  const fetchScheduleData = useCallback(async (attempt = 0) => {
+    const maxRetries = 3;
     
-    fetchData();
+    try {
+      setIsLoading(true);
+      setError(null);
+      
+      const response = await fetch('/api/schedules', {
+        headers: {
+          'Cache-Control': 'no-cache',
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: Failed to fetch schedule`);
+      }
+      
+      const data = await response.json();
+      
+      if (data.success && Array.isArray(data.data)) {
+        setScheduleData(data.data);
+        setDataVersion(prev => prev + 1); // Force re-render
+        setRetryCount(0);
+      } else {
+        throw new Error(data.message || "Invalid schedule data format");
+      }
+    } catch (error) {
+      console.error(`Schedule fetch attempt ${attempt + 1} failed:`, error);
+      
+      if (attempt < maxRetries) {
+        // Exponential backoff: 500ms, 1s, 2s
+        const delay = Math.pow(2, attempt) * 500;
+        setTimeout(() => {
+          setRetryCount(attempt + 1);
+          fetchScheduleData(attempt + 1);
+        }, delay);
+      } else {
+        setError("Failed to load class schedule. Please try refreshing the page.");
+      }
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
+
+  // Initial data fetch
+  useEffect(() => {
+    fetchScheduleData();
+  }, [fetchScheduleData]);
+
+  // Manual retry function
+  const handleRetry = useCallback(() => {
+    setRetryCount(0);
+    fetchScheduleData();
+  }, [fetchScheduleData]);
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
@@ -137,25 +170,34 @@ export default function ClassesPage() {
           </motion.h2>
           
           {isLoading ? (
-            <div className="flex justify-center items-center min-h-[400px]">
+            <div className="flex flex-col justify-center items-center min-h-[400px]">
               <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-red-500"></div>
+              {retryCount > 0 && (
+                <p className="mt-4 text-gray-500 dark:text-gray-400">
+                  Retrying... (Attempt {retryCount + 1}/3)
+                </p>
+              )}
             </div>
           ) : error ? (
             <div className="text-center text-red-500 p-8 bg-red-50 dark:bg-red-900/20 rounded-xl">
               <p className="text-xl">{error}</p>
               <button 
                 className="mt-6 px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-                onClick={() => window.location.reload()}
+                onClick={handleRetry}
               >
                 Try Again
               </button>
             </div>
           ) : (
             <motion.div
+              key={`schedule-${dataVersion}`}
               variants={fadeInUp}
               className="bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden"
             >
-              <Schedule initialClasses={scheduleData} />
+              <Schedule 
+                initialClasses={scheduleData} 
+                key={`schedule-component-${dataVersion}`}
+              />
             </motion.div>
           )}
         </motion.div>
