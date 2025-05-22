@@ -5,6 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { ThemeProvider } from "../components/ThemeProvider";
 import ToastContainerWrapper from "../components/ToastContainerWrapper";
 import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import FacebookTracker from './FacebookTracker';
 import { metadata } from './metadata';
 
@@ -214,6 +215,7 @@ export default function RootLayout({ children }) {
           </footer>
           <ToastContainerWrapper />
           <Analytics />
+          <SpeedInsights />
         </ThemeProvider>
       </body>
     </html>
