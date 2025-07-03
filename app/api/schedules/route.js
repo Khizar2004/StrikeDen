@@ -1,6 +1,5 @@
 import { connectDB } from "@/lib/dbConnect";
 import Schedule from "@/lib/Schedule";
-import Member from "@/lib/Member";
 import Trainer from "@/lib/Trainer";
 import Class from "@/lib/Class";
 import { NextResponse } from 'next/server';
