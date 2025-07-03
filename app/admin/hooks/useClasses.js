@@ -85,7 +85,7 @@ export default function useClasses() {
   const deleteClass = async (id) => {
     try {
       setIsDeleting(true);
-      const response = await fetch(`/api/classes?id=${id}`, {
+      const response = await fetch(`/api/classes/${id}`, {
         method: "DELETE",
       });
 

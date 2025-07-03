@@ -4,6 +4,7 @@ import { ObjectId } from 'mongodb';
 import { adminAuthMiddleware } from "@/lib/middleware";
 import Class from '@/lib/Class';
 
+// fetch all classes
 export async function GET() {
   try {
     await connectDB();
@@ -24,6 +25,7 @@ export async function GET() {
   }
 }
 
+// create a new class
 export async function POST(request) {
   // Check admin authorization first
   const authResponse = await adminAuthMiddleware(request);
@@ -68,91 +70,4 @@ export async function POST(request) {
   }
 }
 
-export async function PUT(request) {
-  // Check admin authorization first
-  const authResponse = await adminAuthMiddleware(request);
-  if (authResponse) return authResponse;
-  
-  try {
-    await connectDB();
-    
-    const { _id, title, description, shortDescription, image, pricing } = await request.json();
-    
-    if (!_id) {
-      return NextResponse.json({ 
-        success: false, 
-        message: "Class ID is required" 
-      }, { status: 400 });
-    }
-    
-    const updateData = {
-      $set: {}
-    };
-    
-    if (title !== undefined) updateData.$set.title = title;
-    if (description !== undefined) updateData.$set.description = description;
-    if (shortDescription !== undefined) updateData.$set.shortDescription = shortDescription;
-    if (image !== undefined) updateData.$set.image = image;
-    if (pricing !== undefined) updateData.$set.pricing = pricing;
-    
-    const updatedClass = await Class.findByIdAndUpdate(_id, updateData, { new: true });
-    
-    if (!updatedClass) {
-      return NextResponse.json({ 
-        success: false, 
-        message: "Class not found" 
-      }, { status: 404 });
-    }
-    
-    return NextResponse.json({ 
-      success: true, 
-      message: "Class updated successfully",
-      class: updatedClass
-    });
-  } catch (error) {
-    console.error("Error updating class:", error);
-    return NextResponse.json({ 
-      success: false, 
-      message: error.message || "Error updating class" 
-    }, { status: 500 });
-  }
-}
-
-export async function DELETE(request) {
-  // Check admin authentication
-  const authResponse = await adminAuthMiddleware(request);
-  if (authResponse) return authResponse;
-  
-  try {
-    await connectDB();
-    const { searchParams } = new URL(request.url);
-    const id = searchParams.get('id');
-    
-    if (!id) {
-      return NextResponse.json(
-        { success: false, error: 'Class ID is required' },
-        { status: 400 }
-      );
-    }
-    
-    const result = await Class.findByIdAndDelete(id);
-    
-    if (!result) {
-      return NextResponse.json(
-        { success: false, error: 'Class not found' },
-        { status: 404 }
-      );
-    }
-    
-    return NextResponse.json({
-      success: true,
-      message: 'Class deleted successfully'
-    });
-  } catch (error) {
-    console.error('Error deleting class:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to delete class' },
-      { status: 500 }
-    );
-  }
-} 
+ 
