@@ -64,7 +64,6 @@ export function middleware(request: NextRequest) {
           headers.set('Access-Control-Allow-Origin', origin || '');
         }
       } else {
-        // In development, be more permissive
         headers.set('Access-Control-Allow-Origin', '*');
       }
       
@@ -83,7 +82,6 @@ export function middleware(request: NextRequest) {
   return response;
 }
 
-// Only run middleware on the following paths (customize as needed)
 export const config = {
   matcher: [
     // Apply to all API routes
