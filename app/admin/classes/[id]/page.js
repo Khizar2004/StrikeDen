@@ -1,4 +1,4 @@
-'use client';
+'use client';  //this file is used to edit a specific class
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { toast } from 'react-toastify';

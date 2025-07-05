@@ -1,4 +1,4 @@
-"use client";
+"use client";    //Form to add new classes (left side)
 
 import { useState } from "react";
 import ImageUpload from "../common/ImageUpload";
