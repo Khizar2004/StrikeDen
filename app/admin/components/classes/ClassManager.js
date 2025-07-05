@@ -1,4 +1,4 @@
-"use client";
+"use client";    //Combines both components side-by-side
 
 import ClassForm from "./ClassForm";
 import ClassesList from "./ClassesList";

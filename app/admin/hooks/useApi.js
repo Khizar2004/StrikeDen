@@ -6,8 +6,8 @@ import { useState, useCallback } from 'react';
  * Custom hook for making API requests with proper CSRF protection
  */
 export default function useApi() {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);  //initializes state variable with initial value of false
+  const [error, setError] = useState(null);  //initializes state variable with initial value of null
 
   /**
    * Make an API request with CSRF token included

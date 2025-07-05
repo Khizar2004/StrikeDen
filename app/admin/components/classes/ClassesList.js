@@ -1,4 +1,4 @@
-"use client";
+"use client";   //Displays all existing classes (right side)
 
 /**
  * Component to display a list of offered classes

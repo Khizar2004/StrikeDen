@@ -1,4 +1,4 @@
-'use client';
+'use client';  //this file exists so that if someone goes to /classes, it will redirect to /admin?tab=offeredClasses
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 

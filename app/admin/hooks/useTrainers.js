@@ -1,6 +1,7 @@
 "use client";
 
-import useCrudResource from "./useCrudResource";
+import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 
 /**
  * Helper to validate an image URL
@@ -53,30 +54,163 @@ const validateTrainer = (trainerData) => {
  * @returns {Object} Trainers state and functions
  */
 export default function useTrainers() {
-  const {
-    items: trainers,
-    isLoading,
-    isSubmitting,
-    isDeleting,
-    error,
-    fetchItems: fetchTrainers,
-    addItem: addTrainer,
-    deleteItem: deleteTrainer,
-    updateItem: updateTrainer
-  } = useCrudResource('trainers', {
-    resourceName: 'Trainer',
-    validateItem: validateTrainer
-  });
+  const [trainers, setTrainers] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  // Fetch trainers on mount
+  useEffect(() => {
+    fetchTrainers();
+  }, []);
+
+  /**
+   * Fetch all trainers from the API
+   */
+  const fetchTrainers = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch("/api/trainers");
+      const data = await response.json();
+      
+      if (data.success) {
+        setTrainers(data.data || []);
+      } else {
+        setTrainers([]);
+        toast.error(data.error || "Failed to fetch trainers");
+      }
+    } catch (error) {
+      console.error("Error fetching trainers:", error);
+      toast.error("Failed to fetch trainers");
+      setTrainers([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  /**
+   * Add a new trainer
+   * @param {Object} trainerData - The trainer data to add
+   */
+  const addTrainer = async (trainerData) => {
+    try {
+      setIsSubmitting(true);
+      
+      // Validate data before sending
+      const validationResult = validateTrainer(trainerData);
+      if (validationResult !== true) {
+        toast.error(validationResult);
+        return false;
+      }
+      
+      const response = await fetch("/api/trainers", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(trainerData),
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        toast.success("Trainer added successfully");
+        await fetchTrainers(); // Refresh the trainers list
+        return true;
+      } else {
+        toast.error(data.error || "Failed to add trainer");
+        return false;
+      }
+    } catch (error) {
+      console.error("Error adding trainer:", error);
+      toast.error("Failed to add trainer");
+      return false;
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  /**
+   * Delete a trainer by ID
+   * @param {string} id - The trainer ID to delete
+   */
+  const deleteTrainer = async (id) => {
+    try {
+      setIsDeleting(true);
+      const response = await fetch(`/api/trainers/${id}`, {
+        method: "DELETE",
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        toast.success("Trainer deleted successfully");
+        await fetchTrainers(); // Refresh the trainers list
+        return true;
+      } else {
+        toast.error(data.error || "Failed to delete trainer");
+        return false;
+      }
+    } catch (error) {
+      console.error("Error deleting trainer:", error);
+      toast.error("Failed to delete trainer");
+      return false;
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  /**
+   * Update an existing trainer
+   * @param {string} id - The ID of the trainer to update
+   * @param {Object} trainerData - The updated trainer data
+   */
+  const updateTrainer = async (id, trainerData) => {
+    try {
+      setIsSubmitting(true);
+      
+      // Validate data before sending
+      const validationResult = validateTrainer(trainerData);
+      if (validationResult !== true) {
+        toast.error(validationResult);
+        return false;
+      }
+      
+      const response = await fetch(`/api/trainers/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(trainerData),
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        toast.success("Trainer updated successfully");
+        await fetchTrainers(); // Refresh the trainers list
+        return true;
+      } else {
+        toast.error(data.error || "Failed to update trainer");
+        return false;
+      }
+    } catch (error) {
+      console.error("Error updating trainer:", error);
+      toast.error("Failed to update trainer");
+      return false;
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return {
     trainers,
     isLoading,
     isSubmitting,
     isDeleting,
-    error,
     fetchTrainers,
     addTrainer,
     deleteTrainer,
-    updateTrainer
+    updateTrainer,
   };
 } 
