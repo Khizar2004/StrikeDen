@@ -1,4 +1,4 @@
-"use client";  //this file is used by ClassManager and ClassesList components to display and manage gym classes
+"use client";  
 
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
