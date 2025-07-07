@@ -4,15 +4,15 @@ import '@testing-library/jest-dom';
 // Global fetch mock for API testing
 global.fetch = jest.fn();
 
-// Mock react-hot-toast
-jest.mock('react-hot-toast', () => ({
+// Mock react-toastify
+jest.mock('react-toastify', () => ({
   toast: {
     success: jest.fn(),
     error: jest.fn(),
     loading: jest.fn(),
     dismiss: jest.fn()
   },
-  Toaster: () => null
+  ToastContainer: () => null
 }));
 
 // Mock Next.js router
