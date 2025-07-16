@@ -103,11 +103,74 @@ export default function SettingsManager() {
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Preview
             </label>
-            <div className="bg-gradient-to-r from-red-600 to-red-700 text-white p-4 rounded-lg">
-              <div className="text-lg font-semibold text-center whitespace-pre-line">
-                {globalPromotion}
+            <div className="relative overflow-hidden">
+              {/* Main banner container */}
+              <div className="relative bg-gradient-to-r from-white via-gray-50 to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-black rounded-lg border border-red-600/30 dark:border-red-600/20 backdrop-blur-sm">
+                {/* Subtle animated background */}
+                <div className="absolute inset-0 overflow-hidden rounded-lg">
+                  {/* Subtle dot pattern */}
+                  <div className="absolute inset-0 opacity-30 dark:opacity-20">
+                    <div className="absolute inset-0" style={{
+                      backgroundImage: `radial-gradient(circle at 2px 2px, rgba(220,38,38,0.15) 1px, transparent 0)`,
+                      backgroundSize: '24px 24px'
+                    }} />
+                  </div>
+                  
+                  {/* Flowing gradient waves */}
+                  <div 
+                    className="absolute inset-0 opacity-60 animate-pulse"
+                    style={{
+                      background: "linear-gradient(90deg, transparent 0%, rgba(220,38,38,0.08) 20%, rgba(220,38,38,0.12) 40%, rgba(220,38,38,0.08) 60%, transparent 80%)",
+                      backgroundSize: "300% 100%",
+                      animation: "gradient-flow 15s linear infinite"
+                    }}
+                  />
+                  
+                  {/* Subtle radial highlights */}
+                  <div className="absolute top-4 right-8 w-32 h-32 bg-red-500/5 rounded-full blur-xl animate-pulse" />
+                  <div className="absolute bottom-4 left-8 w-24 h-24 bg-red-500/8 rounded-full blur-lg animate-pulse" style={{ animationDelay: '2s' }} />
+                  
+                  {/* Red accent line */}
+                  <div className="absolute top-0 left-0 h-[2px] w-full bg-gradient-to-r from-transparent via-red-600 to-transparent" />
+                </div>
+                
+                {/* Content */}
+                <div className="relative z-10 px-8 py-6 text-center">
+                  <div className="flex items-center justify-center space-x-3 mb-3">
+                    {/* Status indicator */}
+                    <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                    <span className="text-red-600 dark:text-red-400 text-sm font-medium uppercase tracking-wider">
+                      Ongoing Promotions
+                    </span>
+                  </div>
+                  
+                  <div className="text-gray-900 dark:text-white text-xl md:text-2xl lg:text-3xl font-black whitespace-pre-line leading-tight tracking-tight">
+                    <span style={{
+                      textShadow: "0 0 8px rgba(220,38,38,0.3)",
+                      animation: "glow 3s ease-in-out infinite"
+                    }}>
+                      {globalPromotion}
+                    </span>
+                  </div>
+                </div>
+                
+                {/* Bottom accent line */}
+                <div className="absolute bottom-0 left-0 h-[1px] w-full bg-gradient-to-r from-transparent via-red-600/50 to-transparent" />
               </div>
             </div>
+            
+            {/* Add the keyframes styles */}
+            <style jsx>{`
+              @keyframes gradient-flow {
+                0% { background-position: 0% 50%; }
+                100% { background-position: 100% 50%; }
+              }
+              
+              @keyframes glow {
+                0%, 100% { text-shadow: 0 0 0px rgba(220,38,38,0); }
+                50% { text-shadow: 0 0 8px rgba(220,38,38,0.3); }
+              }
+            `}</style>
           </div>
         )}
 
