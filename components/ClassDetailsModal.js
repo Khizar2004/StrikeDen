@@ -109,20 +109,48 @@ export default function ClassDetailsModal({ isOpen, onClose, classData }) {
             
             {/* Content */}
             <div className="p-8">
-              {/* Pricing info with link to pricing page */}
-              <div className="mb-8 bg-red-50 dark:bg-red-900/20 p-6 rounded-lg border border-red-200 dark:border-red-800">
-                <h3 className="text-xl font-semibold text-red-700 dark:text-red-300 mb-2">
-                  Interested in Pricing?
-                </h3>
-                <p className="text-red-600 dark:text-red-400 mb-4">
-                  Check out our comprehensive pricing page for all class rates and current promotions.
-                </p>
-                <Link href="/pricing" className="inline-block">
-                  <button className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors duration-200">
-                    View All Pricing
-                  </button>
-                </Link>
-              </div>
+              {/* Pricing section */}
+              {classData.pricing && (
+                <div className="mb-8">
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-5 inline-block pb-2 border-b-2 border-red-600">
+                    Pricing Options
+                  </h3>
+                  <div className="grid grid-cols-2 gap-4 mt-5">
+                    {classData.pricing.walkIn > 0 && (
+                      <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                        <p className="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Walk-in</p>
+                        <p className="text-3xl font-bold text-gray-900 dark:text-white">
+                          <span className="text-lg">₨</span>{classData.pricing.walkIn.toLocaleString()}
+                        </p>
+                      </div>
+                    )}
+                    {classData.pricing.weekly > 0 && (
+                      <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                        <p className="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Weekly</p>
+                        <p className="text-3xl font-bold text-gray-900 dark:text-white">
+                          <span className="text-lg">₨</span>{classData.pricing.weekly.toLocaleString()}
+                        </p>
+                      </div>
+                    )}
+                    {classData.pricing.monthly > 0 && (
+                      <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                        <p className="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Monthly</p>
+                        <p className="text-3xl font-bold text-gray-900 dark:text-white">
+                          <span className="text-lg">₨</span>{classData.pricing.monthly.toLocaleString()}
+                        </p>
+                      </div>
+                    )}
+                    {classData.pricing.annual > 0 && (
+                      <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                        <p className="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Annual</p>
+                        <p className="text-3xl font-bold text-gray-900 dark:text-white">
+                          <span className="text-lg">₨</span>{classData.pricing.annual.toLocaleString()}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
               
               {/* Description */}
               {classData.description && (

@@ -175,18 +175,6 @@ export default function Navbar() {
               />
             )}
           </Link>
-          <Link href="/pricing" className={linkClasses('/pricing')}>
-            <span className="relative z-10">Pricing</span>
-            {activeLink === '/pricing' && (
-              <motion.span 
-                className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-500 rounded-full"
-                layoutId="navHighlight"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.2 }}
-              />
-            )}
-          </Link>
           <Link href="/trainers" className={linkClasses('/trainers')}>
             <span className="relative z-10">Trainers</span>
             {activeLink === '/trainers' && (
@@ -304,17 +292,6 @@ export default function Navbar() {
                   }`}
                 >
                   Classes
-                </Link>
-              </motion.div>
-              <motion.div variants={mobileItemVariants}>
-                <Link href="/pricing" 
-                  className={`block px-3 py-2.5 rounded-md transition-colors duration-200 ${
-                    activeLink === '/pricing' 
-                      ? 'text-primary-500 bg-primary-50/50 dark:bg-primary-900/10' 
-                      : 'text-gray-700 dark:text-white/90 hover:bg-gray-50/50 dark:hover:bg-secondary-700/30'
-                  }`}
-                >
-                  Pricing
                 </Link>
               </motion.div>
               <motion.div variants={mobileItemVariants}>

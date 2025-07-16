@@ -15,7 +15,6 @@ import ConfirmModal from "./components/ui/ConfirmModal";
 import TrainersManager from "./components/trainers/TrainersManager";
 import ScheduleManager from "./components/schedules/ScheduleManager";
 import ClassManager from "./components/classes/ClassManager";
-import SettingsManager from "./components/SettingsManager";
 
 // Import custom hooks
 import useAuth from "./hooks/useAuth";
@@ -41,7 +40,7 @@ export default function AdminPage() {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
       const tabParam = params.get('tab');
-      if (tabParam && ['trainers', 'schedules', 'offeredClasses', 'settings'].includes(tabParam)) {
+      if (tabParam && ['trainers', 'schedules', 'offeredClasses'].includes(tabParam)) {
         setActiveTab(tabParam);
       }
     }
@@ -227,10 +226,6 @@ export default function AdminPage() {
                   handleAddClass={addClass}
                   confirmDeleteClass={confirmDeleteClass}
                 />
-              )}
-
-              {activeTab === "settings" && (
-                <SettingsManager />
               )}
             </div>
           </main>
