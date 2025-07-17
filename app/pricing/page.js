@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 import PricingCard from "../../components/PricingCard";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { trackFacebookEvent, FB_EVENTS } from '../../lib/facebook';
@@ -98,21 +99,40 @@ export default function PricingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12">
-      <div className="container mx-auto px-4">
-        {/* Hero Section */}
+    <main className="bg-gray-100 dark:bg-gray-900 min-h-screen">
+      {/* Hero Section */}
+      <div className="relative w-full h-[40vh] bg-gray-900">
+        <Image
+          src="/images/cta-background.jpg"
+          alt="Class Pricing"
+          fill
+          className="object-cover opacity-60"
+          priority
+        />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <motion.h1
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-6xl md:text-7xl font-black text-white tracking-tighter"
+          >
+            CLASS PRICING
+          </motion.h1>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 py-16">
+        {/* Introduction */}
         <motion.div
           initial="hidden"
-          animate="visible"
-          variants={fadeInUp}
-          className="text-center mb-12"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={staggerContainer}
+          className="mb-20 text-center max-w-3xl mx-auto"
         >
-          <h1 className="text-5xl md:text-6xl font-black text-gray-900 dark:text-white mb-6">
-            Class <span className="text-red-600">Pricing</span>
-          </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+          <motion.p variants={fadeInUp} className="text-xl text-gray-600 dark:text-gray-300">
             Choose the perfect plan for your fitness journey. All classes are designed to challenge and inspire you.
-          </p>
+          </motion.p>
         </motion.div>
 
         {/* Sleek Global Promotion Banner */}
@@ -290,6 +310,6 @@ export default function PricingPage() {
           </div>
         </motion.div>
       </div>
-    </div>
+    </main>
   );
 }
