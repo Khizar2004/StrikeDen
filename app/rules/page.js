@@ -273,11 +273,11 @@ function GymRules() {
           <ul className="space-y-2 text-gray-700 dark:text-gray-300">
             <li className="flex items-start">
               <span className="text-red-500 mr-2 mt-1">○</span>
-              <span>If you miss a class without informing us, we will reach out.</span>
+              <span>If you don't show up or reach out to us for 1 week, you're out.</span>
             </li>
             <li className="flex items-start">
               <span className="text-red-500 mr-2 mt-1">○</span>
-              <span>If we receive no response for 7 consecutive days, your slot will be forfeited and you will be removed from the program.</span>
+              <span>Your slot will be forfeited and you will be removed from the program.</span>
             </li>
           </ul>
         </div>
