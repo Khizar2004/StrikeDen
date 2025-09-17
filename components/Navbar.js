@@ -188,7 +188,7 @@ export default function Navbar() {
             )}
           </Link>
           <Link href="/trainers" className={linkClasses('/trainers')}>
-            <span className="relative z-10">Trainers</span>
+            <span className="relative z-10">Our Team</span>
             {activeLink === '/trainers' && (
               <motion.span 
                 className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-500 rounded-full"
@@ -325,7 +325,7 @@ export default function Navbar() {
                       : 'text-gray-700 dark:text-white/90 hover:bg-gray-50/50 dark:hover:bg-secondary-700/30'
                   }`}
                 >
-                  Trainers
+                  Our Team
                 </Link>
               </motion.div>
               <motion.div variants={mobileItemVariants}>

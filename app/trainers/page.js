@@ -64,7 +64,7 @@ export default function TrainersPage() {
       <div className="relative w-full h-[40vh] bg-gray-900">
         <Image
           src="/images/cta-background.jpg"
-          alt="Our Trainers"
+          alt="Our Team"
           fill
           className="object-cover opacity-60"
           priority
@@ -76,7 +76,7 @@ export default function TrainersPage() {
             transition={{ duration: 0.8 }}
             className="text-6xl md:text-7xl font-black text-white tracking-tighter"
           >
-            OUR TRAINERS
+            OUR TEAM
           </motion.h1>
         </div>
       </div>
@@ -278,7 +278,7 @@ export default function TrainersPage() {
           <div className="relative z-10">
             <h2 className="text-3xl font-bold text-white mb-4 text-center">Ready to Train With Our Experts?</h2>
             <p className="text-white/90 mb-8 max-w-2xl mx-auto text-center">
-              Whether you're a beginner or experienced practitioner, our trainers are ready to help you achieve your goals.
+              Whether you're a beginner or experienced practitioner, our team is ready to help you achieve your goals.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link 

@@ -139,7 +139,7 @@ export default function RootLayout({ children }) {
                     <li>
                       <a href="/trainers" className="text-gray-600 hover:text-red-600 dark:text-gray-300 dark:hover:text-red-500 transition-colors duration-200 flex items-center group">
                         <span className="mr-2 text-red-500 transition-transform duration-200 group-hover:translate-x-1">›</span>
-                        Trainers
+                        Our Team
                       </a>
                     </li>
                     <li>
