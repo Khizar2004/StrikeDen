@@ -318,6 +318,24 @@ function GymRules() {
           </ul>
         </div>
         
+        {/* Rule 12 */}
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 flex items-center">
+            <span className="bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 w-8 h-8 rounded-full flex items-center justify-center mr-3 text-sm font-bold">12</span>
+            Single Student Class Policy
+          </h3>
+          <ul className="space-y-2 text-gray-700 dark:text-gray-300">
+            <li className="flex items-start">
+              <span className="text-red-500 mr-2 mt-1">○</span>
+              <span>If only one person is registered for a class, the instructor will wait a maximum of 15 minutes.</span>
+            </li>
+            <li className="flex items-start">
+              <span className="text-red-500 mr-2 mt-1">○</span>
+              <span>If the student does not inform the instructor that they will be late or does not show up, the class will be cancelled.</span>
+            </li>
+          </ul>
+        </div>
+        
         {/* Conclusion */}
         <div className="mt-8 p-6 bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/30 rounded-lg text-gray-800 dark:text-gray-200">
           <p>
