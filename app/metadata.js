@@ -9,5 +9,13 @@ export const metadata = {
     siteName: "Strike Den MMA",
     locale: "en_US",
     type: "website",
+    images: [
+      {
+        url: "https://strikeden.com/images/logo.png",
+        width: 1200,
+        height: 630,
+        alt: "Strike Den MMA Logo",
+      },
+    ],
   },
 }; 
