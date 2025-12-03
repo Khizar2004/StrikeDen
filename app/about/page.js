@@ -158,7 +158,7 @@ export default function AboutPage() {
       image: "/images/malaika.jpeg"
     },
     {
-      quote: "StrikeDen has top-notch facilities and incredible coaches. It's an amazing place for beginners—lots of styles, all grounded in strong fundamentals.",
+      quote: "StrikeDen has top-notch facilities and incredible coaches. It's an amazing place for beginners; there are lots of styles, all grounded in strong fundamentals.",
       name: "Minhaal Haider, Team Fight Fortress",
       image: "/images/minhaal.jpeg"
     },
@@ -208,7 +208,7 @@ export default function AboutPage() {
               </h2>
               <div className="space-y-6 text-gray-600 dark:text-gray-300 text-lg">
                 <p>
-                  Strike Den started in the smallest of spaces — a humble flat run by Sikander Ali Shah. It began with just 11 students, but not everyone believed in it. The place wasn't big, posh, or even pretty to look at.
+                  Strike Den started in the smallest of spaces, a humble flat run by Sikander Ali Shah. It began with just 11 students, but not everyone believed in it. The place wasn't big, posh, or even pretty to look at.
                 </p>
                 <p>
                   It was raw, unrefined, and built on the belief that hard work trumps all. Despite the early doubts, Sikander and his students stayed committed.
@@ -265,7 +265,7 @@ export default function AboutPage() {
                 variants={fadeInUp} 
                 className="text-2xl text-white text-center italic font-light mb-16 max-w-4xl mx-auto"
               >
-                "To bring world-class combat sports training to Karachi, fostering a supportive and disciplined environment where individuals build confidence, resilience, and strength—both in and out of the ring."
+                "To bring world-class combat sports training to Karachi, fostering a supportive and disciplined environment where individuals build confidence, resilience, and strength, both in and out of the ring."
               </motion.p>
               <motion.div 
                 variants={staggerContainer}
