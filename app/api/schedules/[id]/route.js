@@ -6,10 +6,11 @@ import { adminAuthMiddleware } from "@/lib/middleware";
 import { createSuccessResponse, createErrorResponse, handleApiError } from "@/lib/apiResponse";
 
 // GET single schedule by ID
-export async function GET(request, { params }) {
+export async function GET(request, context) {
   try {
     await connectDB();
-    // Extract id after awaiting params
+    // Extract id after awaiting params - Next.js 15+
+    const params = await context.params;
     const id = params.id;
     
     const schedule = await Schedule.findById(id).populate('trainer');
@@ -32,14 +33,15 @@ export async function GET(request, { params }) {
 }
 
 // DELETE schedule by ID
-export async function DELETE(request, { params }) {
+export async function DELETE(request, context) {
   // Check admin authentication
   const authResponse = await adminAuthMiddleware(request);
   if (authResponse) return authResponse;
   
   try {
     await connectDB();
-    // Extract id after awaiting params
+    // Extract id after awaiting params - Next.js 15+
+    const params = await context.params;
     const id = params.id;
     
     const schedule = await Schedule.findByIdAndDelete(id);
@@ -66,14 +68,15 @@ export async function DELETE(request, { params }) {
 }
 
 // UPDATE schedule by ID
-export async function PUT(request, { params }) {
+export async function PUT(request, context) {
   // Check admin authentication
   const authResponse = await adminAuthMiddleware(request);
   if (authResponse) return authResponse;
   
   try {
     await connectDB();
-    // Extract id after awaiting params
+    // Extract id after awaiting params - Next.js 15+
+    const params = await context.params;
     const id = params.id;
     
     const body = await request.json();

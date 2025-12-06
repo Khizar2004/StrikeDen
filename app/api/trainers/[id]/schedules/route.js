@@ -10,8 +10,9 @@ export const dynamic = "force-dynamic";
 export async function GET(request, context) {
   try {
     await connectDB();
-    // Get the ID directly from context
-    const id = context.params.id;
+    // Get the ID directly from context - await params in Next.js 15+
+    const params = await context.params;
+    const id = params.id;
     
     if (!ObjectId.isValid(id)) {
       return NextResponse.json(

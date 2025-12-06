@@ -10,8 +10,9 @@ export async function GET(request, context) {
   try {
     await connectDB();
     
-    // Get the ID safely
-    const { id } = context.params || {};
+    // Get the ID safely - await params in Next.js 15+
+    const params = await context.params;
+    const { id } = params || {};
     
     if (!ObjectId.isValid(id)) {
       return Response.json(
@@ -48,8 +49,9 @@ export async function PUT(request, context) {
     await connectDB();
     const body = await request.json();
     
-    // Get the ID safely
-    const { id } = context.params || {};
+    // Get the ID safely - await params in Next.js 15+
+    const params = await context.params;
+    const { id } = params || {};
 
     if (!ObjectId.isValid(id)) {
       return Response.json(
@@ -117,8 +119,9 @@ export async function DELETE(request, context) {
   try {
     await connectDB();
     
-    // Get the ID safely
-    const { id } = context.params || {};
+    // Get the ID safely - await params in Next.js 15+
+    const params = await context.params;
+    const { id } = params || {};
 
     if (!ObjectId.isValid(id)) {
       return Response.json(
