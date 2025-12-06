@@ -184,14 +184,14 @@ export default function RootLayout({ children }) {
                       <div className="font-medium text-gray-900 dark:text-white mb-1">Weekdays (Mon-Fri)</div>
                       <div className="flex items-center">
                         <span className="w-3 h-3 bg-red-500 rounded-full mr-2"></span>
-                        <span className="text-red-500 dark:text-red-400">8am - 10am, 4pm - 10pm</span>
+                        <span className="text-red-500 dark:text-red-400">6:30am - 10am, 4pm - 10:30pm</span>
                       </div>
                     </li>
                     <li className="text-gray-600 dark:text-gray-300">
                       <div className="font-medium text-gray-900 dark:text-white mb-1">Saturday</div>
                       <div className="flex items-center">
                         <span className="w-3 h-3 bg-red-500 rounded-full mr-2"></span>
-                        <span className="text-red-500 dark:text-red-400">8am - 10am, 4pm - 10pm</span>
+                        <span className="text-red-500 dark:text-red-400">6:30am - 10am, 4pm - 10:30pm</span>
                       </div>
                     </li>
                     <li className="text-gray-600 dark:text-gray-300">
