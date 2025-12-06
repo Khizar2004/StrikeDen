@@ -3,14 +3,21 @@ import { connectDB } from '@/lib/dbConnect';
 import { ObjectId } from 'mongodb';
 import { adminAuthMiddleware } from "@/lib/middleware";
 import Class from '@/lib/Class';
+import { unstable_cache as cache, revalidateTag } from 'next/cache';
+
+const getClassesCached = cache(
+  async () => {
+    await connectDB();
+    return Class.find({}).lean();
+  },
+  ['classes:list'],
+  { tags: ['classes'] }
+);
 
 // fetch all classes
 export async function GET() {
   try {
-    await connectDB();
-    
-    // Get all classes from the database
-    const classes = await Class.find({}).lean();
+    const classes = await getClassesCached();
     
     return NextResponse.json({
       success: true,
@@ -56,6 +63,9 @@ export async function POST(request) {
       }
     });
     
+    // Bust cached class lists
+    revalidateTag('classes');
+
     return NextResponse.json({ 
       success: true, 
       message: "Class created successfully",

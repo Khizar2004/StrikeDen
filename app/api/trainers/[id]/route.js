@@ -2,14 +2,22 @@ import { connectDB } from "@/lib/dbConnect";
 import Trainer from "@/lib/Trainer";
 import Schedule from "@/lib/Schedule";
 import { ObjectId } from "mongodb";
+import { unstable_cache as cache, revalidateTag } from "next/cache";
 
 export const dynamic = "force-dynamic";
+
+const getTrainerCached = cache(
+  async (id) => {
+    await connectDB();
+    return Trainer.findById(id).lean();
+  },
+  ["trainer:by-id"],
+  { tags: ["trainers"] }
+);
 
 // GET SINGLE TRAINER
 export async function GET(request, context) {
   try {
-    await connectDB();
-    
     // Get the ID safely
     const { id } = context.params || {};
     
@@ -20,7 +28,7 @@ export async function GET(request, context) {
       );
     }
 
-    const trainer = await Trainer.findById(id);
+    const trainer = await getTrainerCached(id);
     if (!trainer) {
       return Response.json(
         { success: false, error: "Trainer not found" },
@@ -94,6 +102,8 @@ export async function PUT(request, context) {
       );
     }
 
+    revalidateTag("trainers");
+
     return Response.json({ success: true, data: updatedTrainer });
     
   } catch (error) {
@@ -143,6 +153,10 @@ export async function DELETE(request, context) {
 
     // Now delete the trainer
     await Trainer.findByIdAndDelete(id);
+
+    revalidateTag("trainers");
+    // Schedules for this trainer were removed, so clear schedule caches too
+    revalidateTag("schedules");
 
     return Response.json({
       success: true,

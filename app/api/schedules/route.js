@@ -4,15 +4,24 @@ import Trainer from "@/lib/Trainer";
 import Class from "@/lib/Class";
 import { NextResponse } from 'next/server';
 import { adminAuthMiddleware } from "@/lib/middleware";
+import { unstable_cache as cache, revalidateTag } from 'next/cache';
+
+const getSchedulesCached = cache(
+  async () => {
+    await connectDB();
+    return Schedule.find({})
+      .populate('trainer')
+      .sort({ dayOfWeek: 1, startTimeString: 1 })
+      .lean();
+  },
+  ['schedules:list'],
+  { tags: ['schedules', 'trainers'] }
+);
 
 // GET schedules (public endpoint)
 export async function GET() {
   try {
-    await connectDB();
-    // Get all schedules sorted by day of week and start time, and populate the trainer field
-    const schedules = await Schedule.find({})
-      .populate('trainer')
-      .sort({ dayOfWeek: 1, startTimeString: 1 });
+    const schedules = await getSchedulesCached();
     return NextResponse.json({ success: true, data: schedules });
   } catch (error) {
     console.error("Error fetching schedules:", error);
@@ -84,6 +93,10 @@ export async function POST(request) {
 
     const schedule = await newSchedule.save();
 
+    // Bust cached schedules (and trainer schedule cache)
+    revalidateTag('schedules');
+    revalidateTag('trainers');
+
     return NextResponse.json({ success: true, data: schedule });
   } catch (error) {
     console.error("Error creating schedule:", error);
@@ -94,5 +107,3 @@ export async function POST(request) {
     }, { status: 500 });
   }
 }
-
-

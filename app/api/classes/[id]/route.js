@@ -3,15 +3,22 @@ import { connectDB } from '@/lib/dbConnect';
 import { ObjectId } from 'mongodb';
 import { adminAuthMiddleware } from "@/lib/middleware";
 import Class from '@/lib/Class';
+import { unstable_cache as cache, revalidateTag } from 'next/cache';
 
 export const dynamic = "force-dynamic";
+
+const getClassByIdCached = cache(
+  async (id) => {
+    await connectDB();
+    return Class.findById(id).lean();
+  },
+  ['class-by-id'],
+  { tags: ['classes'] }
+);
 
 // GET - Fetch a single class by ID
 export async function GET(request, context) {
   try {
-    await connectDB();
-    
-    // Get ID from context params
     const id = context.params.id;
     
     if (!ObjectId.isValid(id)) {
@@ -21,7 +28,7 @@ export async function GET(request, context) {
       );
     }
 
-    const classData = await Class.findById(id);
+    const classData = await getClassByIdCached(id);
     
     if (!classData) {
       return NextResponse.json(
@@ -79,6 +86,9 @@ export async function PUT(request, context) {
       body,
       { new: true, runValidators: true }
     );
+
+    // Bust cached class lists
+    revalidateTag('classes');
     
     return NextResponse.json({
       success: true,
@@ -123,6 +133,9 @@ export async function DELETE(request, context) {
       );
     }
     
+    // Bust cached class lists
+    revalidateTag('classes');
+
     return NextResponse.json({
       success: true,
       message: "Class deleted successfully"

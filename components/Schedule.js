@@ -197,7 +197,11 @@ export default function Schedule({ initialClasses }) {
                     <div className="pb-6 space-y-4">
                       {scheduleData[day].map((classItem) => (
                         <div 
-                          key={classItem.id}
+                          key={
+                            classItem._id ||
+                            classItem.id ||
+                            `${classItem.dayOfWeek}-${classItem.className}-${classItem.startTimeString}-${classItem.trainer?._id || classItem.trainer || 'none'}`
+                          }
                           className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center bg-gray-50 dark:bg-secondary-800/50 p-4 rounded-md"
                         >
                           <div>

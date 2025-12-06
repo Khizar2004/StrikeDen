@@ -4,15 +4,23 @@ import Class from "@/lib/Class";
 import { NextResponse } from 'next/server';
 import { adminAuthMiddleware } from "@/lib/middleware";
 import { createSuccessResponse, createErrorResponse, handleApiError } from "@/lib/apiResponse";
+import { unstable_cache as cache, revalidateTag } from 'next/cache';
+
+const getScheduleByIdCached = cache(
+  async (id) => {
+    await connectDB();
+    return Schedule.findById(id).populate('trainer').lean();
+  },
+  ['schedule:by-id'],
+  { tags: ['schedules', 'trainers'] }
+);
 
 // GET single schedule by ID
 export async function GET(request, { params }) {
   try {
-    await connectDB();
-    // Extract id after awaiting params
     const id = params.id;
     
-    const schedule = await Schedule.findById(id).populate('trainer');
+    const schedule = await getScheduleByIdCached(id);
     
     if (!schedule) {
       return NextResponse.json(
@@ -51,6 +59,10 @@ export async function DELETE(request, { params }) {
       );
     }
     
+    // Bust cached schedules (and trainer schedule cache)
+    revalidateTag('schedules');
+    revalidateTag('trainers');
+
     return NextResponse.json({ 
       success: true, 
       message: "Schedule deleted successfully" 
@@ -105,7 +117,7 @@ export async function PUT(request, { params }) {
       id,
       body,
       { new: true, runValidators: true }
-    ).populate('trainer');
+    ).populate('trainer').lean();
     
     if (!schedule) {
       return NextResponse.json(
@@ -114,6 +126,10 @@ export async function PUT(request, { params }) {
       );
     }
     
+    // Bust cached schedules (and trainer schedule cache)
+    revalidateTag('schedules');
+    revalidateTag('trainers');
+
     return NextResponse.json({ success: true, data: schedule });
     
   } catch (error) {

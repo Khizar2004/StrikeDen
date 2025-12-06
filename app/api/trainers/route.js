@@ -2,12 +2,21 @@ import { connectDB } from "@/lib/dbConnect";
 import Trainer from "@/lib/Trainer";
 import { adminAuthMiddleware } from "@/lib/middleware";
 import { createSuccessResponse, createErrorResponse, handleApiError } from "@/lib/apiResponse";
+import { unstable_cache as cache, revalidateTag } from "next/cache";
+
+const getTrainersCached = cache(
+  async () => {
+    await connectDB();
+    return Trainer.find({}).sort({ createdAt: -1 }).lean();
+  },
+  ["trainers:list"],
+  { tags: ["trainers"] }
+);
 
 // GET ALL TRAINERS (public endpoint)
 export async function GET() {
   try {
-    await connectDB();
-    const trainers = await Trainer.find({}).sort({ createdAt: -1 });
+    const trainers = await getTrainersCached();
     return createSuccessResponse(trainers);
   } catch (error) {
     return handleApiError(error);
@@ -52,6 +61,7 @@ export async function POST(request) {
     }
 
     const newTrainer = await Trainer.create(body);
+    revalidateTag("trainers");
     return createSuccessResponse(newTrainer, 201);
     
   } catch (error) {

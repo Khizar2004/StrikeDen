@@ -3,14 +3,31 @@ import Schedule from "@/lib/Schedule";
 import Trainer from "@/lib/Trainer";
 import { ObjectId } from "mongodb";
 import { NextResponse } from "next/server";
+import { unstable_cache as cache } from "next/cache";
 
 export const dynamic = "force-dynamic";
+
+const getTrainerSchedulesCached = cache(
+  async (id) => {
+    await connectDB();
+    const trainer = await Trainer.findById(id).lean();
+    if (!trainer) {
+      return { trainer: null, schedules: null };
+    }
+
+    const schedules = await Schedule.find({ trainer: id })
+      .sort({ dayOfWeek: 1, startTimeString: 1 })
+      .lean();
+
+    return { trainer, schedules };
+  },
+  ["trainer-schedules:by-id"],
+  { tags: ["schedules", "trainers"] }
+);
 
 // GET schedules for a specific trainer by ID
 export async function GET(request, context) {
   try {
-    await connectDB();
-    // Get the ID directly from context
     const id = context.params.id;
     
     if (!ObjectId.isValid(id)) {
@@ -20,18 +37,14 @@ export async function GET(request, context) {
       );
     }
     
-    // Check if trainer exists
-    const trainer = await Trainer.findById(id);
+    const { trainer, schedules } = await getTrainerSchedulesCached(id);
+
     if (!trainer) {
       return NextResponse.json(
         { success: false, message: "Trainer not found" },
         { status: 404 }
       );
     }
-    
-    // Get all schedules for this trainer sorted by day of week and start time
-    const schedules = await Schedule.find({ trainer: id })
-      .sort({ dayOfWeek: 1, startTimeString: 1 });
       
     return NextResponse.json({ 
       success: true, 
