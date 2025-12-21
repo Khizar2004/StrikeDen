@@ -418,6 +418,28 @@ function PaymentTerms() {
           </ul>
         </div>
         
+        {/* Payment Term 4 */}
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 flex items-center">
+            <span className="bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 w-8 h-8 rounded-full flex items-center justify-center mr-3 text-sm font-bold">4</span>
+            Training Fee Adjustment Policy
+          </h3>
+          <ul className="space-y-2 text-gray-700 dark:text-gray-300">
+            <li className="flex items-start">
+              <span className="text-blue-500 mr-2 mt-1">-</span>
+              <span>If you have paid for a month of training and are unable to attend during that month, you must inform the management within 15 days of the payment date.</span>
+            </li>
+            <li className="flex items-start">
+              <span className="text-blue-500 mr-2 mt-1">-</span>
+              <span>Failure to do so will result in <span className="font-bold">no adjustment or carry forward of the fee, under any circumstances.</span></span>
+            </li>
+            <li className="flex items-start">
+              <span className="text-blue-500 mr-2 mt-1">-</span>
+              <span>If you have paid for multiple months, the same rule applies to each individual month.</span>
+            </li>
+          </ul>
+        </div>
+        
         {/* Conclusion */}
         <div className="p-6 bg-blue-50 dark:bg-blue-900/10 rounded-lg border border-blue-100 dark:border-blue-900/30 text-gray-800 dark:text-gray-200 text-sm">
           <p>By adhering to these terms, we can ensure a smooth and consistent experience for everyone. Thank you for your cooperation.</p>
