@@ -1,14 +1,17 @@
 "use client";
 import Image from "next/image";
 
-export default function PricingCard({ classData }) {
+export default function PricingCard({ classData, onClick }) {
   if (!classData) return null;
 
   const { pricing } = classData;
   const hasPricing = pricing && (pricing.walkIn > 0 || pricing.weekly > 0 || pricing.monthly > 0 || pricing.annual > 0);
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+    <div
+      className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:-translate-y-1"
+      onClick={onClick}
+    >
       {/* Class Image */}
       <div className="relative w-full aspect-video bg-gray-200 dark:bg-gray-700">
         <Image

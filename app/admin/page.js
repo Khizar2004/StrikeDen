@@ -15,6 +15,7 @@ import ConfirmModal from "./components/ui/ConfirmModal";
 import TrainersManager from "./components/trainers/TrainersManager";
 import ScheduleManager from "./components/schedules/ScheduleManager";
 import ClassManager from "./components/classes/ClassManager";
+import ProgramManager from "./components/programs/ProgramManager";
 import SettingsManager from "./components/SettingsManager";
 
 // Import custom hooks
@@ -22,6 +23,7 @@ import useAuth from "./hooks/useAuth";
 import useTrainers from "./hooks/useTrainers";
 import useSchedules from "./hooks/useSchedules";
 import useClasses from "./hooks/useClasses";
+import usePrograms from "./hooks/usePrograms";
 import useConfirmModal from "./hooks/useConfirmModal";
 
 // Move Tooltip to a separate component file
@@ -41,7 +43,7 @@ export default function AdminPage() {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
       const tabParam = params.get('tab');
-      if (tabParam && ['trainers', 'schedules', 'offeredClasses', 'settings'].includes(tabParam)) {
+      if (tabParam && ['trainers', 'schedules', 'offeredClasses', 'offeredPrograms', 'settings'].includes(tabParam)) {
         setActiveTab(tabParam);
       }
     }
@@ -67,15 +69,24 @@ export default function AdminPage() {
     deleteSchedule 
   } = useSchedules();
   
-  const { 
-    classes: offeredClasses, 
-    isLoading: isClassesLoading, 
-    isSubmitting: isAddingClass, 
-    isDeleting: isDeletingClass, 
-    addClass, 
-    deleteClass 
+  const {
+    classes: offeredClasses,
+    isLoading: isClassesLoading,
+    isSubmitting: isAddingClass,
+    isDeleting: isDeletingClass,
+    addClass,
+    deleteClass
   } = useClasses();
-  
+
+  const {
+    programs: offeredPrograms,
+    isLoading: isProgramsLoading,
+    isSubmitting: isAddingProgram,
+    isDeleting: isDeletingProgram,
+    addProgram,
+    deleteProgram
+  } = usePrograms();
+
   const { 
     confirmModal, 
     openConfirmModal, 
@@ -93,7 +104,10 @@ export default function AdminPage() {
     deleteSchedule: isDeletingSchedule,
     offeredClasses: isClassesLoading,
     addOfferedClass: isAddingClass,
-    deleteOfferedClass: isDeletingClass
+    deleteOfferedClass: isDeletingClass,
+    offeredPrograms: isProgramsLoading,
+    addOfferedProgram: isAddingProgram,
+    deleteOfferedProgram: isDeletingProgram
   };
 
   // Handler functions for confirmation modals
@@ -120,6 +134,15 @@ export default function AdminPage() {
       title: "Delete Class",
       message: "Are you sure you want to delete this class? This action cannot be undone.",
       onConfirm: deleteClass,
+      itemId: id
+    });
+  };
+
+  const confirmDeleteProgram = (id) => {
+    openConfirmModal({
+      title: "Delete Program",
+      message: "Are you sure you want to delete this program? This action cannot be undone.",
+      onConfirm: deleteProgram,
       itemId: id
     });
   };
@@ -221,11 +244,20 @@ export default function AdminPage() {
               )}
 
               {activeTab === "offeredClasses" && (
-                <ClassManager 
+                <ClassManager
                   classes={offeredClasses}
                   isLoading={isLoading}
                   handleAddClass={addClass}
                   confirmDeleteClass={confirmDeleteClass}
+                />
+              )}
+
+              {activeTab === "offeredPrograms" && (
+                <ProgramManager
+                  programs={offeredPrograms}
+                  isLoading={isLoading}
+                  handleAddProgram={addProgram}
+                  confirmDeleteProgram={confirmDeleteProgram}
                 />
               )}
 
