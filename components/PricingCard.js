@@ -9,11 +9,11 @@ export default function PricingCard({ classData, onClick }) {
 
   return (
     <div
-      className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:-translate-y-1"
+      className="h-full flex flex-col bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:-translate-y-1"
       onClick={onClick}
     >
       {/* Class Image */}
-      <div className="relative w-full aspect-video bg-gray-200 dark:bg-gray-700">
+      <div className="relative w-full aspect-video bg-gray-200 dark:bg-gray-700 flex-shrink-0">
         <Image
           src={classData.image || "/images/default-class.jpg"}
           alt={classData.title}
@@ -24,18 +24,16 @@ export default function PricingCard({ classData, onClick }) {
       </div>
       
       {/* Content */}
-      <div className="p-6">
+      <div className="p-6 flex flex-col flex-grow">
         {/* Title */}
         <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
           {classData.title}
         </h3>
         
         {/* Short Description */}
-        {classData.shortDescription && (
-          <p className="text-gray-600 dark:text-gray-300 mb-4">
-            {classData.shortDescription}
-          </p>
-        )}
+        <p className="text-gray-600 dark:text-gray-300 mb-4 min-h-[3rem]">
+          {classData.shortDescription || '\u00A0'}
+        </p>
         
         {/* Pricing */}
         {hasPricing ? (

@@ -143,7 +143,7 @@ export default function PricingPage() {
           className="mb-20 text-center max-w-3xl mx-auto"
         >
           <motion.p variants={fadeInUp} className="text-xl text-gray-600 dark:text-gray-300">
-            Choose the perfect plan for your fitness journey. All classes are designed to challenge and inspire you.
+            Explore our programs and choose the perfect plan for your fitness journey. Click on any program to learn more about what's included.
           </motion.p>
         </motion.div>
 
