@@ -1,0 +1,246 @@
+"use client";
+import { useState, useRef, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import Image from 'next/image';
+import ProgramDetailsModal from './ProgramDetailsModal';
+
+export default function ProgramsSlider() {
+  const [programs, setPrograms] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [width, setWidth] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [selectedProgram, setSelectedProgram] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const sliderRef = useRef(null);
+  const contentRef = useRef(null);
+  const dragStartTime = useRef(0);
+  const dragDistance = useRef(0);
+  const dragStartPos = useRef(0);
+
+  // Fetch programs data
+  useEffect(() => {
+    const fetchPrograms = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/programs');
+        const data = await response.json();
+
+        if (data.success) {
+          // Filter active programs
+          const activePrograms = (data.programs || []).filter(prog => prog.active);
+          setPrograms(activePrograms);
+        } else {
+          console.error("Failed to fetch programs:", data.error);
+        }
+      } catch (error) {
+        console.error("Error fetching programs:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPrograms();
+  }, []);
+
+  // Calculate the width of the scrollable area
+  useEffect(() => {
+    if (sliderRef.current && contentRef.current && programs?.length) {
+      setWidth(contentRef.current.scrollWidth - sliderRef.current.offsetWidth);
+    }
+  }, [programs]);
+
+  // Update width on window resize
+  useEffect(() => {
+    const handleResize = () => {
+      if (sliderRef.current && contentRef.current && programs?.length) {
+        setWidth(contentRef.current.scrollWidth - sliderRef.current.offsetWidth);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [programs]);
+
+  const handleDragStart = (e, info) => {
+    setIsDragging(true);
+    dragStartTime.current = Date.now();
+    dragStartPos.current = info.point.x;
+    dragDistance.current = 0;
+
+    // Disable pointer events on links during drag
+    document.querySelectorAll('.program-card-link').forEach(link => {
+      link.style.pointerEvents = 'none';
+    });
+  };
+
+  const handleDragEnd = (e, info) => {
+    // Calculate drag distance and time
+    const dragTime = Date.now() - dragStartTime.current;
+    dragDistance.current = Math.abs(info.point.x - dragStartPos.current);
+
+    // Only reset isDragging after a short delay to ensure click handling works properly
+    setTimeout(() => {
+      setIsDragging(false);
+
+      // Re-enable pointer events on links after drag
+      document.querySelectorAll('.program-card-link').forEach(link => {
+        link.style.pointerEvents = 'auto';
+      });
+    }, 50);
+  };
+
+  // Prevent default behavior on mousedown to avoid link drag issues
+  const handleMouseDown = (e) => {
+    if (e.button === 0) {
+      e.preventDefault();
+    }
+  };
+
+  // Handle program card click to show modal
+  const handleProgramClick = (e, programItem) => {
+    const dragTime = Date.now() - dragStartTime.current;
+    if (!isDragging || (dragDistance.current < 20 && dragTime < 200)) {
+      e.preventDefault();
+      setSelectedProgram(programItem);
+      setIsModalOpen(true);
+    }
+  };
+
+  // Close modal
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  // Error handler for image loading
+  const handleImageError = (e) => {
+    e.target.onerror = null;
+    e.target.style.backgroundColor = "#1A1A1A";
+    e.target.alt = "Image not available";
+  };
+
+  if (loading) {
+    return (
+      <div className="max-w-screen-2xl mx-auto px-4 py-12">
+        <motion.h2
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-5xl md:text-6xl font-black text-center mb-12 tracking-tight text-gray-900 dark:text-white"
+        >
+          OUR PROGRAMS
+        </motion.h2>
+        <div className="flex justify-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-500"></div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!programs || programs.length === 0) {
+    return null; // Don't show section if no programs
+  }
+
+  return (
+    <div className="max-w-screen-2xl mx-auto px-0 py-12">
+      <motion.h2
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="text-5xl md:text-6xl font-black text-center mb-12 tracking-tight text-gray-900 dark:text-white"
+      >
+        OUR PROGRAMS
+      </motion.h2>
+
+      <div className="overflow-hidden relative">
+        <motion.div
+          ref={sliderRef}
+          className="cursor-grab overflow-hidden"
+          whileTap={{ cursor: "grabbing" }}
+          onMouseDown={handleMouseDown}
+        >
+          <motion.div
+            ref={contentRef}
+            className="flex"
+            drag="x"
+            dragConstraints={{ right: 0, left: -width }}
+            dragTransition={{
+              power: 0.25,
+              timeConstant: 400,
+              modifyTarget: target => Math.round(target / 100) * 100
+            }}
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
+            dragElastic={0.05}
+            dragMomentum={true}
+          >
+            {programs.map((item) => (
+              <motion.div
+                key={item._id}
+                className="min-w-[270px] sm:min-w-[350px] md:min-w-[400px] lg:min-w-[420px] h-[500px] relative px-2"
+                whileHover={{ scale: isDragging ? 1 : 1.02 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div
+                  className="program-card-link block h-full w-full relative cursor-pointer overflow-hidden rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 transform transition-transform duration-500 hover:shadow-xl"
+                  onClick={(e) => handleProgramClick(e, item)}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent z-10"></div>
+                  <div className="relative h-full w-full">
+                    <Image
+                      src={item.image || "/images/default-class.jpg"}
+                      alt={item.title}
+                      fill
+                      className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-110"
+                      sizes="(max-width: 768px) 90vw, (max-width: 1200px) 40vw, 33vw"
+                      onError={handleImageError}
+                      draggable="false"
+                      priority
+                    />
+                  </div>
+                  <div className="absolute bottom-0 left-0 right-0 z-20 p-6 flex flex-col items-center">
+                    <h3 className="text-4xl md:text-5xl font-black text-white drop-shadow-lg text-center mb-2">
+                      {item.title}
+                    </h3>
+                    {item.shortDescription && (
+                      <p className="text-gray-200 text-lg mt-1 mb-3 text-center line-clamp-2">
+                        {item.shortDescription}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </motion.div>
+
+        {/* Scroll hint indicators */}
+        {programs.length > 2 && (
+          <div className="absolute top-1/2 right-3 -translate-y-1/2 flex flex-col gap-1 opacity-70 z-20">
+            <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
+            <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
+            <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
+          </div>
+        )}
+
+        {/* Instruction text */}
+        {programs.length > 2 && (
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.7 }}
+            transition={{ delay: 1, duration: 0.6 }}
+            className="text-center text-sm text-gray-500 dark:text-gray-400 mt-4 italic"
+          >
+            Drag to explore more programs
+          </motion.p>
+        )}
+      </div>
+
+      {/* Program Details Modal */}
+      <ProgramDetailsModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        programData={selectedProgram}
+      />
+    </div>
+  );
+}

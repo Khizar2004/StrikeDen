@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { useTheme } from "../../components/ThemeProvider";
 import Schedule from "../../components/Schedule";
-import ClassesSlider from "../../components/ClassesSlider";
+import OfferingsSlider from "../../components/OfferingsSlider";
 import { trackFacebookEvent, FB_EVENTS } from '../../lib/facebook';
 
 // Animation variants
@@ -109,18 +109,18 @@ export default function ClassesPage() {
           className="mb-20 text-center max-w-3xl mx-auto"
         >
           <motion.p variants={fadeInUp} className="text-xl text-gray-600 dark:text-gray-300 mb-6">
-            At Strike Den, we offer a comprehensive range of classes designed for all skill levels. 
-            From beginners looking to learn the basics to advanced practitioners seeking to refine their technique, 
-            our diverse program has something for everyone.
+            At Strike Den, we offer a comprehensive range of classes and programs designed for all skill levels.
+            From beginners looking to learn the basics to advanced practitioners seeking to refine their technique,
+            our diverse offerings have something for everyone.
           </motion.p>
           <motion.p variants={fadeInUp} className="text-lg text-gray-500 dark:text-gray-400">
-            Explore our class options below and find the perfect fit for your goals and schedule.
+            Explore our classes and programs below and find the perfect fit for your goals and schedule.
           </motion.p>
         </motion.div>
         
-        {/* Class Offerings Slider */}
-        <ClassesSlider />
-        
+        {/* Classes & Programs Slider with Tabs */}
+        <OfferingsSlider />
+
         {/* Weekly Schedule Section with improved styling */}
         <motion.div
           initial="hidden"
