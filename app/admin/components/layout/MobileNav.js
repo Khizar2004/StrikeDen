@@ -13,6 +13,7 @@ export default function MobileNav({ activeTab, setActiveTab, handleLogout }) {
     { id: "trainers", label: "Manage Trainers" },
     { id: "schedules", label: "Class Schedule" },
     { id: "offeredClasses", label: "Offered Classes" },
+    { id: "offeredPrograms", label: "Offered Programs" },
     { id: "settings", label: "Site Settings" },
   ];
   

@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import PricingCard from "../../components/PricingCard";
+import ProgramDetailsModal from "../../components/ProgramDetailsModal";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { trackFacebookEvent, FB_EVENTS } from '../../lib/facebook';
 
@@ -27,10 +28,21 @@ const staggerContainer = {
 };
 
 export default function PricingPage() {
-  const [classes, setClasses] = useState([]);
+  const [programs, setPrograms] = useState([]);
   const [globalPromotion, setGlobalPromotion] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedProgram, setSelectedProgram] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleProgramClick = (program) => {
+    setSelectedProgram(program);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
 
   // Track page view when component mounts
   useEffect(() => {
@@ -47,21 +59,21 @@ export default function PricingPage() {
       try {
         setIsLoading(true);
         
-        // Fetch classes and global promotion in parallel
-        const [classesResponse, settingsResponse] = await Promise.all([
-          fetch('/api/classes'),
+        // Fetch programs and global promotion in parallel
+        const [programsResponse, settingsResponse] = await Promise.all([
+          fetch('/api/programs'),
           fetch('/api/settings')
         ]);
-        
-        const classesData = await classesResponse.json();
+
+        const programsData = await programsResponse.json();
         const settingsData = await settingsResponse.json();
-        
-        if (classesData.success) {
-          // Filter active classes
-          const activeClasses = classesData.classes.filter(cls => cls.active);
-          setClasses(activeClasses);
+
+        if (programsData.success) {
+          // Filter active programs
+          const activePrograms = programsData.programs.filter(prog => prog.active);
+          setPrograms(activePrograms);
         } else {
-          setError('Failed to load classes');
+          setError('Failed to load programs');
         }
         
         if (settingsData.success) {
@@ -116,7 +128,7 @@ export default function PricingPage() {
             transition={{ duration: 0.8 }}
             className="text-6xl md:text-7xl font-black text-white tracking-tighter"
           >
-            CLASS PRICING
+            PROGRAM PRICING
           </motion.h1>
         </div>
       </div>
@@ -142,9 +154,12 @@ export default function PricingPage() {
           variants={staggerContainer}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
         >
-          {classes.map((classData) => (
-            <motion.div key={classData._id} variants={fadeInUp}>
-              <PricingCard classData={classData} />
+          {programs.map((programData) => (
+            <motion.div key={programData._id} variants={fadeInUp}>
+              <PricingCard
+                classData={programData}
+                onClick={() => handleProgramClick(programData)}
+              />
             </motion.div>
           ))}
         </motion.div>
@@ -172,6 +187,13 @@ export default function PricingPage() {
           </div>
         </motion.div>
       </div>
+
+      {/* Program Details Modal */}
+      <ProgramDetailsModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        programData={selectedProgram}
+      />
     </main>
   );
 }
