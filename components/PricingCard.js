@@ -1,7 +1,8 @@
 "use client";
+import { memo } from "react";
 import Image from "next/image";
 
-export default function PricingCard({ classData, onClick }) {
+export default memo(function PricingCard({ classData, onClick }) {
   if (!classData) return null;
 
   const { pricing } = classData;
@@ -86,4 +87,4 @@ export default function PricingCard({ classData, onClick }) {
       </div>
     </div>
   );
-}
+});

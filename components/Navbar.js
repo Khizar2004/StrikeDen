@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import ThemeToggle from './ThemeToggle';
 import { usePathname } from 'next/navigation';
@@ -82,9 +83,11 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="relative z-50 flex items-center gap-3 group">
             <div className="h-10 w-10 relative overflow-hidden rounded-lg shadow-md group-hover:shadow-lg transition-all duration-300">
-              <img 
-                src="/images/logo.jpg" 
-                alt="StrikeDen Logo" 
+              <Image
+                src="/images/logo.jpg"
+                alt="StrikeDen Logo"
+                width={40}
+                height={40}
                 className="h-full w-full object-cover"
               />
             </div>

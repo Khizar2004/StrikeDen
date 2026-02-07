@@ -1,15 +1,17 @@
 "use client";
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
-import ClassDetailsModal from './ClassDetailsModal';
-import ProgramDetailsModal from './ProgramDetailsModal';
+import dynamic from 'next/dynamic';
 
-export default function OfferingsSlider() {
+const ClassDetailsModal = dynamic(() => import('./ClassDetailsModal'), { ssr: false });
+const ProgramDetailsModal = dynamic(() => import('./ProgramDetailsModal'), { ssr: false });
+
+export default function OfferingsSlider({ initialClasses, initialPrograms }) {
   const [activeTab, setActiveTab] = useState('classes');
-  const [classes, setClasses] = useState([]);
-  const [programs, setPrograms] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [classes, setClasses] = useState(initialClasses || []);
+  const [programs, setPrograms] = useState(initialPrograms || []);
+  const [loading, setLoading] = useState(!initialClasses && !initialPrograms);
   const [width, setWidth] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [selectedClass, setSelectedClass] = useState(null);
@@ -24,8 +26,10 @@ export default function OfferingsSlider() {
 
   const currentItems = activeTab === 'classes' ? classes : programs;
 
-  // Fetch data
+  // Fetch data only if not provided via props
   useEffect(() => {
+    if (initialClasses && initialPrograms) return;
+
     const fetchData = async () => {
       try {
         setLoading(true);
@@ -52,7 +56,7 @@ export default function OfferingsSlider() {
     };
 
     fetchData();
-  }, []);
+  }, [initialClasses, initialPrograms]);
 
   // Calculate width
   useEffect(() => {
@@ -75,7 +79,7 @@ export default function OfferingsSlider() {
     return () => window.removeEventListener('resize', handleResize);
   }, [currentItems]);
 
-  const handleDragStart = (e, info) => {
+  const handleDragStart = useCallback((e, info) => {
     setIsDragging(true);
     dragStartTime.current = Date.now();
     dragStartPos.current = info.point.x;
@@ -84,9 +88,9 @@ export default function OfferingsSlider() {
     document.querySelectorAll('.offering-card-link').forEach(link => {
       link.style.pointerEvents = 'none';
     });
-  };
+  }, []);
 
-  const handleDragEnd = (e, info) => {
+  const handleDragEnd = useCallback((e, info) => {
     const dragTime = Date.now() - dragStartTime.current;
     dragDistance.current = Math.abs(info.point.x - dragStartPos.current);
 
@@ -96,15 +100,15 @@ export default function OfferingsSlider() {
         link.style.pointerEvents = 'auto';
       });
     }, 50);
-  };
+  }, []);
 
-  const handleMouseDown = (e) => {
+  const handleMouseDown = useCallback((e) => {
     if (e.button === 0) {
       e.preventDefault();
     }
-  };
+  }, []);
 
-  const handleCardClick = (e, item) => {
+  const handleCardClick = useCallback((e, item) => {
     const dragTime = Date.now() - dragStartTime.current;
     if (!isDragging || (dragDistance.current < 20 && dragTime < 200)) {
       e.preventDefault();
@@ -116,13 +120,13 @@ export default function OfferingsSlider() {
         setIsProgramModalOpen(true);
       }
     }
-  };
+  }, [isDragging, activeTab]);
 
-  const handleImageError = (e) => {
+  const handleImageError = useCallback((e) => {
     e.target.onerror = null;
     e.target.style.backgroundColor = "#1A1A1A";
     e.target.alt = "Image not available";
-  };
+  }, []);
 
   if (loading) {
     return (

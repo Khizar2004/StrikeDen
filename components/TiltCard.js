@@ -1,8 +1,8 @@
 "use client";
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback, memo } from 'react';
 import { motion } from 'framer-motion';
 
-export default function TiltCard({ 
+export default memo(function TiltCard({ 
   children, 
   className = "", 
   perspective = 1000,
@@ -36,31 +36,30 @@ export default function TiltCard({
     }
   }, []);
 
-  const handleMouseMove = (e) => {
+  const handleMouseMove = useCallback((e) => {
     if (!tiltEffectEnabled || !cardRef.current) return;
-    
+
     const { left, top, width, height } = cardRef.current.getBoundingClientRect();
-    
+
     const x = (e.clientX - left) / width;
     const y = (e.clientY - top) / height;
-    
+
     setMousePosition({ x, y });
-    
-    // Calculate tilt values
+
     const tiltX = ((y * 2) - 1) * -tiltMaxAngle;
     const tiltY = ((x * 2) - 1) * tiltMaxAngle;
-    
+
     setTiltValues({ x: tiltX, y: tiltY });
-  };
+  }, [tiltEffectEnabled, tiltMaxAngle]);
 
-  const handleMouseEnter = () => {
+  const handleMouseEnter = useCallback(() => {
     setIsHovered(true);
-  };
+  }, []);
 
-  const handleMouseLeave = () => {
+  const handleMouseLeave = useCallback(() => {
     setTiltValues({ x: 0, y: 0 });
     setIsHovered(false);
-  };
+  }, []);
 
   return (
     <motion.div
@@ -176,4 +175,4 @@ export default function TiltCard({
       </div>
     </motion.div>
   );
-} 
+});

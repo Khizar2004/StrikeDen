@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { connectDB } from '@/lib/dbConnect';
-import { ObjectId } from 'mongodb';
 import { adminAuthMiddleware } from "@/lib/middleware";
 import Class from '@/lib/Class';
 
