@@ -75,15 +75,10 @@ export default function ClassesClient({ schedules, classes, programs }) {
           whileInView="visible"
           viewport={{ once: true }}
           variants={staggerContainer}
-          className="mb-20 text-center max-w-3xl mx-auto"
+          className="mb-10 text-center max-w-3xl mx-auto"
         >
-          <motion.p variants={fadeInUp} className="text-xl text-gray-600 dark:text-gray-300 mb-6">
-            At Strike Den, we offer a comprehensive range of classes and programs designed for all skill levels.
-            From beginners looking to learn the basics to advanced practitioners seeking to refine their technique,
-            our diverse offerings have something for everyone.
-          </motion.p>
           <motion.p variants={fadeInUp} className="text-lg text-gray-500 dark:text-gray-400">
-            Explore our classes and programs below and find the perfect fit for your goals and schedule.
+            Classes and programs for all skill levels — find the right fit for your goals.
           </motion.p>
         </motion.div>
 
