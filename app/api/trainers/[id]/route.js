@@ -1,9 +1,9 @@
 import { connectDB } from "@/lib/dbConnect";
 import Trainer from "@/lib/Trainer";
 import Schedule from "@/lib/Schedule";
-import { ObjectId } from "mongodb";
+import mongoose from 'mongoose';
 
-export const dynamic = "force-dynamic";
+const ObjectId = mongoose.Types.ObjectId;
 
 // GET SINGLE TRAINER
 export async function GET(request, context) {

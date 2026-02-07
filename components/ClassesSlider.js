@@ -1,9 +1,11 @@
 "use client";
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import ClassDetailsModal from './ClassDetailsModal';
+import dynamic from 'next/dynamic';
+
+const ClassDetailsModal = dynamic(() => import('./ClassDetailsModal'), { ssr: false });
 
 export default function ClassesSlider() {
   const [classes, setClasses] = useState([]);
@@ -60,62 +62,54 @@ export default function ClassesSlider() {
     return () => window.removeEventListener('resize', handleResize);
   }, [classes]);
 
-  const handleDragStart = (e, info) => {
+  const handleDragStart = useCallback((e, info) => {
     setIsDragging(true);
     dragStartTime.current = Date.now();
     dragStartPos.current = info.point.x;
-    dragDistance.current = 0;  // Reset drag distance
-    
-    // Disable pointer events on links during drag
+    dragDistance.current = 0;
+
     document.querySelectorAll('.class-card-link').forEach(link => {
       link.style.pointerEvents = 'none';
     });
-  };
+  }, []);
 
-  const handleDragEnd = (e, info) => {
-    // Calculate drag distance and time
+  const handleDragEnd = useCallback((e, info) => {
     const dragTime = Date.now() - dragStartTime.current;
     dragDistance.current = Math.abs(info.point.x - dragStartPos.current);
-    
-    // Only reset isDragging after a short delay to ensure click handling works properly
+
     setTimeout(() => {
       setIsDragging(false);
-      
-      // Re-enable pointer events on links after drag
+
       document.querySelectorAll('.class-card-link').forEach(link => {
         link.style.pointerEvents = 'auto';
       });
-    }, 50);  
-  };
+    }, 50);
+  }, []);
 
-  // Prevent default behavior on mousedown to avoid link drag issues
-  const handleMouseDown = (e) => {
+  const handleMouseDown = useCallback((e) => {
     if (e.button === 0) {
       e.preventDefault();
     }
-  };
+  }, []);
 
-  // Handle class card click to show modal
-  const handleClassClick = (e, classItem) => {
+  const handleClassClick = useCallback((e, classItem) => {
     const dragTime = Date.now() - dragStartTime.current;
     if (!isDragging || (dragDistance.current < 20 && dragTime < 200)) {
       e.preventDefault();
       setSelectedClass(classItem);
       setIsModalOpen(true);
     }
-  };
+  }, [isDragging]);
 
-  // Close modal
-  const handleCloseModal = () => {
+  const handleCloseModal = useCallback(() => {
     setIsModalOpen(false);
-  };
+  }, []);
 
-  // Error handler for image loading
-  const handleImageError = (e) => {
+  const handleImageError = useCallback((e) => {
     e.target.onerror = null;
     e.target.style.backgroundColor = "#1A1A1A";
     e.target.alt = "Image not available";
-  };
+  }, []);
 
   if (loading) {
     return (

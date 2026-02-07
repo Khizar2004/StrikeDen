@@ -1,8 +1,8 @@
 "use client";
 import { motion } from 'framer-motion';
-import { useRef, useState } from 'react';
+import { useRef, useState, memo } from 'react';
 
-export default function GlassCard({ 
+export default memo(function GlassCard({ 
   children, 
   className = "", 
   glowColor = "rgba(229, 9, 20, 0.4)",
@@ -125,4 +125,4 @@ export default function GlassCard({
       </div>
     </motion.div>
   );
-} 
+});

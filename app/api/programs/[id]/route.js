@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
 import { connectDB } from '@/lib/dbConnect';
-import { ObjectId } from 'mongodb';
+import mongoose from 'mongoose';
 import { adminAuthMiddleware } from "@/lib/middleware";
 import Program from '@/lib/Program';
 
-export const dynamic = "force-dynamic";
+const ObjectId = mongoose.Types.ObjectId;
 
 // GET - Fetch a single program by ID
 export async function GET(request, context) {
