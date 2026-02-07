@@ -196,8 +196,8 @@ export default function Schedule({ initialClasses }) {
                   >
                     <div className="pb-6 space-y-4">
                       {scheduleData[day].map((classItem) => (
-                        <div 
-                          key={classItem.id}
+                        <div
+                          key={classItem._id}
                           className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center bg-gray-50 dark:bg-secondary-800/50 p-4 rounded-md"
                         >
                           <div>
