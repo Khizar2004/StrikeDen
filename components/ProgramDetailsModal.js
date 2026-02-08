@@ -55,7 +55,12 @@ export default function ProgramDetailsModal({ isOpen, onClose, programData }) {
   }, [isOpen]);
 
   const { pricing } = programData || {};
-  const hasPricing = pricing && (pricing.walkIn > 0 || pricing.weekly > 0 || pricing.monthly > 0 || pricing.annual > 0);
+  const activeTiers = pricing ? [
+    pricing.walkIn > 0 && { label: "Walk-in", amount: pricing.walkIn },
+    pricing.weekly > 0 && { label: "Weekly", amount: pricing.weekly },
+    pricing.monthly > 0 && { label: "Monthly", amount: pricing.monthly },
+    pricing.annual > 0 && { label: "Annual", amount: pricing.annual },
+  ].filter(Boolean) : [];
 
   return (
     <AnimatePresence>
@@ -113,44 +118,35 @@ export default function ProgramDetailsModal({ isOpen, onClose, programData }) {
             {/* Content */}
             <div className="p-8">
               {/* Pricing Section */}
-              {hasPricing && (
+              {activeTiers.length === 1 && (
+                <div className="mb-8">
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 inline-block pb-2 border-b-2 border-red-600">
+                    Pricing
+                  </h3>
+                  <div className="mt-4 text-center">
+                    <p className="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
+                      {activeTiers[0].label}
+                    </p>
+                    <p className="text-4xl font-bold text-gray-900 dark:text-white">
+                      ₨{activeTiers[0].amount.toLocaleString()}
+                    </p>
+                  </div>
+                </div>
+              )}
+              {activeTiers.length > 1 && (
                 <div className="mb-8">
                   <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 inline-block pb-2 border-b-2 border-red-600">
                     Pricing Options
                   </h3>
                   <div className="grid grid-cols-2 gap-4 mt-4">
-                    {pricing.walkIn > 0 && (
-                      <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                        <p className="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider">Walk-in</p>
+                    {activeTiers.map((tier) => (
+                      <div key={tier.label} className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                        <p className="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider">{tier.label}</p>
                         <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                          ₨{pricing.walkIn.toLocaleString()}
+                          ₨{tier.amount.toLocaleString()}
                         </p>
                       </div>
-                    )}
-                    {pricing.weekly > 0 && (
-                      <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                        <p className="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider">Weekly</p>
-                        <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                          ₨{pricing.weekly.toLocaleString()}
-                        </p>
-                      </div>
-                    )}
-                    {pricing.monthly > 0 && (
-                      <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                        <p className="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider">Monthly</p>
-                        <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                          ₨{pricing.monthly.toLocaleString()}
-                        </p>
-                      </div>
-                    )}
-                    {pricing.annual > 0 && (
-                      <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                        <p className="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider">Annual</p>
-                        <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                          ₨{pricing.annual.toLocaleString()}
-                        </p>
-                      </div>
-                    )}
+                    ))}
                   </div>
                 </div>
               )}

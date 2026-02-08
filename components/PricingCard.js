@@ -1,12 +1,18 @@
 "use client";
 import { memo } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 export default memo(function PricingCard({ classData, onClick }) {
   if (!classData) return null;
 
   const { pricing } = classData;
-  const hasPricing = pricing && (pricing.walkIn > 0 || pricing.weekly > 0 || pricing.monthly > 0 || pricing.annual > 0);
+  const activeTiers = pricing ? [
+    pricing.walkIn > 0 && { label: "Walk-in", amount: pricing.walkIn },
+    pricing.weekly > 0 && { label: "Weekly", amount: pricing.weekly },
+    pricing.monthly > 0 && { label: "Monthly", amount: pricing.monthly },
+    pricing.annual > 0 && { label: "Annual", amount: pricing.annual },
+  ].filter(Boolean) : [];
 
   return (
     <div
@@ -23,58 +29,43 @@ export default memo(function PricingCard({ classData, onClick }) {
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
       </div>
-      
+
       {/* Content */}
       <div className="p-6 flex flex-col flex-grow">
         {/* Title */}
         <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
           {classData.title}
         </h3>
-        
+
         {/* Short Description */}
         <p className="text-gray-600 dark:text-gray-300 mb-4 min-h-[3rem]">
           {classData.shortDescription || '\u00A0'}
         </p>
-        
+
         {/* Pricing */}
-        {hasPricing ? (
+        {activeTiers.length === 1 ? (
+          <div className="text-center">
+            <p className="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">
+              {activeTiers[0].label}
+            </p>
+            <p className="text-3xl font-bold text-gray-900 dark:text-white">
+              ₨{activeTiers[0].amount.toLocaleString()}
+            </p>
+          </div>
+        ) : activeTiers.length > 1 ? (
           <div className="space-y-3">
             <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
               Pricing Options
             </h4>
             <div className="grid grid-cols-2 gap-3">
-              {pricing.walkIn > 0 && (
-                <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded-lg">
-                  <p className="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider">Walk-in</p>
+              {activeTiers.map((tier) => (
+                <div key={tier.label} className="bg-gray-50 dark:bg-gray-700 p-3 rounded-lg">
+                  <p className="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider">{tier.label}</p>
                   <p className="text-xl font-bold text-gray-900 dark:text-white">
-                    ₨{pricing.walkIn.toLocaleString()}
+                    ₨{tier.amount.toLocaleString()}
                   </p>
                 </div>
-              )}
-              {pricing.weekly > 0 && (
-                <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded-lg">
-                  <p className="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider">Weekly</p>
-                  <p className="text-xl font-bold text-gray-900 dark:text-white">
-                    ₨{pricing.weekly.toLocaleString()}
-                  </p>
-                </div>
-              )}
-              {pricing.monthly > 0 && (
-                <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded-lg">
-                  <p className="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider">Monthly</p>
-                  <p className="text-xl font-bold text-gray-900 dark:text-white">
-                    ₨{pricing.monthly.toLocaleString()}
-                  </p>
-                </div>
-              )}
-              {pricing.annual > 0 && (
-                <div className="bg-gray-50 dark:bg-gray-700 p-3 rounded-lg">
-                  <p className="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider">Annual</p>
-                  <p className="text-xl font-bold text-gray-900 dark:text-white">
-                    ₨{pricing.annual.toLocaleString()}
-                  </p>
-                </div>
-              )}
+              ))}
             </div>
           </div>
         ) : (
@@ -84,6 +75,16 @@ export default memo(function PricingCard({ classData, onClick }) {
             </p>
           </div>
         )}
+
+        <div className="mt-auto pt-4">
+          <Link
+            href="/contact"
+            onClick={(e) => e.stopPropagation()}
+            className="block w-full py-3 bg-primary-500 hover:bg-primary-600 text-white text-center font-semibold rounded-lg shadow-lg shadow-primary-500/20 transition-all duration-300"
+          >
+            Join Now
+          </Link>
+        </div>
       </div>
     </div>
   );
