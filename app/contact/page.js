@@ -3,8 +3,8 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useTheme } from "../../components/ThemeProvider";
-import { FaMapMarkerAlt, FaPhone, FaClock, FaFacebookF, FaInstagram, FaWhatsapp } from "react-icons/fa";
-import { MdEmail, MdAccessTime } from "react-icons/md";
+import { FaMapMarkerAlt, FaPhone, FaFacebookF, FaInstagram, FaWhatsapp } from "react-icons/fa";
+import { MdAccessTime } from "react-icons/md";
 import dynamic from 'next/dynamic';
 import { trackFacebookEvent, FB_EVENTS } from '../../lib/facebook';
 

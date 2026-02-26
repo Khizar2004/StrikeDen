@@ -32,26 +32,6 @@
   }
 }
 
-@keyframes text-flicker {
-  0%, 19.999%, 22%, 62.999%, 64%, 64.999%, 70%, 100% {
-    opacity: 1;
-    text-shadow: 0 0 4px rgba(255, 255, 255, 0.5), 0 0 11px rgba(255, 255, 255, 0.5), 0 0 19px rgba(229, 9, 20, 0.7);
-  }
-  20%, 21.999%, 63%, 63.999%, 65%, 69.999% {
-    opacity: 0.8;
-    text-shadow: none;
-  }
-}
-
-@keyframes border-pulse {
-  0%, 100% {
-    border-color: rgba(229, 9, 20, 0.7);
-  }
-  50% {
-    border-color: rgba(229, 9, 20, 1);
-  }
-}
-
 @keyframes gradient-shift {
   0% {
     background-position: 0% 50%;
@@ -61,15 +41,6 @@
   }
   100% {
     background-position: 0% 50%;
-  }
-}
-
-@keyframes reveal-text {
-  from {
-    clip-path: inset(0 100% 0 0);
-  }
-  to {
-    clip-path: inset(0 0 0 0);
   }
 }
 
@@ -84,20 +55,7 @@
   }
 }
 
-@keyframes rotate-slow {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 @layer base {
-  :root {
-    /* Remove cursor-related variables */
-  }
-  
   html {
     scroll-behavior: smooth;
   }
@@ -156,8 +114,6 @@
     @apply text-2xl md:text-4xl;
     line-height: 1.3;
   }
-  
-  /* Remove cursor overrides for elements */
   
   ::selection {
     @apply bg-primary-500 text-white;
@@ -251,69 +207,6 @@
     @apply opacity-20;
   }
   
-  .btn-accent {
-    @apply bg-accent text-white hover:bg-accent-dark focus:ring-accent
-    border border-accent-dark shadow-red-glow;
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .btn-accent::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: 0.5s;
-  }
-  
-  .btn-accent:hover::before {
-    left: 100%;
-  }
-  
-  .btn-secondary {
-    @apply bg-gray-medium text-white hover:bg-gray-light focus:ring-primary-500
-    border border-gray-light shadow-lg;
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .btn-secondary::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at center, rgba(229, 9, 20, 0.3), transparent 70%);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-  
-  .btn-secondary:hover::after {
-    opacity: 1;
-  }
-  
-  .btn-outline {
-    @apply bg-transparent text-primary-500 hover:bg-primary-500/10 focus:ring-primary-500
-    border-2 border-primary-500 shadow-none hover:shadow-red-glow;
-    position: relative;
-    z-index: 1;
-  }
-  
-  .btn-outline::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(45deg, rgba(229, 9, 20, 0.1), rgba(229, 9, 20, 0.2));
-    z-index: -1;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-  
-  .btn-outline:hover::before {
-    opacity: 1;
-  }
-  
   .card {
     @apply bg-gray-dark rounded-xl shadow-card p-6 transition-all duration-300
     border border-gray-light/20 hover:border-primary-500/40 hover:shadow-red-glow;
@@ -358,44 +251,9 @@
     box-shadow: 0 0 0 2px rgba(229, 9, 20, 0.2);
   }
   
-  .glass-panel {
-    @apply backdrop-blur-md bg-secondary-800/60 border border-gray-light/20 shadow-lg;
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .glass-panel::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
-    transition: 0.5s;
-  }
-  
-  .glass-panel:hover::before {
-    left: 100%;
-  }
-  
   .neon-text {
     @apply text-primary-500;
     text-shadow: 0 0 5px rgba(229, 9, 20, 0.7), 0 0 10px rgba(229, 9, 20, 0.5), 0 0 15px rgba(229, 9, 20, 0.3);
-  }
-  
-  .neon-border {
-    @apply border border-primary-500;
-    box-shadow: 0 0 5px rgba(229, 9, 20, 0.7), 0 0 10px rgba(229, 9, 20, 0.5);
-    animation: border-pulse 2s infinite;
-  }
-  
-  .flicker-text {
-    animation: text-flicker 3s infinite alternate;
-  }
-  
-  .reveal-text {
-    animation: reveal-text 0.8s cubic-bezier(0.77, 0, 0.175, 1) forwards;
   }
   
   .reveal-blur {
@@ -404,67 +262,13 @@
 }
 
 @layer utilities {
-  .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary-400 to-accent;
-    background-size: 200% 200%;
-    animation: gradient-shift 3s ease infinite;
-  }
-  
-  .text-gradient-static {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary-400 to-accent;
-  }
-  
   .text-shadow {
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
-  }
-  
-  .text-shadow-sm {
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
-  }
-  
-  .text-shadow-lg {
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 1);
-  }
-  
-  .filter-grayscale {
-    filter: grayscale(1);
-  }
-  
-  .filter-grayscale-0 {
-    filter: grayscale(0);
-  }
-  
-  .perspective-1000 {
-    perspective: 1000px;
-  }
-  
-  .preserve-3d {
-    transform-style: preserve-3d;
-  }
-  
-  .backface-hidden {
-    backface-visibility: hidden;
   }
   
   .red-glow {
     box-shadow: 0 0 15px rgba(229, 9, 20, 0.6);
     animation: pulse-glow 3s infinite;
-  }
-  
-  .clip-path-slant {
-    clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
-  }
-  
-  .clip-path-slant-reverse {
-    clip-path: polygon(0 0, 100% 15%, 100% 100%, 0 100%);
-  }
-  
-  .clip-path-diamond {
-    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
-  }
-  
-  .clip-path-hexagon {
-    clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
   }
   
   .bg-mesh {
@@ -487,39 +291,6 @@
       linear-gradient(to bottom, rgba(229, 9, 20, 0.05) 1px, transparent 1px);
   }
   
-  .bg-gradient-animated {
-    background: linear-gradient(-45deg, #121212, #1a1a1a, #2a2a2a, #1a1a1a);
-    background-size: 400% 400%;
-    animation: gradient-shift 15s ease infinite;
-  }
-  
-  .rotate-slow {
-    animation: rotate-slow 20s linear infinite;
-  }
-  
-  .hover-lift {
-    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-  
-  .hover-lift:hover {
-    transform: translateY(-8px);
-  }
-  
-  .hover-scale {
-    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-  
-  .hover-scale:hover {
-    transform: scale(1.05);
-  }
-  
-  .hover-rotate {
-    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-  
-  .hover-rotate:hover {
-    transform: rotate(3deg);
-  }
 }
 
 /* Leaflet Map Styles */

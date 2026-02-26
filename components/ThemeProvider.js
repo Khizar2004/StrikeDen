@@ -28,17 +28,11 @@ function ThemeContextProvider({ children }) {
 
 export function useTheme() {
   const { mounted } = useContext(ThemeContext);
-  const { theme, setTheme, resolvedTheme } = useNextTheme();
-  
-  const toggleTheme = () => {
-    setTheme(theme === 'dark' ? 'light' : 'dark');
-  };
-  
-  return { 
-    theme, 
-    resolvedTheme,
-    setTheme, 
-    toggleTheme,
-    mounted 
+  const { theme, setTheme } = useNextTheme();
+
+  return {
+    theme,
+    setTheme,
+    mounted
   };
 }

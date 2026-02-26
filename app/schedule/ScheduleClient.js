@@ -23,7 +23,7 @@ export default function ScheduleClient({ schedules }) {
         subtitle="View our weekly class schedule and plan your training"
       />
 
-      <Schedule classes={schedules} />
+      <Schedule initialClasses={schedules} />
     </motion.div>
   );
 }

@@ -28,7 +28,7 @@ const staggerContainer = {
   }
 };
 
-export default function PricingClient({ programs, globalPromotion }) {
+export default function PricingClient({ programs }) {
   const [selectedProgram, setSelectedProgram] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 

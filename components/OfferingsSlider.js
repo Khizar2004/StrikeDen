@@ -26,6 +26,19 @@ export default function OfferingsSlider({ initialClasses, initialPrograms }) {
 
   const currentItems = activeTab === 'classes' ? classes : programs;
 
+  // Callback ref: recalculate drag width when new content DOM mounts
+  const handleContentRef = useCallback((node) => {
+    contentRef.current = node;
+    if (node) {
+      requestAnimationFrame(() => {
+        if (sliderRef.current && contentRef.current) {
+          const newWidth = contentRef.current.scrollWidth - sliderRef.current.offsetWidth;
+          setWidth(Math.max(0, newWidth));
+        }
+      });
+    }
+  }, []);
+
   // Fetch data only if not provided via props
   useEffect(() => {
     if (initialClasses && initialPrograms) return;
@@ -91,7 +104,6 @@ export default function OfferingsSlider({ initialClasses, initialPrograms }) {
   }, []);
 
   const handleDragEnd = useCallback((e, info) => {
-    const dragTime = Date.now() - dragStartTime.current;
     dragDistance.current = Math.abs(info.point.x - dragStartPos.current);
 
     setTimeout(() => {
@@ -228,7 +240,7 @@ export default function OfferingsSlider({ initialClasses, initialPrograms }) {
                 onMouseDown={handleMouseDown}
               >
                 <motion.div
-                  ref={contentRef}
+                  ref={handleContentRef}
                   className="flex"
                   drag="x"
                   dragConstraints={{ right: 0, left: -width }}
