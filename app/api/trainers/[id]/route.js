@@ -1,4 +1,5 @@
 import { connectDB } from "@/lib/dbConnect";
+import { adminAuthMiddleware } from "@/lib/middleware";
 import Trainer from "@/lib/Trainer";
 import Schedule from "@/lib/Schedule";
 import mongoose from 'mongoose';
@@ -45,6 +46,9 @@ export async function GET(request, context) {
 
 // UPDATE TRAINER
 export async function PUT(request, context) {
+  const authResponse = await adminAuthMiddleware(request);
+  if (authResponse) return authResponse;
+
   try {
     await connectDB();
     const body = await request.json();
@@ -116,6 +120,9 @@ export async function PUT(request, context) {
 
 // DELETE TRAINER
 export async function DELETE(request, context) {
+  const authResponse = await adminAuthMiddleware(request);
+  if (authResponse) return authResponse;
+
   try {
     await connectDB();
     
