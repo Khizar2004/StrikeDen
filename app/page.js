@@ -20,7 +20,7 @@ export default async function Home() {
 
   return (
     <HomeClient
-      trainers={trainers.slice(0, 3)}
+      trainers={trainers}
       classes={classes}
     />
   );

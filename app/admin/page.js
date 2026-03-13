@@ -4,10 +4,6 @@ import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useTheme } from '../../components/ThemeProvider';
-import { FaSun, FaMoon } from 'react-icons/fa';
-import { formatTime } from "@/lib/utils";
-
 // Import UI components
 import AdminSidebar from "./components/layout/AdminSidebar";
 import MobileNav from "./components/layout/MobileNav";
@@ -26,17 +22,14 @@ import useClasses from "./hooks/useClasses";
 import usePrograms from "./hooks/usePrograms";
 import useConfirmModal from "./hooks/useConfirmModal";
 
-// Move Tooltip to a separate component file
-import Tooltip from "./components/ui/Tooltip";
 
 /**
  * Admin Dashboard Page
  */
 export default function AdminPage() {
-  const { theme, mounted } = useTheme();
   const [activeTab, setActiveTab] = useState("trainers");
   const router = useRouter();
-  
+
   // Check URL parameters for tab selection
   useEffect(() => {
     // Only run in browser environment
@@ -48,27 +41,27 @@ export default function AdminPage() {
       }
     }
   }, []);
-  
+
   // Initialize hooks
   const { isAuth, isLoading: isAuthLoading, handleLogout } = useAuth();
-  const { 
-    trainers, 
-    isLoading: isTrainersLoading, 
-    isSubmitting: isAddingTrainer, 
-    isDeleting: isDeletingTrainer, 
-    addTrainer, 
-    deleteTrainer 
+  const {
+    trainers,
+    isLoading: isTrainersLoading,
+    isSubmitting: isAddingTrainer,
+    isDeleting: isDeletingTrainer,
+    addTrainer,
+    deleteTrainer
   } = useTrainers();
-  
-  const { 
-    schedules, 
-    isLoading: isSchedulesLoading, 
-    isSubmitting: isAddingSchedule, 
-    isDeleting: isDeletingSchedule, 
-    addSchedule, 
-    deleteSchedule 
+
+  const {
+    schedules,
+    isLoading: isSchedulesLoading,
+    isSubmitting: isAddingSchedule,
+    isDeleting: isDeletingSchedule,
+    addSchedule,
+    deleteSchedule
   } = useSchedules();
-  
+
   const {
     classes: offeredClasses,
     isLoading: isClassesLoading,
@@ -87,11 +80,11 @@ export default function AdminPage() {
     deleteProgram
   } = usePrograms();
 
-  const { 
-    confirmModal, 
-    openConfirmModal, 
-    closeConfirmModal, 
-    handleConfirm 
+  const {
+    confirmModal,
+    openConfirmModal,
+    closeConfirmModal,
+    handleConfirm
   } = useConfirmModal();
 
   // Loading states for UI components
@@ -149,8 +142,8 @@ export default function AdminPage() {
 
   // Memoize the enriched schedules
   const enrichedSchedules = useMemo(() => {
-    if (!schedules.length || !trainers.length) return [];
-    
+    if (!schedules.length) return [];
+
     return schedules.map(schedule => {
       // Check if trainer is already a populated object or just an ID
       if (schedule.trainer && typeof schedule.trainer === 'object' && schedule.trainer._id) {
@@ -173,10 +166,10 @@ export default function AdminPage() {
   }, [schedules, trainers]);
 
   // Show loading state while data is being fetched
-  if (isAuthLoading || !mounted) {
+  if (isAuthLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "#0F0F0F" }}>
+        <div className="animate-spin h-10 w-10 border-2 border-[#E50914] border-t-transparent"></div>
       </div>
     );
   }
@@ -184,19 +177,19 @@ export default function AdminPage() {
   // Show error state if not authenticated
   if (!isAuth) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "#0F0F0F" }}>
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-red-600 dark:text-red-400 mb-4">Access Denied</h2>
-          <p className="text-gray-600 dark:text-gray-400">Please log in to access the admin dashboard.</p>
+          <h2 className="text-xl font-bold uppercase tracking-wide mb-4" style={{ color: "#E50914" }}>Access Denied</h2>
+          <p className="text-sm" style={{ color: "rgba(237,235,230,0.5)" }}>Please log in to access the admin dashboard.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 transition-colors duration-200">
+    <div className="min-h-screen" style={{ background: "#0F0F0F", color: "#EDEBE6" }}>
       {/* Confirmation Modal */}
-      <ConfirmModal 
+      <ConfirmModal
         isOpen={confirmModal.isOpen}
         onClose={closeConfirmModal}
         onConfirm={handleConfirm}
@@ -206,7 +199,7 @@ export default function AdminPage() {
 
       <div className="flex h-screen overflow-hidden">
         {/* Sidebar Navigation (Desktop) */}
-        <AdminSidebar 
+        <AdminSidebar
           activeTab={activeTab}
           setActiveTab={setActiveTab}
           handleLogout={handleLogout}
@@ -215,17 +208,17 @@ export default function AdminPage() {
         {/* Main Content */}
         <div className="flex-1 flex flex-col overflow-hidden">
           {/* Mobile Navigation */}
-          <MobileNav 
+          <MobileNav
             activeTab={activeTab}
             setActiveTab={setActiveTab}
             handleLogout={handleLogout}
           />
-          
-          <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
-            <div className="container mx-auto px-4 py-6">
+
+          <main className="flex-1 overflow-y-auto" style={{ background: "#0F0F0F" }}>
+            <div className="max-w-screen-xl mx-auto px-4 md:px-8 py-8">
               {/* Tab Content */}
               {activeTab === "trainers" && (
-                <TrainersManager 
+                <TrainersManager
                   trainers={trainers}
                   isLoading={isLoading}
                   handleAddTrainer={addTrainer}
@@ -234,7 +227,7 @@ export default function AdminPage() {
               )}
 
               {activeTab === "schedules" && (
-                <ScheduleManager 
+                <ScheduleManager
                   schedules={enrichedSchedules}
                   trainers={trainers}
                   isLoading={isLoading}

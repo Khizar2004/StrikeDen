@@ -55,41 +55,49 @@ export default function SettingsManager() {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+        <div className="animate-spin h-8 w-8 border-2 border-[#E50914] border-t-transparent"></div>
       </div>
     );
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
-      <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+    <div className="p-8" style={{ background: "#141414", border: "1px solid rgba(237,235,230,0.06)" }}>
+      <h2 className="text-xl font-bold uppercase tracking-wide mb-8" style={{ color: "#EDEBE6" }}>
         Site Settings
       </h2>
-      
+
       <div className="space-y-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-xs uppercase tracking-widest font-bold mb-2" style={{ color: "rgba(237,235,230,0.5)" }}>
             Global Promotion Banner
           </label>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
+          <p className="text-sm mb-3" style={{ color: "rgba(237,235,230,0.35)" }}>
             This message will appear at the top of the pricing page when set. Leave empty to hide the banner.
           </p>
           <textarea
             value={globalPromotion}
             onChange={(e) => setGlobalPromotion(e.target.value)}
             placeholder="Enter promotional message (e.g., '50% off all classes this month!')"
-            className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent dark:bg-gray-700 dark:text-white resize-none"
+            className="w-full px-4 py-3 text-sm focus:outline-none transition-colors resize-none"
+            style={{
+              background: "#1A1A1A",
+              border: "1px solid rgba(237,235,230,0.1)",
+              color: "#EDEBE6",
+            }}
             rows="3"
             maxLength="300"
+            onFocus={(e) => e.currentTarget.style.borderColor = "#E50914"}
+            onBlur={(e) => e.currentTarget.style.borderColor = "rgba(237,235,230,0.1)"}
           />
           <div className="flex justify-between items-center mt-2">
-            <span className="text-xs text-gray-400">
+            <span className="text-xs" style={{ color: "rgba(237,235,230,0.35)" }}>
               {globalPromotion.length}/300 characters
             </span>
             {globalPromotion && (
               <button
                 onClick={() => setGlobalPromotion('')}
-                className="text-xs text-red-600 hover:text-red-700"
+                className="text-xs uppercase tracking-widest font-bold transition-colors"
+                style={{ color: "#E50914" }}
               >
                 Clear
               </button>
@@ -100,77 +108,24 @@ export default function SettingsManager() {
         {/* Preview */}
         {globalPromotion && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-xs uppercase tracking-widest font-bold mb-2" style={{ color: "rgba(237,235,230,0.5)" }}>
               Preview
             </label>
-            <div className="relative overflow-hidden">
-              {/* Main banner container */}
-              <div className="relative bg-gradient-to-r from-white via-gray-50 to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-black rounded-lg border border-red-600/30 dark:border-red-600/20 backdrop-blur-sm">
-                {/* Subtle animated background */}
-                <div className="absolute inset-0 overflow-hidden rounded-lg">
-                  {/* Subtle dot pattern */}
-                  <div className="absolute inset-0 opacity-30 dark:opacity-20">
-                    <div className="absolute inset-0" style={{
-                      backgroundImage: `radial-gradient(circle at 2px 2px, rgba(220,38,38,0.15) 1px, transparent 0)`,
-                      backgroundSize: '24px 24px'
-                    }} />
-                  </div>
-                  
-                  {/* Flowing gradient waves */}
-                  <div 
-                    className="absolute inset-0 opacity-60 animate-pulse"
-                    style={{
-                      background: "linear-gradient(90deg, transparent 0%, rgba(220,38,38,0.08) 20%, rgba(220,38,38,0.12) 40%, rgba(220,38,38,0.08) 60%, transparent 80%)",
-                      backgroundSize: "300% 100%",
-                      animation: "gradient-flow 15s linear infinite"
-                    }}
-                  />
-                  
-                  {/* Subtle radial highlights */}
-                  <div className="absolute top-4 right-8 w-32 h-32 bg-red-500/5 rounded-full blur-xl animate-pulse" />
-                  <div className="absolute bottom-4 left-8 w-24 h-24 bg-red-500/8 rounded-full blur-lg animate-pulse" style={{ animationDelay: '2s' }} />
-                  
-                  {/* Red accent line */}
-                  <div className="absolute top-0 left-0 h-[2px] w-full bg-gradient-to-r from-transparent via-red-600 to-transparent" />
+            <div className="relative overflow-hidden" style={{ background: "#1A1A1A", border: "1px solid rgba(229,9,20,0.2)" }}>
+              <div className="absolute top-0 left-0 h-[2px] w-full" style={{ background: "linear-gradient(90deg, transparent, #E50914, transparent)" }} />
+              <div className="relative z-10 px-8 py-6 text-center">
+                <div className="flex items-center justify-center gap-3 mb-3">
+                  <div className="w-2 h-2 animate-pulse" style={{ background: "#E50914" }} />
+                  <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "#E50914" }}>
+                    Ongoing Promotions
+                  </span>
                 </div>
-                
-                {/* Content */}
-                <div className="relative z-10 px-8 py-6 text-center">
-                  <div className="flex items-center justify-center space-x-3 mb-3">
-                    {/* Status indicator */}
-                    <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-                    <span className="text-red-600 dark:text-red-400 text-sm font-medium uppercase tracking-wider">
-                      Ongoing Promotions
-                    </span>
-                  </div>
-                  
-                  <div className="text-gray-900 dark:text-white text-xl md:text-2xl lg:text-3xl font-black whitespace-pre-line leading-tight tracking-tight">
-                    <span style={{
-                      textShadow: "0 0 8px rgba(220,38,38,0.3)",
-                      animation: "glow 3s ease-in-out infinite"
-                    }}>
-                      {globalPromotion}
-                    </span>
-                  </div>
+                <div className="text-xl md:text-2xl font-bold whitespace-pre-line leading-tight tracking-tight" style={{ color: "#EDEBE6" }}>
+                  {globalPromotion}
                 </div>
-                
-                {/* Bottom accent line */}
-                <div className="absolute bottom-0 left-0 h-[1px] w-full bg-gradient-to-r from-transparent via-red-600/50 to-transparent" />
               </div>
+              <div className="absolute bottom-0 left-0 h-[1px] w-full" style={{ background: "linear-gradient(90deg, transparent, rgba(229,9,20,0.5), transparent)" }} />
             </div>
-            
-            {/* Add the keyframes styles */}
-            <style jsx>{`
-              @keyframes gradient-flow {
-                0% { background-position: 0% 50%; }
-                100% { background-position: 100% 50%; }
-              }
-              
-              @keyframes glow {
-                0%, 100% { text-shadow: 0 0 0px rgba(220,38,38,0); }
-                50% { text-shadow: 0 0 8px rgba(220,38,38,0.3); }
-              }
-            `}</style>
           </div>
         )}
 
@@ -178,7 +133,8 @@ export default function SettingsManager() {
           <button
             onClick={handleSave}
             disabled={isSaving}
-            className="px-6 py-3 bg-red-600 hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors duration-200"
+            className="px-8 py-3 text-sm font-bold uppercase tracking-widest transition-colors disabled:opacity-50"
+            style={{ background: "#E50914", color: "#FFFFFF" }}
           >
             {isSaving ? 'Saving...' : 'Save Settings'}
           </button>

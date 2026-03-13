@@ -1,14 +1,14 @@
 "use client";
-import { useState, useRef, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import Image from 'next/image';
-import dynamic from 'next/dynamic';
+import { useState, useRef, useEffect, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
+import dynamic from "next/dynamic";
 
-const ClassDetailsModal = dynamic(() => import('./ClassDetailsModal'), { ssr: false });
-const ProgramDetailsModal = dynamic(() => import('./ProgramDetailsModal'), { ssr: false });
+const ClassDetailsModal = dynamic(() => import("./ClassDetailsModal"), { ssr: false });
+const ProgramDetailsModal = dynamic(() => import("./ProgramDetailsModal"), { ssr: false });
 
-export default function OfferingsSlider({ initialClasses, initialPrograms }) {
-  const [activeTab, setActiveTab] = useState('classes');
+export default function OfferingsSlider({ initialClasses, initialPrograms, isDark }) {
+  const [activeTab, setActiveTab] = useState("classes");
   const [classes, setClasses] = useState(initialClasses || []);
   const [programs, setPrograms] = useState(initialPrograms || []);
   const [loading, setLoading] = useState(!initialClasses && !initialPrograms);
@@ -24,7 +24,7 @@ export default function OfferingsSlider({ initialClasses, initialPrograms }) {
   const dragDistance = useRef(0);
   const dragStartPos = useRef(0);
 
-  const currentItems = activeTab === 'classes' ? classes : programs;
+  const currentItems = activeTab === "classes" ? classes : programs;
 
   // Callback ref: recalculate drag width when new content DOM mounts
   const handleContentRef = useCallback((node) => {
@@ -47,8 +47,8 @@ export default function OfferingsSlider({ initialClasses, initialPrograms }) {
       try {
         setLoading(true);
         const [classesRes, programsRes] = await Promise.all([
-          fetch('/api/classes'),
-          fetch('/api/programs')
+          fetch("/api/classes"),
+          fetch("/api/programs"),
         ]);
 
         const classesData = await classesRes.json();
@@ -58,7 +58,7 @@ export default function OfferingsSlider({ initialClasses, initialPrograms }) {
           setClasses(classesData.classes || []);
         }
         if (programsData.success) {
-          const activePrograms = (programsData.programs || []).filter(prog => prog.active);
+          const activePrograms = (programsData.programs || []).filter((prog) => prog.active);
           setPrograms(activePrograms);
         }
       } catch (error) {
@@ -88,8 +88,8 @@ export default function OfferingsSlider({ initialClasses, initialPrograms }) {
       }
     };
 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, [currentItems]);
 
   const handleDragStart = useCallback((e, info) => {
@@ -98,8 +98,8 @@ export default function OfferingsSlider({ initialClasses, initialPrograms }) {
     dragStartPos.current = info.point.x;
     dragDistance.current = 0;
 
-    document.querySelectorAll('.offering-card-link').forEach(link => {
-      link.style.pointerEvents = 'none';
+    document.querySelectorAll(".offering-card-link").forEach((link) => {
+      link.style.pointerEvents = "none";
     });
   }, []);
 
@@ -108,8 +108,8 @@ export default function OfferingsSlider({ initialClasses, initialPrograms }) {
 
     setTimeout(() => {
       setIsDragging(false);
-      document.querySelectorAll('.offering-card-link').forEach(link => {
-        link.style.pointerEvents = 'auto';
+      document.querySelectorAll(".offering-card-link").forEach((link) => {
+        link.style.pointerEvents = "auto";
       });
     }, 50);
   }, []);
@@ -120,31 +120,33 @@ export default function OfferingsSlider({ initialClasses, initialPrograms }) {
     }
   }, []);
 
-  const handleCardClick = useCallback((e, item) => {
-    const dragTime = Date.now() - dragStartTime.current;
-    if (!isDragging || (dragDistance.current < 20 && dragTime < 200)) {
-      e.preventDefault();
-      if (activeTab === 'classes') {
-        setSelectedClass(item);
-        setIsClassModalOpen(true);
-      } else {
-        setSelectedProgram(item);
-        setIsProgramModalOpen(true);
+  const handleCardClick = useCallback(
+    (e, item) => {
+      const dragTime = Date.now() - dragStartTime.current;
+      if (!isDragging || (dragDistance.current < 20 && dragTime < 200)) {
+        e.preventDefault();
+        if (activeTab === "classes") {
+          setSelectedClass(item);
+          setIsClassModalOpen(true);
+        } else {
+          setSelectedProgram(item);
+          setIsProgramModalOpen(true);
+        }
       }
-    }
-  }, [isDragging, activeTab]);
+    },
+    [isDragging, activeTab]
+  );
 
   const handleImageError = useCallback((e) => {
     e.target.onerror = null;
     e.target.style.backgroundColor = "#1A1A1A";
-    e.target.alt = "Image not available";
   }, []);
 
   if (loading) {
     return (
       <div className="max-w-screen-2xl mx-auto px-4 py-12">
         <div className="flex justify-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-500"></div>
+          <div className="h-12 w-12 border-t-2 border-b-2 border-[#E50914] animate-spin" />
         </div>
       </div>
     );
@@ -157,50 +159,52 @@ export default function OfferingsSlider({ initialClasses, initialPrograms }) {
   if (!hasClasses && !hasPrograms) {
     return (
       <div className="max-w-screen-2xl mx-auto px-4 py-12 text-center">
-        <p className="text-gray-500 dark:text-gray-400">No offerings available at the moment.</p>
+        <p className="text-[rgba(15,15,15,0.55)] dark:text-[rgba(237,235,230,0.6)]">
+          No offerings available at the moment.
+        </p>
       </div>
     );
   }
 
   return (
     <div className="max-w-screen-2xl mx-auto px-0 py-12">
-      {/* Tab Switcher - Only show if both exist */}
+      {/* Tab Switcher — brutalist bar, sharp corners */}
       {hasClasses && hasPrograms && (
         <div className="flex justify-center mb-10">
-          <div className="inline-flex bg-gray-200 dark:bg-gray-700 rounded-xl p-1.5">
+          <div className="inline-flex bg-[#F0F0F0] dark:bg-[#1A1A1A] p-1">
             <button
-              onClick={() => setActiveTab('classes')}
-              className={`relative px-8 py-3 text-lg font-bold rounded-lg transition-all duration-300 ${
-                activeTab === 'classes'
-                  ? 'text-white'
-                  : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
+              onClick={() => setActiveTab("classes")}
+              className={`relative px-8 py-3 text-lg font-bold transition-all duration-300 ${
+                activeTab === "classes"
+                  ? "text-white"
+                  : "text-[rgba(15,15,15,0.55)] dark:text-[rgba(237,235,230,0.6)] hover:text-[#1A1A1A] dark:hover:text-[#EDEBE6]"
               }`}
             >
-              {activeTab === 'classes' && (
+              {activeTab === "classes" && (
                 <motion.div
                   layoutId="activeTab"
-                  className="absolute inset-0 bg-red-600 rounded-lg"
+                  className="absolute inset-0 bg-[#E50914]"
                   transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                 />
               )}
-              <span className="relative z-10">Classes</span>
+              <span className="relative z-10 uppercase tracking-wide">Classes</span>
             </button>
             <button
-              onClick={() => setActiveTab('programs')}
-              className={`relative px-8 py-3 text-lg font-bold rounded-lg transition-all duration-300 ${
-                activeTab === 'programs'
-                  ? 'text-white'
-                  : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
+              onClick={() => setActiveTab("programs")}
+              className={`relative px-8 py-3 text-lg font-bold transition-all duration-300 ${
+                activeTab === "programs"
+                  ? "text-white"
+                  : "text-[rgba(15,15,15,0.55)] dark:text-[rgba(237,235,230,0.6)] hover:text-[#1A1A1A] dark:hover:text-[#EDEBE6]"
               }`}
             >
-              {activeTab === 'programs' && (
+              {activeTab === "programs" && (
                 <motion.div
                   layoutId="activeTab"
-                  className="absolute inset-0 bg-red-600 rounded-lg"
+                  className="absolute inset-0 bg-[#E50914]"
                   transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                 />
               )}
-              <span className="relative z-10">Programs</span>
+              <span className="relative z-10 uppercase tracking-wide">Programs</span>
             </button>
           </div>
         </div>
@@ -212,9 +216,14 @@ export default function OfferingsSlider({ initialClasses, initialPrograms }) {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="text-5xl md:text-6xl font-black text-center mb-12 tracking-tight text-gray-900 dark:text-white"
+        className="font-display uppercase text-center mb-12 text-[#1A1A1A] dark:text-[#EDEBE6]"
+        style={{
+          fontSize: "clamp(2.5rem, 5vw, 4.5rem)",
+          lineHeight: 0.88,
+          letterSpacing: "-0.04em",
+        }}
       >
-        {activeTab === 'classes' ? 'OUR CLASSES' : 'OUR PROGRAMS'}
+        {activeTab === "classes" ? "OUR CLASSES" : "OUR PROGRAMS"}
       </motion.h2>
 
       {/* Slider */}
@@ -228,7 +237,7 @@ export default function OfferingsSlider({ initialClasses, initialPrograms }) {
           className="overflow-hidden relative"
         >
           {currentItems.length === 0 ? (
-            <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+            <div className="text-center py-8 text-[rgba(15,15,15,0.55)] dark:text-[rgba(237,235,230,0.6)]">
               No {activeTab} available at the moment.
             </div>
           ) : (
@@ -247,7 +256,7 @@ export default function OfferingsSlider({ initialClasses, initialPrograms }) {
                   dragTransition={{
                     power: 0.25,
                     timeConstant: 400,
-                    modifyTarget: target => Math.round(target / 100) * 100
+                    modifyTarget: (target) => Math.round(target / 100) * 100,
                   }}
                   onDragStart={handleDragStart}
                   onDragEnd={handleDragEnd}
@@ -262,10 +271,17 @@ export default function OfferingsSlider({ initialClasses, initialPrograms }) {
                       transition={{ duration: 0.3 }}
                     >
                       <div
-                        className="offering-card-link block h-full w-full relative cursor-pointer overflow-hidden rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 transform transition-transform duration-500 hover:shadow-xl"
+                        className="offering-card-link block h-full w-full relative cursor-pointer overflow-hidden"
                         onClick={(e) => handleCardClick(e, item)}
                       >
-                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent z-10"></div>
+                        {/* Bottom gradient overlay — sharp, to dark surface */}
+                        <div
+                          className="absolute inset-0 z-10"
+                          style={{
+                            background:
+                              "linear-gradient(to top, #141414 0%, rgba(20,20,20,0.6) 40%, transparent 100%)",
+                          }}
+                        />
                         <div className="relative h-full w-full">
                           <Image
                             src={item.image || "/images/default-class.jpg"}
@@ -275,15 +291,21 @@ export default function OfferingsSlider({ initialClasses, initialPrograms }) {
                             sizes="(max-width: 768px) 90vw, (max-width: 1200px) 40vw, 33vw"
                             onError={handleImageError}
                             draggable="false"
-                            priority
                           />
                         </div>
                         <div className="absolute bottom-0 left-0 right-0 z-20 p-6 flex flex-col items-center">
-                          <h3 className="text-4xl md:text-5xl font-black text-white drop-shadow-lg text-center mb-2">
+                          <h3
+                            className="font-display uppercase text-white text-center mb-2"
+                            style={{
+                              fontSize: "clamp(1.5rem, 3vw, 2.5rem)",
+                              lineHeight: 0.88,
+                              letterSpacing: "-0.04em",
+                            }}
+                          >
                             {item.title}
                           </h3>
                           {item.shortDescription && (
-                            <p className="text-gray-200 text-lg mt-1 mb-3 text-center line-clamp-2">
+                            <p className="text-[rgba(237,235,230,0.6)] text-base mt-1 mb-3 text-center line-clamp-2">
                               {item.shortDescription}
                             </p>
                           )}
@@ -294,19 +316,19 @@ export default function OfferingsSlider({ initialClasses, initialPrograms }) {
                 </motion.div>
               </motion.div>
 
-              {/* Scroll hint */}
+              {/* Scroll hint — minimal brutalist dots */}
               {currentItems.length > 2 && (
                 <>
-                  <div className="absolute top-1/2 right-3 -translate-y-1/2 flex flex-col gap-1 opacity-70 z-20">
-                    <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
-                    <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
-                    <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
+                  <div className="absolute top-1/2 right-3 -translate-y-1/2 flex flex-col gap-1.5 opacity-70 z-20">
+                    <div className="w-1.5 h-1.5 bg-white" />
+                    <div className="w-1.5 h-1.5 bg-white" />
+                    <div className="w-1.5 h-1.5 bg-white" />
                   </div>
                   <motion.p
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 0.7 }}
                     transition={{ delay: 0.5, duration: 0.6 }}
-                    className="text-center text-sm text-gray-500 dark:text-gray-400 mt-4 italic"
+                    className="text-center text-sm uppercase tracking-wide mt-4 text-[rgba(15,15,15,0.55)] dark:text-[rgba(237,235,230,0.6)]"
                   >
                     Drag to explore more {activeTab}
                   </motion.p>

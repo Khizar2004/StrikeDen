@@ -11,7 +11,7 @@ export default function ImageUpload({ onImageUploaded, initialImage = null }) {
   const [preview, setPreview] = useState(null);
   const [error, setError] = useState(null);
   const [uploadedPath, setUploadedPath] = useState(null);
-  
+
   // Set initial preview and path
   useEffect(() => {
     if (initialImage) {
@@ -23,10 +23,10 @@ export default function ImageUpload({ onImageUploaded, initialImage = null }) {
   // Helper to validate an image URL format
   const isValidImageUrl = (url) => {
     if (!url) return false;
-    
+
     // Check if it's a relative path starting with /uploads/
     if (url.startsWith('/uploads/')) return true;
-    
+
     // Check if it's a complete URL
     try {
       new URL(url);
@@ -41,7 +41,7 @@ export default function ImageUpload({ onImageUploaded, initialImage = null }) {
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    
+
     setError(null);
 
     // Validate file type
@@ -76,7 +76,7 @@ export default function ImageUpload({ onImageUploaded, initialImage = null }) {
       const response = await fetch('/api/upload/blob', {
         method: 'POST',
         body: formData,
-        credentials: 'include' // Keep cookies for authentication
+        credentials: 'include'
       });
 
       // Handle non-JSON responses gracefully
@@ -88,11 +88,11 @@ export default function ImageUpload({ onImageUploaded, initialImage = null }) {
         const text = await response.text();
         throw new Error(`Server returned non-JSON response: ${text}`);
       }
-      
+
       if (!response.ok) {
         throw new Error(data.error || `Upload failed with status: ${response.status}`);
       }
-      
+
       if (data.success && data.url) {
         setUploadedPath(data.url);
         onImageUploaded(data.url);
@@ -110,9 +110,8 @@ export default function ImageUpload({ onImageUploaded, initialImage = null }) {
   // Render different preview based on image source type
   const renderPreview = () => {
     if (!preview) return null;
-    
+
     if (typeof preview === 'string' && preview.startsWith('data:')) {
-      // For data URLs (local file preview)
       return (
         <div className="relative w-full h-full">
           <Image
@@ -126,7 +125,6 @@ export default function ImageUpload({ onImageUploaded, initialImage = null }) {
         </div>
       );
     } else {
-      // For server paths or URLs
       return (
         <div className="w-full h-full">
           <img
@@ -143,14 +141,15 @@ export default function ImageUpload({ onImageUploaded, initialImage = null }) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-center">
-        <div className="relative w-32 h-32 bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden">
+        <div className="relative w-32 h-32 overflow-hidden" style={{ background: "#1A1A1A", border: "1px solid rgba(237,235,230,0.1)" }}>
           {preview ? (
             renderPreview()
           ) : (
             <div className="flex items-center justify-center h-full">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-12 w-12 text-gray-400"
+                className="h-12 w-12"
+                style={{ color: "rgba(237,235,230,0.2)" }}
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -166,21 +165,22 @@ export default function ImageUpload({ onImageUploaded, initialImage = null }) {
           )}
 
           {isUploading && (
-            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-              <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            <div className="absolute inset-0 flex items-center justify-center" style={{ background: "rgba(0,0,0,0.6)" }}>
+              <div className="w-8 h-8 border-2 border-white border-t-transparent animate-spin"></div>
             </div>
           )}
         </div>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+        <label className="block text-xs uppercase tracking-widest font-bold mb-2" style={{ color: "rgba(237,235,230,0.5)" }}>
           {preview ? 'Change Image' : 'Upload Image'}
         </label>
-        <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-md">
+        <div className="flex justify-center px-6 pt-5 pb-6 border-2 border-dashed" style={{ borderColor: "rgba(237,235,230,0.1)", background: "#1A1A1A" }}>
           <div className="space-y-1 text-center">
             <svg
-              className="mx-auto h-12 w-12 text-gray-400"
+              className="mx-auto h-10 w-10"
+              style={{ color: "rgba(237,235,230,0.2)" }}
               stroke="currentColor"
               fill="none"
               viewBox="0 0 48 48"
@@ -193,10 +193,11 @@ export default function ImageUpload({ onImageUploaded, initialImage = null }) {
                 strokeLinejoin="round"
               />
             </svg>
-            <div className="flex justify-center text-sm text-gray-600 dark:text-gray-400">
+            <div className="flex justify-center text-sm">
               <label
                 htmlFor="file-upload"
-                className="relative cursor-pointer bg-white dark:bg-gray-700 rounded-md font-medium text-red-600 dark:text-red-400 hover:text-red-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-red-500"
+                className="relative cursor-pointer font-bold text-xs uppercase tracking-widest transition-colors"
+                style={{ color: "#E50914" }}
               >
                 <span className="px-2">Upload a file</span>
                 <input
@@ -209,7 +210,7 @@ export default function ImageUpload({ onImageUploaded, initialImage = null }) {
                 />
               </label>
             </div>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
+            <p className="text-xs" style={{ color: "rgba(237,235,230,0.35)" }}>
               PNG, JPG, GIF up to 5MB
             </p>
           </div>
@@ -217,14 +218,14 @@ export default function ImageUpload({ onImageUploaded, initialImage = null }) {
       </div>
 
       {error && (
-        <p className="mt-2 text-sm text-red-600 dark:text-red-500">{error}</p>
+        <p className="mt-2 text-sm" style={{ color: "#E50914" }}>{error}</p>
       )}
-      
+
       {uploadedPath && (
-        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1 truncate">
+        <div className="text-xs mt-1 truncate" style={{ color: "rgba(237,235,230,0.35)" }}>
           <strong>Path:</strong> {uploadedPath}
         </div>
       )}
     </div>
   );
-} 
+}

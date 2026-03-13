@@ -16,6 +16,15 @@ const SPECIALIZATIONS = [
   'MMA Coach'
 ];
 
+const inputStyle = {
+  background: "#1A1A1A",
+  border: "1px solid rgba(237,235,230,0.1)",
+  color: "#EDEBE6",
+};
+
+const labelClass = "block text-xs uppercase tracking-widest font-bold mb-2";
+const labelStyle = { color: "rgba(237,235,230,0.5)" };
+
 /**
  * Form for adding or editing a trainer
  */
@@ -28,47 +37,44 @@ export default function TrainerForm({ initialData = {}, onSubmit, isLoading }) {
     bio: initialData.bio || '',
     certifications: initialData.certifications || []
   });
-  
+
   const [newCertification, setNewCertification] = useState('');
-  const [debug, setDebug] = useState('');
-  
+
   // For handling the specializations
   const [selectedSpecializations, setSelectedSpecializations] = useState([]);
   const [customSpecializations, setCustomSpecializations] = useState([]);
   const [newCustomSpecialization, setNewCustomSpecialization] = useState('');
-  
+
   // Set initial specializations
   useEffect(() => {
     if (initialData.specialization) {
-      // Handle both string and array for backward compatibility
-      const specs = Array.isArray(initialData.specialization) 
-        ? initialData.specialization 
+      const specs = Array.isArray(initialData.specialization)
+        ? initialData.specialization
         : [initialData.specialization];
-      
-      // Separate predefined specializations from custom ones
+
       const predefined = specs.filter(spec => SPECIALIZATIONS.includes(spec));
       const custom = specs.filter(spec => !SPECIALIZATIONS.includes(spec));
-      
+
       setSelectedSpecializations(predefined);
       setCustomSpecializations(custom);
     }
   }, [initialData]);
-  
+
   // Update trainer data whenever specializations change
   useEffect(() => {
     const allSpecializations = [...selectedSpecializations, ...customSpecializations];
-    
+
     setTrainerData(prev => ({
       ...prev,
       specialization: allSpecializations
     }));
   }, [selectedSpecializations, customSpecializations]);
-  
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setTrainerData(prev => ({ ...prev, [name]: value }));
   };
-  
+
   const handleSpecializationChange = (specialization) => {
     setSelectedSpecializations(prev => {
       if (prev.includes(specialization)) {
@@ -78,24 +84,22 @@ export default function TrainerForm({ initialData = {}, onSubmit, isLoading }) {
       }
     });
   };
-  
+
   const handleAddCustomSpecialization = () => {
     if (newCustomSpecialization.trim()) {
       setCustomSpecializations(prev => [...prev, newCustomSpecialization.trim()]);
       setNewCustomSpecialization('');
     }
   };
-  
+
   const handleRemoveCustomSpecialization = (index) => {
     setCustomSpecializations(prev => prev.filter((_, i) => i !== index));
   };
-  
+
   const handleImageUploaded = (imagePath) => {
-    console.log("Image uploaded:", imagePath);
-    setDebug("Image path: " + imagePath);
     setTrainerData(prev => ({ ...prev, image: imagePath }));
   };
-  
+
   const handleAddCertification = () => {
     if (newCertification.trim()) {
       setTrainerData(prev => ({
@@ -105,32 +109,31 @@ export default function TrainerForm({ initialData = {}, onSubmit, isLoading }) {
       setNewCertification('');
     }
   };
-  
+
   const handleRemoveCertification = (index) => {
     setTrainerData(prev => ({
       ...prev,
       certifications: prev.certifications.filter((_, i) => i !== index)
     }));
   };
-  
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Submitting trainer data:", trainerData);
     onSubmit(trainerData);
   };
-  
+
   return (
-    <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-      <div className="border-b border-gray-200 dark:border-gray-700 px-6 py-4">
-        <h3 className="text-lg font-medium text-gray-900 dark:text-white">
+    <form onSubmit={handleSubmit} className="overflow-hidden" style={{ background: "#141414", border: "1px solid rgba(237,235,230,0.06)" }}>
+      <div className="px-6 py-4" style={{ borderBottom: "1px solid rgba(237,235,230,0.06)" }}>
+        <h3 className="text-sm font-bold uppercase tracking-widest" style={{ color: "#EDEBE6" }}>
           {initialData._id ? 'Edit Trainer' : 'Add New Trainer'}
         </h3>
       </div>
-      
-      <div className="px-6 py-4 space-y-4">
+
+      <div className="px-6 py-5 space-y-5">
         <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            Name <span className="text-red-500">*</span>
+          <label htmlFor="name" className={labelClass} style={labelStyle}>
+            Name <span style={{ color: "#E50914" }}>*</span>
           </label>
           <input
             type="text"
@@ -139,13 +142,17 @@ export default function TrainerForm({ initialData = {}, onSubmit, isLoading }) {
             required
             value={trainerData.name}
             onChange={handleChange}
-            className="w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            placeholder="Full name"
+            className="w-full px-4 py-3 text-sm focus:outline-none transition-colors"
+            style={inputStyle}
+            onFocus={(e) => e.currentTarget.style.borderColor = "#E50914"}
+            onBlur={(e) => e.currentTarget.style.borderColor = "rgba(237,235,230,0.1)"}
           />
         </div>
-        
+
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Specializations <span className="text-red-500">*</span>
+          <label className={labelClass} style={labelStyle}>
+            Specializations <span style={{ color: "#E50914" }}>*</span>
           </label>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mb-3">
             {SPECIALIZATIONS.map(spec => (
@@ -155,48 +162,54 @@ export default function TrainerForm({ initialData = {}, onSubmit, isLoading }) {
                   type="checkbox"
                   checked={selectedSpecializations.includes(spec)}
                   onChange={() => handleSpecializationChange(spec)}
-                  className="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
+                  className="h-4 w-4 accent-[#E50914]"
+                  style={{ accentColor: "#E50914" }}
                 />
-                <label htmlFor={`spec-${spec}`} className="ml-2 text-sm text-gray-700 dark:text-gray-300">
+                <label htmlFor={`spec-${spec}`} className="ml-2 text-sm" style={{ color: "rgba(237,235,230,0.6)" }}>
                   {spec}
                 </label>
               </div>
             ))}
           </div>
-          
+
           <div className="mt-3">
-            <label htmlFor="customSpecialization" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label htmlFor="customSpecialization" className={labelClass} style={labelStyle}>
               Custom Specializations
             </label>
-            <div className="flex mb-2">
+            <div className="flex">
               <input
                 type="text"
                 id="customSpecialization"
                 value={newCustomSpecialization}
                 onChange={(e) => setNewCustomSpecialization(e.target.value)}
                 placeholder="Enter custom specialization"
-                className="flex-1 rounded-l-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                className="flex-1 px-4 py-3 text-sm focus:outline-none transition-colors"
+                style={inputStyle}
+                onFocus={(e) => e.currentTarget.style.borderColor = "#E50914"}
+                onBlur={(e) => e.currentTarget.style.borderColor = "rgba(237,235,230,0.1)"}
               />
               <button
                 type="button"
                 onClick={handleAddCustomSpecialization}
-                className="px-4 py-2 rounded-r-md bg-red-600 text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition-colors"
+                className="px-4 py-3 text-xs font-bold uppercase tracking-widest transition-colors"
+                style={{ background: "#E50914", color: "#FFFFFF" }}
               >
                 Add
               </button>
             </div>
-            
+
             {customSpecializations.length > 0 && (
               <div className="mt-2 space-y-2">
                 {customSpecializations.map((spec, index) => (
-                  <div key={index} className="flex items-center justify-between bg-blue-50 dark:bg-blue-900/20 p-2 rounded-md">
-                    <span className="text-sm text-blue-800 dark:text-blue-200">{spec}</span>
+                  <div key={index} className="flex items-center justify-between p-2" style={{ background: "rgba(248,163,72,0.08)", border: "1px solid rgba(248,163,72,0.15)" }}>
+                    <span className="text-sm" style={{ color: "#F8A348" }}>{spec}</span>
                     <button
                       type="button"
                       onClick={() => handleRemoveCustomSpecialization(index)}
-                      className="ml-2 text-blue-500 hover:text-blue-700 focus:outline-none"
+                      className="ml-2 transition-colors"
+                      style={{ color: "rgba(237,235,230,0.35)" }}
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                       </svg>
                     </button>
@@ -205,24 +218,26 @@ export default function TrainerForm({ initialData = {}, onSubmit, isLoading }) {
               </div>
             )}
           </div>
-          
+
           {/* Display selected specializations */}
           {(selectedSpecializations.length > 0 || customSpecializations.length > 0) && (
             <div className="mt-3">
-              <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Selected Specializations:</p>
+              <p className="text-xs uppercase tracking-widest font-bold mb-2" style={{ color: "rgba(237,235,230,0.35)" }}>Selected:</p>
               <div className="flex flex-wrap gap-2">
                 {selectedSpecializations.map(spec => (
-                  <span 
-                    key={spec} 
-                    className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+                  <span
+                    key={spec}
+                    className="inline-flex items-center px-2.5 py-1 text-xs font-bold uppercase tracking-wider"
+                    style={{ background: "rgba(229,9,20,0.15)", color: "#E50914" }}
                   >
                     {spec}
                   </span>
                 ))}
                 {customSpecializations.map((spec, index) => (
-                  <span 
-                    key={`custom-${index}`} 
-                    className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
+                  <span
+                    key={`custom-${index}`}
+                    className="inline-flex items-center px-2.5 py-1 text-xs font-bold uppercase tracking-wider"
+                    style={{ background: "rgba(248,163,72,0.12)", color: "#F8A348" }}
                   >
                     {spec}
                   </span>
@@ -231,9 +246,9 @@ export default function TrainerForm({ initialData = {}, onSubmit, isLoading }) {
             </div>
           )}
         </div>
-        
+
         <div>
-          <label htmlFor="experience" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          <label htmlFor="experience" className={labelClass} style={labelStyle}>
             Experience
           </label>
           <input
@@ -243,22 +258,25 @@ export default function TrainerForm({ initialData = {}, onSubmit, isLoading }) {
             value={trainerData.experience}
             onChange={handleChange}
             placeholder="e.g., 5 years, 3+ years experience, etc."
-            className="w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            className="w-full px-4 py-3 text-sm focus:outline-none transition-colors"
+            style={inputStyle}
+            onFocus={(e) => e.currentTarget.style.borderColor = "#E50914"}
+            onBlur={(e) => e.currentTarget.style.borderColor = "rgba(237,235,230,0.1)"}
           />
         </div>
-        
+
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          <label className={labelClass} style={labelStyle}>
             Profile Image
           </label>
-          <ImageUpload 
-            onImageUploaded={handleImageUploaded} 
+          <ImageUpload
+            onImageUploaded={handleImageUploaded}
             initialImage={trainerData.image}
           />
         </div>
-        
+
         <div>
-          <label htmlFor="bio" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          <label htmlFor="bio" className={labelClass} style={labelStyle}>
             Biography
           </label>
           <textarea
@@ -267,43 +285,51 @@ export default function TrainerForm({ initialData = {}, onSubmit, isLoading }) {
             rows="4"
             value={trainerData.bio}
             onChange={handleChange}
-            className="w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            className="w-full px-4 py-3 text-sm focus:outline-none transition-colors resize-none"
+            style={inputStyle}
+            onFocus={(e) => e.currentTarget.style.borderColor = "#E50914"}
+            onBlur={(e) => e.currentTarget.style.borderColor = "rgba(237,235,230,0.1)"}
           ></textarea>
         </div>
-        
+
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className={labelClass} style={labelStyle}>
             Certifications
           </label>
-          
-          <div className="flex mb-2">
+
+          <div className="flex">
             <input
               type="text"
               value={newCertification}
               onChange={(e) => setNewCertification(e.target.value)}
-              className="flex-1 rounded-l-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="flex-1 px-4 py-3 text-sm focus:outline-none transition-colors"
+              style={inputStyle}
               placeholder="Add certification"
+              onFocus={(e) => e.currentTarget.style.borderColor = "#E50914"}
+              onBlur={(e) => e.currentTarget.style.borderColor = "rgba(237,235,230,0.1)"}
             />
             <button
               type="button"
               onClick={handleAddCertification}
-              className="px-4 py-2 rounded-r-md bg-red-600 text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition-colors"
+              className="px-4 py-3 text-xs font-bold uppercase tracking-widest transition-colors"
+              style={{ background: "#E50914", color: "#FFFFFF" }}
             >
               Add
             </button>
           </div>
-          
+
           {trainerData.certifications.length > 0 ? (
             <div className="mt-2 space-y-2">
               {trainerData.certifications.map((cert, index) => (
-                <div key={index} className="flex items-center justify-between bg-gray-50 dark:bg-gray-700 p-2 rounded-md">
-                  <span className="text-sm text-gray-800 dark:text-gray-200">{cert}</span>
+                <div key={index} className="flex items-center justify-between p-2" style={{ background: "#1A1A1A", border: "1px solid rgba(237,235,230,0.06)" }}>
+                  <span className="text-sm" style={{ color: "rgba(237,235,230,0.7)" }}>{cert}</span>
                   <button
                     type="button"
                     onClick={() => handleRemoveCertification(index)}
-                    className="ml-2 text-red-500 hover:text-red-700 focus:outline-none"
+                    className="ml-2 transition-colors"
+                    style={{ color: "#E50914" }}
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                     </svg>
                   </button>
@@ -311,20 +337,21 @@ export default function TrainerForm({ initialData = {}, onSubmit, isLoading }) {
               ))}
             </div>
           ) : (
-            <p className="text-sm text-gray-500 dark:text-gray-400">No certifications added yet</p>
+            <p className="text-xs mt-2" style={{ color: "rgba(237,235,230,0.3)" }}>No certifications added yet</p>
           )}
         </div>
       </div>
-      
-      <div className="px-6 py-4 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+
+      <div className="px-6 py-4" style={{ borderTop: "1px solid rgba(237,235,230,0.06)" }}>
         <button
           type="submit"
           disabled={isLoading || (selectedSpecializations.length === 0 && customSpecializations.length === 0)}
-          className={`w-full inline-flex justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 ${isLoading || (selectedSpecializations.length === 0 && customSpecializations.length === 0) ? 'opacity-75 cursor-not-allowed' : ''}`}
+          className="w-full py-3 text-sm font-bold uppercase tracking-widest transition-colors disabled:opacity-50"
+          style={{ background: "#E50914", color: "#FFFFFF" }}
         >
           {isLoading ? 'Saving...' : initialData._id ? 'Update Trainer' : 'Add Trainer'}
         </button>
       </div>
     </form>
   );
-} 
+}

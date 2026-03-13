@@ -1,273 +1,262 @@
 "use client";
-import { motion } from 'framer-motion';
-import { useState } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { useTheme } from '../../components/ThemeProvider';
-import { FaInstagram, FaTwitter, FaLinkedinIn } from 'react-icons/fa';
+import { motion } from "framer-motion";
+import { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { useTheme } from "../../components/ThemeProvider";
+import { slideUp, staggerContainer } from "../../lib/animations";
+import BrutalistPageHero from "../../components/BrutalistPageHero";
+import { BlobField } from "../../components/BlobField";
+import { BrutalistButton } from "../../components/BrutalistButton";
+import { FaInstagram, FaTwitter, FaLinkedinIn } from "react-icons/fa";
+import { FiArrowRight } from "react-icons/fi";
 
-const fadeInUp = {
-  hidden: { opacity: 0, y: 60 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] }
-  }
-};
-
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1
-    }
-  }
-};
-
-export default function TrainersClient({ trainers }) {
+export default function TrainersClient({ trainers = [] }) {
   const { theme, mounted } = useTheme();
-  const [selectedTrainer, setSelectedTrainer] = useState(trainers.length > 0 ? trainers[0] : null);
+  const [selectedTrainer, setSelectedTrainer] = useState(
+    trainers.length > 0 ? trainers[0] : null
+  );
 
-  if (!mounted) {
-    return null;
-  }
+  if (!mounted) return null;
+
+  const isDark = theme === "dark";
+  const textColor = isDark ? "#EDEBE6" : "#1A1A1A";
+  const mutedColor = isDark ? "rgba(237,235,230,0.6)" : "rgba(15,15,15,0.55)";
+  const surfaceBg = isDark ? "#141414" : "#F5F5F5";
+  const dividerColor = isDark ? "rgba(237,235,230,0.15)" : "rgba(0,0,0,0.08)";
 
   return (
-    <main className="bg-gray-100 dark:bg-gray-900 min-h-screen">
-      {/* Hero Section */}
-      <div className="relative w-full h-[40vh] bg-gray-900">
-        <Image
-          src="/images/cta-background.jpg"
-          alt="Our Team"
-          fill
-          className="object-cover opacity-60"
-          priority
-        />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <motion.h1
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-6xl md:text-7xl font-black text-white tracking-tighter"
+    <main style={{ background: isDark ? "#0F0F0F" : "#FFFFFF" }}>
+      {/* ─── Hero ─── */}
+      <BrutalistPageHero title="THE COACHES" />
+
+      {/* ─── Intro + Trainer Browser ─── */}
+      <section className="px-6 md:px-16 py-32" style={{ background: isDark ? "#0F0F0F" : "#FFFFFF" }}>
+        <div className="max-w-screen-xl mx-auto">
+          <motion.p
+            variants={slideUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            className="text-lg md:text-xl max-w-3xl mb-20"
+            style={{ color: mutedColor }}
           >
-            OUR TEAM
-          </motion.h1>
-        </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 py-16">
-        {/* Introduction */}
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          variants={staggerContainer}
-          className="mb-20 text-center max-w-3xl mx-auto"
-        >
-          <motion.p variants={fadeInUp} className="text-xl text-gray-600 dark:text-gray-300">
-            Our instructors bring years of experience and passion to every class. With diverse backgrounds in
-            various martial arts disciplines, they're dedicated to helping you achieve your fitness and training goals.
+            Our instructors bring years of experience and passion to every class. Whether you&apos;re a beginner or seasoned fighter, our coaches tailor every session to your goals.
           </motion.p>
-        </motion.div>
 
-        {/* Trainers Grid */}
-        {trainers.length === 0 ? (
-          <div className="text-center py-16 bg-white dark:bg-gray-800 rounded-xl shadow-lg">
-            <p className="text-xl text-gray-500 dark:text-gray-400">Our trainer information is being updated. Please check back soon.</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-20">
-            {/* Featured Trainer */}
-            <div className="lg:col-span-1 order-2 lg:order-1">
-              <motion.div
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                variants={staggerContainer}
-                className="grid grid-cols-1 gap-4 sticky top-24"
-              >
-                {trainers.map((trainer) => (
+          {trainers.length === 0 ? (
+            <div className="py-16 text-center">
+              <p style={{ color: mutedColor }} className="text-xl">Our trainer information is being updated. Please check back soon.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+              {/* ── Sidebar ── */}
+              <div className="lg:col-span-4 order-2 lg:order-1">
+                <motion.div
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
+                  variants={staggerContainer}
+                  className="grid grid-cols-1 gap-2 sticky top-24"
+                >
+                  {trainers.map((trainer) => {
+                    const isActive = selectedTrainer?._id === trainer._id;
+                    return (
+                      <motion.div
+                        key={trainer._id}
+                        variants={slideUp}
+                        className="cursor-pointer flex items-center p-4 transition-colors duration-200"
+                        style={{ background: isActive ? "#E50914" : (isDark ? "#1A1A1A" : "#FFFFFF") }}
+                        onClick={() => setSelectedTrainer(trainer)}
+                        whileHover={!isActive ? { x: 4, transition: { duration: 0.2 } } : {}}
+                      >
+                        <div className="relative h-14 w-14 overflow-hidden mr-4 flex-shrink-0">
+                          <Image
+                            src={trainer.image || "/images/placeholder-trainer.jpg"}
+                            alt={trainer.name}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                        <div>
+                          <h3
+                            className="font-display uppercase text-sm"
+                            style={{ color: isActive ? "#FFFFFF" : textColor, letterSpacing: "0.04em" }}
+                          >
+                            {trainer.name}
+                          </h3>
+                          <p className="text-xs mt-0.5" style={{ color: isActive ? "rgba(255,255,255,0.8)" : mutedColor }}>
+                            {Array.isArray(trainer.specialization)
+                              ? trainer.specialization.join(", ")
+                              : trainer.specialization}
+                          </p>
+                        </div>
+                      </motion.div>
+                    );
+                  })}
+                </motion.div>
+              </div>
+
+              {/* ── Main Profile ── */}
+              <div className="lg:col-span-8 order-1 lg:order-2">
+                {selectedTrainer && (
                   <motion.div
-                    key={trainer._id}
-                    variants={fadeInUp}
-                    className={`p-4 rounded-lg cursor-pointer transition-colors duration-300 flex items-center
-                      ${selectedTrainer?._id === trainer._id
-                        ? 'bg-red-600 text-white'
-                        : 'bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
-                    onClick={() => setSelectedTrainer(trainer)}
+                    key={selectedTrainer._id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                    className="overflow-hidden"
                   >
-                    <div className="relative h-16 w-16 rounded-full overflow-hidden mr-4 flex-shrink-0 border-2 border-red-500">
+                    {/* Large Image */}
+                    <div className="relative" style={{ height: "75vh" }}>
                       <Image
-                        src={trainer.image || "/images/placeholder-trainer.jpg"}
-                        alt={trainer.name}
+                        src={selectedTrainer.image || "/images/placeholder-trainer.jpg"}
+                        alt={selectedTrainer.name}
                         fill
                         className="object-cover"
                       />
+                      <div
+                        className="absolute inset-0"
+                        style={{
+                          background: `linear-gradient(to top, ${isDark ? surfaceBg : "#FFFFFF"} 0%, transparent 50%)`,
+                        }}
+                      />
                     </div>
-                    <div>
-                      <h3 className={`font-bold ${selectedTrainer?._id === trainer._id ? 'text-white' : 'text-gray-900 dark:text-white'}`}>
-                        {trainer.name}
-                      </h3>
-                      <p className={`text-sm ${selectedTrainer?._id === trainer._id ? 'text-white/90' : 'text-gray-500 dark:text-gray-400'}`}>
-                        {Array.isArray(trainer.specialization)
-                          ? trainer.specialization.join(', ')
-                          : trainer.specialization}
-                      </p>
-                    </div>
-                  </motion.div>
-                ))}
-              </motion.div>
-            </div>
 
-            {/* Trainer Profile */}
-            <div className="lg:col-span-2 order-1 lg:order-2">
-              {selectedTrainer && (
-                <motion.div
-                  key={selectedTrainer._id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5 }}
-                  className="bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden"
-                >
-                  <div className="relative h-[90vh]">
-                    <Image
-                      src={selectedTrainer.image || "/images/placeholder-trainer.jpg"}
-                      alt={selectedTrainer.name}
-                      fill
-                      className="object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
-                    <div className="absolute bottom-0 left-0 p-8 w-full">
-                      <div className="flex flex-col md:flex-row md:items-end md:justify-between">
-                        <div>
-                          <h2 className="text-4xl font-black text-white mb-2">{selectedTrainer.name}</h2>
-                          <div className="flex flex-wrap gap-2 mb-3">
-                            {Array.isArray(selectedTrainer.specialization)
-                              ? selectedTrainer.specialization.map((spec, index) => (
-                                  <span
-                                    key={index}
-                                    className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
-                                  >
-                                    {spec}
-                                  </span>
-                                ))
-                              : <p className="text-red-400 text-xl font-bold">{selectedTrainer.specialization}</p>
-                            }
-                          </div>
-                        </div>
-                        <div className="flex mt-4 md:mt-0 space-x-3">
-                          {selectedTrainer.socialMedia?.instagram && (
-                            <a href={selectedTrainer.socialMedia.instagram} target="_blank" rel="noopener noreferrer"
-                              className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-red-600 transition-colors duration-300">
-                              <FaInstagram className="text-white" />
-                            </a>
-                          )}
-                          {selectedTrainer.socialMedia?.twitter && (
-                            <a href={selectedTrainer.socialMedia.twitter} target="_blank" rel="noopener noreferrer"
-                              className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-red-600 transition-colors duration-300">
-                              <FaTwitter className="text-white" />
-                            </a>
-                          )}
-                          {selectedTrainer.socialMedia?.linkedin && (
-                            <a href={selectedTrainer.socialMedia.linkedin} target="_blank" rel="noopener noreferrer"
-                              className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-red-600 transition-colors duration-300">
-                              <FaLinkedinIn className="text-white" />
-                            </a>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                    {/* Content below image */}
+                    <div className="px-2 -mt-8 relative z-10">
+                      <h2
+                        className="font-display uppercase"
+                        style={{
+                          fontSize: "clamp(2.5rem, 6vw, 5rem)",
+                          lineHeight: 0.88,
+                          letterSpacing: "-0.04em",
+                          color: textColor,
+                        }}
+                      >
+                        {selectedTrainer.name}
+                      </h2>
 
-                  <div className="p-8">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                      <div className="md:col-span-2">
-                        <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">About</h3>
-                        <div className="text-gray-700 dark:text-gray-300 space-y-4">
-                          <p>{selectedTrainer.bio || "Experienced instructor passionate about helping students achieve their goals."}</p>
-                          {selectedTrainer.experience && (
-                            <p><span className="font-semibold">Experience:</span> {selectedTrainer.experience} years</p>
-                          )}
-                        </div>
+                      {/* Spec tags */}
+                      <div className="flex flex-wrap gap-2 mt-5">
+                        {(Array.isArray(selectedTrainer.specialization)
+                          ? selectedTrainer.specialization
+                          : [selectedTrainer.specialization]
+                        ).map((spec, index) => (
+                          <span
+                            key={index}
+                            className="inline-block px-3 py-1 text-xs uppercase tracking-widest font-medium"
+                            style={{
+                              border: `1px solid ${dividerColor}`,
+                              color: isDark ? "#F8A348" : "#E50914",
+                            }}
+                          >
+                            {spec}
+                          </span>
+                        ))}
                       </div>
 
-                      <div>
-                        <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Expertise</h3>
-                        {selectedTrainer.certifications && selectedTrainer.certifications.length > 0 ? (
+                      {/* Bio */}
+                      <div className="mt-8 pt-8" style={{ borderTop: `1px solid ${dividerColor}` }}>
+                        <p className="text-base md:text-lg leading-relaxed max-w-2xl" style={{ color: mutedColor }}>
+                          {selectedTrainer.bio || "Experienced instructor passionate about helping students achieve their goals."}
+                        </p>
+                        {selectedTrainer.experience && (
+                          <p className="mt-4 text-sm" style={{ color: mutedColor }}>
+                            <span className="uppercase tracking-widest text-xs font-bold" style={{ color: textColor }}>Experience</span>
+                            <br />{selectedTrainer.experience} years
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Certifications */}
+                      {selectedTrainer.certifications?.length > 0 && (
+                        <div className="mt-8 pt-8" style={{ borderTop: `1px solid ${dividerColor}` }}>
+                          <h3 className="uppercase tracking-widest text-xs font-bold mb-4" style={{ color: "#F8A348" }}>Expertise</h3>
                           <div className="flex flex-wrap gap-2">
                             {selectedTrainer.certifications.map((cert, index) => (
-                              <span key={index} className="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-3 py-1 rounded-full text-sm">
+                              <span key={index} className="inline-block px-3 py-1 text-xs" style={{ border: `1px solid ${dividerColor}`, color: textColor }}>
                                 {cert}
                               </span>
                             ))}
                           </div>
-                        ) : (
-                          <p className="text-gray-500 dark:text-gray-400">Certifications information coming soon</p>
-                        )}
+                        </div>
+                      )}
+
+                      {/* View Schedule + Socials */}
+                      <div className="mt-8 pt-8 pb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-6" style={{ borderTop: `1px solid ${dividerColor}` }}>
+                        <Link
+                          href={`/trainers/${selectedTrainer._id}`}
+                          className="flex items-center gap-2 text-sm uppercase tracking-widest transition-all hover:gap-3"
+                          style={{ color: "#E50914" }}
+                        >
+                          View Schedule <FiArrowRight />
+                        </Link>
+
+                        <div className="flex items-center gap-5">
+                          {selectedTrainer.socialMedia?.instagram && (
+                            <a href={selectedTrainer.socialMedia.instagram} target="_blank" rel="noopener noreferrer" className="transition-colors duration-200" style={{ color: mutedColor }} onMouseEnter={(e) => (e.currentTarget.style.color = "#E50914")} onMouseLeave={(e) => (e.currentTarget.style.color = mutedColor)}>
+                              <FaInstagram size={18} />
+                            </a>
+                          )}
+                          {selectedTrainer.socialMedia?.twitter && (
+                            <a href={selectedTrainer.socialMedia.twitter} target="_blank" rel="noopener noreferrer" className="transition-colors duration-200" style={{ color: mutedColor }} onMouseEnter={(e) => (e.currentTarget.style.color = "#E50914")} onMouseLeave={(e) => (e.currentTarget.style.color = mutedColor)}>
+                              <FaTwitter size={18} />
+                            </a>
+                          )}
+                          {selectedTrainer.socialMedia?.linkedin && (
+                            <a href={selectedTrainer.socialMedia.linkedin} target="_blank" rel="noopener noreferrer" className="transition-colors duration-200" style={{ color: mutedColor }} onMouseEnter={(e) => (e.currentTarget.style.color = "#E50914")} onMouseLeave={(e) => (e.currentTarget.style.color = mutedColor)}>
+                              <FaLinkedinIn size={18} />
+                            </a>
+                          )}
+                        </div>
                       </div>
                     </div>
-
-                    <div className="mt-8 pt-8 border-t border-gray-100 dark:border-gray-700">
-                      <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Class Schedule</h3>
-                      <p className="text-gray-500 dark:text-gray-400 mb-4">
-                        Check out {selectedTrainer.name}'s weekly classes:
-                      </p>
-                      <Link
-                        href={`/trainers/${selectedTrainer._id}`}
-                        className="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
-                      >
-                        <span>View Schedule</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                      </Link>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
+                  </motion.div>
+                )}
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
+      </section>
 
-        {/* CTA Section */}
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="bg-gradient-to-r from-gray-900 to-gray-800 p-12 rounded-2xl shadow-xl relative overflow-hidden"
+      {/* ─── CTA ─── */}
+      <section className="relative overflow-hidden py-32" style={{ background: isDark ? "#0A0A0A" : "#FAFAFA" }}>
+        <BlobField colors={["#E50914", "#F8A348"]} intensity={0.08} blendMode={isDark ? "screen" : "multiply"} />
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-80px" }}
+          className="relative z-10 px-6 md:px-16 max-w-screen-xl mx-auto"
         >
-          <div className="absolute inset-0 opacity-10">
-            <Image
-              src="/images/cta-background.jpg"
-              alt="Training background"
-              fill
-              className="object-cover"
-            />
-          </div>
-
-          <div className="relative z-10">
-            <h2 className="text-3xl font-bold text-white mb-4 text-center">Ready to Train With Our Experts?</h2>
-            <p className="text-white/90 mb-8 max-w-2xl mx-auto text-center">
-              Whether you're a beginner or experienced practitioner, our team is ready to help you achieve your goals.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                href="/contact"
-                className="bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-lg font-bold transition-colors duration-300 text-center"
-              >
-                Book a Session
-              </Link>
-              <Link
-                href="/classes"
-                className="bg-white/10 hover:bg-white/20 text-white border border-white/30 px-8 py-4 rounded-lg font-bold transition-colors duration-300 text-center"
-              >
-                View Class Schedule
-              </Link>
-            </div>
-          </div>
-        </motion.section>
-      </div>
+          <motion.span variants={slideUp} className="text-xs uppercase tracking-widest mb-4 block font-bold" style={{ color: "#F8A348" }}>
+            Ready to Train?
+          </motion.span>
+          <motion.h2
+            variants={slideUp}
+            className="font-display uppercase mb-10"
+            style={{ fontSize: "clamp(3rem, 10vw, 10rem)", lineHeight: 0.82, letterSpacing: "-0.04em", color: textColor }}
+          >
+            BOOK YOUR
+            <br />
+            <span style={{ marginLeft: "8vw", display: "block", color: "#E50914" }}>SESSION.</span>
+          </motion.h2>
+          <motion.p variants={slideUp} className="max-w-md text-lg mb-12" style={{ color: mutedColor }}>
+            Whether you&apos;re a beginner or experienced practitioner, our team is ready to help you achieve your goals.
+          </motion.p>
+          <motion.div variants={slideUp} className="flex flex-wrap items-center gap-8">
+            <BrutalistButton href="/contact">Book a Session</BrutalistButton>
+            <Link
+              href="/classes"
+              className="flex items-center gap-2 text-sm uppercase tracking-widest transition-all hover:gap-3"
+              style={{ color: "#E50914" }}
+            >
+              View Class Schedule <FiArrowRight />
+            </Link>
+          </motion.div>
+        </motion.div>
+      </section>
     </main>
   );
 }

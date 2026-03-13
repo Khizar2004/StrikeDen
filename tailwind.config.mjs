@@ -56,6 +56,7 @@ module.exports = {
       fontFamily: {
         sans: ['var(--font-geist-sans)', 'sans-serif'],
         mono: ['var(--font-geist-mono)', 'monospace'],
+        display: ['var(--font-display)', 'sans-serif'],
       },
       boxShadow: {
         'smooth': '0 4px 20px rgba(229, 9, 20, 0.15)',

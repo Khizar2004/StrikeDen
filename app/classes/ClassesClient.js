@@ -4,184 +4,194 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import Schedule from "../../components/Schedule";
 import OfferingsSlider from "../../components/OfferingsSlider";
-import { trackFacebookEvent, FB_EVENTS } from '../../lib/facebook';
-
-// Animation variants
-const fadeInUp = {
-  hidden: { opacity: 0, y: 60 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] }
-  }
-};
-
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1
-    }
-  }
-};
+import { trackFacebookEvent, FB_EVENTS } from "../../lib/facebook";
+import { useTheme } from "../../components/ThemeProvider";
+import { slideUp, staggerContainer } from "../../lib/animations";
+import BrutalistPageHero from "../../components/BrutalistPageHero";
+import { BlobField } from "../../components/BlobField";
 
 export default function ClassesClient({ schedules, classes, programs }) {
-  // Track class signup interest
+  const { theme, mounted } = useTheme();
+  const isDark = theme === "dark";
+
   const handleClassSignupClick = (className) => {
     trackFacebookEvent(FB_EVENTS.COMPLETE_REGISTRATION, {
-      content_name: className || 'Class Registration',
-      content_category: 'Class Signup',
-      status: 'interested'
+      content_name: className || "Class Registration",
+      content_category: "Class Signup",
+      status: "interested",
     });
   };
 
-  // Track page view when component mounts
   useEffect(() => {
     trackFacebookEvent(FB_EVENTS.VIEW_CONTENT, {
-      content_name: 'Classes Page',
-      content_category: 'Training Programs',
-      content_type: 'product_group',
+      content_name: "Classes Page",
+      content_category: "Training Programs",
+      content_type: "product_group",
     });
   }, []);
 
+  if (!mounted) return null;
+
+  const textColor = isDark ? "#EDEBE6" : "#1A1A1A";
+  const mutedColor = isDark ? "rgba(237,235,230,0.6)" : "rgba(15,15,15,0.55)";
+  const surfaceBg = isDark ? "#141414" : "#F5F5F5";
+
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
-      {/* Hero Section */}
-      <div className="relative w-full h-[40vh] bg-gray-900">
-        <Image
-          src="/images/cta-background.jpg"
-          alt="Classes at Strike Den"
-          fill
-          className="object-cover opacity-60"
-          priority
-        />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <motion.h1
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-6xl md:text-7xl font-black text-white tracking-tighter"
-          >
-            TRAINING PROGRAMS
-          </motion.h1>
-        </div>
-      </div>
+    <main style={{ background: isDark ? "#0F0F0F" : "#FFFFFF" }}>
+      {/* ─── Hero ─── */}
+      <BrutalistPageHero
+        title="TRAINING PROGRAMS"
+        subtitle="Classes and programs for all skill levels — find the right fit for your goals."
+      />
 
-      <div className="max-w-7xl mx-auto px-4 py-16">
-        {/* Introduction Section */}
+      {/* ─── Offerings Slider ─── */}
+      <section className="px-6 md:px-16 py-32" style={{ background: isDark ? "#0F0F0F" : "#FFFFFF" }}>
+        <OfferingsSlider initialClasses={classes} initialPrograms={programs} isDark={isDark} />
+      </section>
+
+      {/* ─── Schedule ─── */}
+      <section className="px-6 md:px-16 py-32" style={{ background: isDark ? "#0F0F0F" : "#FFFFFF" }}>
         <motion.div
+          variants={staggerContainer}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true }}
-          variants={staggerContainer}
-          className="mb-10 text-center max-w-3xl mx-auto"
+          viewport={{ once: true, margin: "-80px" }}
+          className="max-w-screen-xl mx-auto"
         >
-          <motion.p variants={fadeInUp} className="text-lg text-gray-500 dark:text-gray-400">
-            Classes and programs for all skill levels — find the right fit for your goals.
-          </motion.p>
-        </motion.div>
-
-        {/* Classes & Programs Slider with Tabs */}
-        <OfferingsSlider initialClasses={classes} initialPrograms={programs} />
-
-        {/* Weekly Schedule Section with improved styling */}
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          variants={staggerContainer}
-          className="mt-20"
-        >
+          <motion.span variants={slideUp} className="text-xs uppercase tracking-widest mb-4 block font-bold" style={{ color: "#F8A348" }}>
+            Weekly Schedule
+          </motion.span>
           <motion.h2
-            variants={fadeInUp}
-            className="text-5xl font-black text-center text-gray-900 dark:text-white mb-16 tracking-tighter"
+            variants={slideUp}
+            className="font-display uppercase mb-10"
+            style={{
+              fontSize: "clamp(2.5rem, 6vw, 6rem)",
+              lineHeight: 0.88,
+              letterSpacing: "-0.04em",
+              color: textColor,
+            }}
           >
-            WEEKLY SCHEDULE
+            CLASS <span style={{ color: "#E50914" }}>TIMES</span>
           </motion.h2>
-
-          <motion.div
-            variants={fadeInUp}
-            className="bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden"
-          >
+          <motion.div variants={slideUp} className="overflow-hidden" style={{ background: isDark ? "#1A1A1A" : "#F5F5F5" }}>
             <Schedule initialClasses={schedules} />
           </motion.div>
         </motion.div>
+      </section>
 
-        {/* Training Information */}
+      {/* ─── Training Info ─── */}
+      <section className="px-6 md:px-16 py-32" style={{ background: isDark ? "#0F0F0F" : "#FFFFFF" }}>
         <motion.div
+          variants={staggerContainer}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true }}
-          variants={staggerContainer}
-          className="mt-24 grid grid-cols-1 md:grid-cols-2 gap-16 items-center"
+          viewport={{ once: true, margin: "-80px" }}
+          className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center max-w-screen-xl mx-auto"
         >
-          <motion.div variants={fadeInUp} className="order-2 md:order-1">
-            <h2 className="text-4xl md:text-5xl font-black text-gray-900 dark:text-white mb-6 tracking-tighter">
-              PERSONALIZED <span className="text-red-600">TRAINING</span> APPROACH
+          <motion.div variants={slideUp}>
+            <span className="text-xs uppercase tracking-widest mb-4 block font-bold" style={{ color: "#F8A348" }}>
+              Our Approach
+            </span>
+            <h2
+              className="font-display uppercase mb-8"
+              style={{
+                fontSize: "clamp(2.5rem, 6vw, 6rem)",
+                lineHeight: 0.88,
+                letterSpacing: "-0.04em",
+                color: textColor,
+              }}
+            >
+              PERSONALIZED
+              <br />
+              <span style={{ color: "#E50914" }}>TRAINING</span>
             </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300 mb-6">
-              Our professional instructors adapt each class to accommodate different skill levels,
-              ensuring everyone gets the most out of their training experience.
+            <p className="text-lg mb-10" style={{ color: mutedColor }}>
+              Our professional instructors adapt each class to accommodate different skill levels, ensuring everyone gets the most out of their training experience.
             </p>
-            <ul className="space-y-4">
-              <li className="flex items-center">
-                <span className="h-6 w-6 rounded-full bg-red-600 flex items-center justify-center text-white mr-3">✓</span>
-                <span className="text-gray-700 dark:text-gray-300">Small class sizes for personalized attention</span>
-              </li>
-              <li className="flex items-center">
-                <span className="h-6 w-6 rounded-full bg-red-600 flex items-center justify-center text-white mr-3">✓</span>
-                <span className="text-gray-700 dark:text-gray-300">Beginner-friendly introduction to techniques</span>
-              </li>
-              <li className="flex items-center">
-                <span className="h-6 w-6 rounded-full bg-red-600 flex items-center justify-center text-white mr-3">✓</span>
-                <span className="text-gray-700 dark:text-gray-300">Advanced training for experienced practitioners</span>
-              </li>
-              <li className="flex items-center">
-                <span className="h-6 w-6 rounded-full bg-red-600 flex items-center justify-center text-white mr-3">✓</span>
-                <span className="text-gray-700 dark:text-gray-300">Private sessions available for focused improvement</span>
-              </li>
-            </ul>
+            <div className="space-y-6">
+              {[
+                { label: "Small Class Sizes", desc: "Personalized attention for every student" },
+                { label: "Beginner Friendly", desc: "Introduction to techniques at your pace" },
+                { label: "Advanced Training", desc: "Push your limits with expert guidance" },
+                { label: "Private Sessions", desc: "One-on-one focused improvement" },
+              ].map(({ label, desc }) => (
+                <div key={label} className="flex items-start gap-4">
+                  <div className="w-px h-12 self-stretch mt-1 flex-shrink-0" style={{ background: "#E50914" }} />
+                  <div>
+                    <div className="font-bold uppercase tracking-widest text-xs mb-1" style={{ color: "#F8A348" }}>
+                      {label}
+                    </div>
+                    <div className="text-sm" style={{ color: mutedColor }}>
+                      {desc}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </motion.div>
-          <motion.div variants={fadeInUp} className="order-1 md:order-2 relative">
-            <div className="absolute -top-4 -right-4 w-24 h-24 bg-red-600 rounded-xl -z-10"></div>
+
+          <motion.div variants={slideUp} className="relative">
+            <div className="absolute -top-4 -left-4 w-16 h-16 z-10" style={{ background: "#E50914" }} />
             <Image
               src="/images/group1.jpg"
               alt="Personalized Training"
               width={600}
-              height={400}
-              className="rounded-xl shadow-xl object-cover w-full h-80 md:h-96"
+              height={750}
+              className="relative w-full object-cover"
+              style={{ aspectRatio: "4/5" }}
             />
+            <div className="absolute -bottom-4 -right-4 w-16 h-16" style={{ background: "#F8A348", opacity: 0.55 }} />
           </motion.div>
         </motion.div>
+      </section>
 
-        {/* Add a Call-to-Action at the end of the page */}
+      {/* ─── CTA ─── */}
+      <section className="relative overflow-hidden py-32" style={{ background: isDark ? "#0A0A0A" : "#FAFAFA" }}>
+        <BlobField colors={["#E50914", "#F8A348"]} intensity={0.08} blendMode={isDark ? "screen" : "multiply"} />
         <motion.div
+          variants={staggerContainer}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true }}
-          variants={staggerContainer}
-          className="mt-24 text-center pb-8"
+          viewport={{ once: true, margin: "-80px" }}
+          className="relative z-10 px-6 md:px-16 max-w-screen-xl mx-auto"
         >
-          <motion.h2 variants={fadeInUp} className="text-4xl font-black mb-6">
-            READY TO <span className="text-red-600">START</span> YOUR JOURNEY?
+          <motion.span variants={slideUp} className="text-xs uppercase tracking-widest mb-4 block font-bold" style={{ color: "#F8A348" }}>
+            Ready to Begin?
+          </motion.span>
+          <motion.h2
+            variants={slideUp}
+            className="font-display uppercase mb-10"
+            style={{
+              fontSize: "clamp(3rem, 10vw, 10rem)",
+              lineHeight: 0.82,
+              letterSpacing: "-0.04em",
+              color: textColor,
+            }}
+          >
+            START
+            <br />
+            <span style={{ marginLeft: "8vw", display: "block", color: "#E50914" }}>TRAINING.</span>
           </motion.h2>
-          <motion.p variants={fadeInUp} className="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
+          <motion.p variants={slideUp} className="max-w-md text-lg mb-12" style={{ color: mutedColor }}>
             Join our community today and transform your fitness level with expert guidance.
           </motion.p>
-          <motion.div variants={fadeInUp}>
+          <motion.div variants={slideUp}>
             <a
               href="https://api.whatsapp.com/send/?phone=923372629350&text=Hi!%20I%27m%20interested%20in%20joining%20classes%20at%20Strike%20Den.&type=phone_number&app_absent=0"
               target="_blank"
               rel="noopener noreferrer"
-              onClick={() => handleClassSignupClick('WhatsApp Signup')}
-              className="inline-flex items-center bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-lg font-bold text-lg transition-colors duration-300"
+              onClick={() => handleClassSignupClick("WhatsApp Signup")}
+              className="relative inline-block overflow-hidden px-8 py-4 group"
+              style={{ background: "#EDEBE6" }}
             >
-              SIGN UP FOR CLASSES
+              <span className="absolute inset-0 -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-out" style={{ background: "#E50914" }} />
+              <span className="relative z-10 font-bold text-sm uppercase tracking-widest transition-colors duration-300 group-hover:text-white" style={{ color: "#0F0F0F" }}>
+                Sign Up for Classes
+              </span>
             </a>
           </motion.div>
         </motion.div>
-      </div>
-    </div>
+      </section>
+    </main>
   );
 }
