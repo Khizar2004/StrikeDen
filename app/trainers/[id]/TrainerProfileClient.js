@@ -1,173 +1,442 @@
 "use client";
 import { motion } from "framer-motion";
-import { useTheme } from '@/components/ThemeProvider';
-import Link from 'next/link';
-import Image from 'next/image';
-import { deduplicateSchedules, formatDayName } from '@/lib/utils';
+import { useTheme } from "@/components/ThemeProvider";
+import Link from "next/link";
+import Image from "next/image";
+import { deduplicateSchedules, formatDayName } from "@/lib/utils";
+import { slideUp, staggerContainer } from "@/lib/animations";
+import { BlobField } from "@/components/BlobField";
+import { BrutalistButton } from "@/components/BrutalistButton";
+import { FiArrowLeft } from "react-icons/fi";
 
-export default function TrainerProfileClient({ trainer, schedules: rawSchedules }) {
-  const { theme } = useTheme();
+const DAYS_ORDER = [
+  "monday",
+  "tuesday",
+  "wednesday",
+  "thursday",
+  "friday",
+  "saturday",
+  "sunday",
+];
+
+export default function TrainerProfileClient({
+  trainer,
+  schedules: rawSchedules,
+}) {
+  const { theme, mounted } = useTheme();
   const schedules = deduplicateSchedules(rawSchedules);
 
-  // Animation variants
-  const fadeIn = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.5 }
-    }
-  };
+  if (!mounted) return null;
+  if (!trainer)
+    return (
+      <div
+        className="min-h-screen flex items-center justify-center"
+        style={{ background: "#0F0F0F", color: "#EDEBE6" }}
+      >
+        <p className="text-xl uppercase tracking-widest font-bold">
+          Trainer not found
+        </p>
+      </div>
+    );
 
-  const staggeredContainer = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
+  const isDark = theme === "dark";
+  const textColor = isDark ? "#EDEBE6" : "#1A1A1A";
+  const mutedColor = isDark
+    ? "rgba(237,235,230,0.6)"
+    : "rgba(15,15,15,0.55)";
+  const surfaceBg = isDark ? "#141414" : "#F5F5F5";
+  const dividerColor = isDark
+    ? "rgba(237,235,230,0.12)"
+    : "rgba(15,15,15,0.08)";
 
-  if (!trainer) return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white flex flex-col items-center justify-center">
-      <p className="text-xl">Trainer not found</p>
-    </div>
+  const specializations = Array.isArray(trainer.specialization)
+    ? trainer.specialization
+    : trainer.specialization
+      ? [trainer.specialization]
+      : [];
+
+  const scheduleDays = DAYS_ORDER.filter((day) =>
+    schedules.some((s) => s.dayOfWeek === day)
   );
 
   return (
-    <main className="min-h-screen bg-gray-50 dark:bg-gray-900 py-16 px-6">
-      <div className="max-w-4xl mx-auto">
+    <main style={{ background: isDark ? "#0F0F0F" : "#FFFFFF" }}>
+      {/* ─── Hero ─── */}
+      <section className="relative min-h-[85vh] flex items-end overflow-hidden">
+        {/* Trainer image as background */}
+        <div className="absolute inset-0">
+          <Image
+            src={trainer.image || "/images/placeholder-trainer.jpg"}
+            alt={trainer.name}
+            fill
+            className="object-cover object-top"
+            priority
+          />
+          {/* Gradient overlay */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: isDark
+                ? "linear-gradient(to top, #0F0F0F 0%, rgba(15,15,15,0.7) 40%, rgba(15,15,15,0.3) 100%)"
+                : "linear-gradient(to top, #FFFFFF 0%, rgba(255,255,255,0.7) 40%, rgba(255,255,255,0.3) 100%)",
+            }}
+          />
+        </div>
+
+        <BlobField
+          colors={["#E50914", "#F8A348"]}
+          intensity={0.06}
+          blendMode={isDark ? "screen" : "multiply"}
+        />
+
         <motion.div
-          className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden"
+          className="relative z-10 px-6 md:px-16 pb-20 md:pb-28 max-w-screen-xl w-full"
+          variants={staggerContainer}
           initial="hidden"
           animate="visible"
-          variants={fadeIn}
         >
-          {/* Trainer header */}
-          <div className="relative bg-gradient-to-r from-red-600 to-red-700 px-8 py-12 text-white">
-            <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
-              <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white/30 flex-shrink-0">
-                <Image
-                  src={trainer.image || "/images/placeholder-trainer.jpg"}
-                  alt={trainer.name}
-                  width={128}
-                  height={128}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="text-center md:text-left">
-                <h1 className="text-4xl font-bold">{trainer.name}</h1>
-                <div className="flex flex-wrap gap-2 mt-2 justify-center md:justify-start">
-                  {Array.isArray(trainer.specialization)
-                    ? trainer.specialization.map((spec, index) => (
-                        <span
-                          key={index}
-                          className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-white/20 text-white"
-                        >
-                          {spec}
-                        </span>
-                      ))
-                    : <p className="text-xl text-white/80">{trainer.specialization}</p>
-                  }
-                </div>
-                <div className="mt-4 text-white/70">
-                  <p>Experience: {trainer.experience} years</p>
-                </div>
-              </div>
-            </div>
-          </div>
+          {/* Back link */}
+          <motion.div variants={slideUp} className="mb-10">
+            <Link
+              href="/trainers"
+              className="inline-flex items-center gap-2 text-xs uppercase tracking-widest font-bold transition-all hover:gap-3"
+              style={{ color: "#F8A348" }}
+            >
+              <FiArrowLeft /> Back to Our Team
+            </Link>
+          </motion.div>
 
-          {/* Bio */}
-          <div className="px-8 py-6">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">About</h2>
-            <p className="text-gray-700 dark:text-gray-300">{trainer.bio || "No bio available."}</p>
-          </div>
+          {/* Name */}
+          <motion.h1
+            variants={slideUp}
+            className="font-display uppercase"
+            style={{
+              fontSize: "clamp(3rem, 12vw, 11rem)",
+              lineHeight: 0.82,
+              letterSpacing: "-0.04em",
+              color: textColor,
+            }}
+          >
+            {trainer.name}
+          </motion.h1>
+
+          {/* Specializations */}
+          <motion.div
+            variants={slideUp}
+            className="mt-6 flex flex-wrap gap-3"
+          >
+            {specializations.map((spec) => (
+              <span
+                key={spec}
+                className="px-4 py-2 text-xs font-bold uppercase tracking-widest"
+                style={{
+                  background: isDark
+                    ? "rgba(229,9,20,0.12)"
+                    : "rgba(229,9,20,0.08)",
+                  color: "#E50914",
+                  border: `1px solid ${isDark ? "rgba(229,9,20,0.25)" : "rgba(229,9,20,0.15)"}`,
+                }}
+              >
+                {spec}
+              </span>
+            ))}
+          </motion.div>
+
+          {/* Experience */}
+          {trainer.experience && (
+            <motion.p
+              variants={slideUp}
+              className="mt-5 text-sm uppercase tracking-widest font-bold"
+              style={{ color: "#F8A348" }}
+            >
+              {trainer.experience} {typeof trainer.experience === "number" ? "years experience" : "experience"}
+            </motion.p>
+          )}
         </motion.div>
+      </section>
 
-        {/* Class Schedule Section */}
-        <motion.div
-          className="mt-8 bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden"
-          initial="hidden"
-          animate="visible"
-          variants={fadeIn}
-          transition={{ delay: 0.2 }}
+      {/* ─── Bio ─── */}
+      {trainer.bio && (
+        <section
+          className="px-6 md:px-16 py-32"
+          style={{ background: isDark ? "#0F0F0F" : "#FFFFFF" }}
         >
-          <div className="px-8 py-6 border-b border-gray-100 dark:border-gray-700">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Class Schedule</h2>
-          </div>
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-80px" }}
+            className="max-w-screen-xl mx-auto"
+          >
+            <motion.span
+              variants={slideUp}
+              className="text-xs uppercase tracking-widest mb-4 block font-bold"
+              style={{ color: "#F8A348" }}
+            >
+              About
+            </motion.span>
+            <motion.h2
+              variants={slideUp}
+              className="font-display uppercase mb-10"
+              style={{
+                fontSize: "clamp(2.5rem, 6vw, 6rem)",
+                lineHeight: 0.88,
+                letterSpacing: "-0.04em",
+                color: textColor,
+              }}
+            >
+              THE <span style={{ color: "#E50914" }}>STORY</span>
+            </motion.h2>
+            <motion.div variants={slideUp}>
+              <div className="h-px mb-10" style={{ background: dividerColor }} />
+              <p
+                className="text-lg md:text-xl leading-relaxed max-w-3xl"
+                style={{ color: mutedColor }}
+              >
+                {trainer.bio}
+              </p>
+              <div className="h-px mt-10" style={{ background: dividerColor }} />
+            </motion.div>
+          </motion.div>
+        </section>
+      )}
+
+      {/* ─── Certifications ─── */}
+      {trainer.certifications && trainer.certifications.length > 0 && (
+        <section
+          className="px-6 md:px-16 py-32"
+          style={{ background: isDark ? "#0F0F0F" : "#FFFFFF" }}
+        >
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-80px" }}
+            className="max-w-screen-xl mx-auto"
+          >
+            <motion.span
+              variants={slideUp}
+              className="text-xs uppercase tracking-widest mb-4 block font-bold"
+              style={{ color: "#F8A348" }}
+            >
+              Credentials
+            </motion.span>
+            <motion.h2
+              variants={slideUp}
+              className="font-display uppercase mb-10"
+              style={{
+                fontSize: "clamp(2.5rem, 6vw, 6rem)",
+                lineHeight: 0.88,
+                letterSpacing: "-0.04em",
+                color: textColor,
+              }}
+            >
+              CERTIFI<span style={{ color: "#E50914" }}>CATIONS</span>
+            </motion.h2>
+            <motion.div
+              variants={slideUp}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+            >
+              {trainer.certifications.map((cert, i) => (
+                <div
+                  key={i}
+                  className="flex items-start gap-4 p-6"
+                  style={{
+                    background: surfaceBg,
+                    borderLeft: "2px solid #E50914",
+                  }}
+                >
+                  <span
+                    className="font-display text-2xl flex-shrink-0"
+                    style={{ color: "rgba(229,9,20,0.4)" }}
+                  >
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span
+                    className="text-sm font-bold uppercase tracking-wider pt-1"
+                    style={{ color: textColor }}
+                  >
+                    {cert}
+                  </span>
+                </div>
+              ))}
+            </motion.div>
+          </motion.div>
+        </section>
+      )}
+
+      {/* ─── Schedule ─── */}
+      <section
+        className="px-6 md:px-16 py-32"
+        style={{ background: isDark ? "#0F0F0F" : "#FFFFFF" }}
+      >
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-80px" }}
+          className="max-w-screen-xl mx-auto"
+        >
+          <motion.span
+            variants={slideUp}
+            className="text-xs uppercase tracking-widest mb-4 block font-bold"
+            style={{ color: "#F8A348" }}
+          >
+            Weekly Schedule
+          </motion.span>
+          <motion.h2
+            variants={slideUp}
+            className="font-display uppercase mb-10"
+            style={{
+              fontSize: "clamp(2.5rem, 6vw, 6rem)",
+              lineHeight: 0.88,
+              letterSpacing: "-0.04em",
+              color: textColor,
+            }}
+          >
+            CLASS <span style={{ color: "#E50914" }}>TIMES</span>
+          </motion.h2>
 
           {schedules.length === 0 ? (
-            <div className="p-8 text-center">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto text-gray-300 dark:text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-              <p className="text-gray-500 dark:text-gray-400 mt-4">No classes currently scheduled with this trainer.</p>
-            </div>
+            <motion.div
+              variants={slideUp}
+              className="py-16 text-center"
+              style={{ background: surfaceBg }}
+            >
+              <p
+                className="text-sm uppercase tracking-widest"
+                style={{ color: mutedColor }}
+              >
+                No classes currently scheduled with this trainer.
+              </p>
+            </motion.div>
           ) : (
             <motion.div
-              className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4"
-              variants={staggeredContainer}
-              initial="hidden"
-              animate="visible"
+              variants={slideUp}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
             >
-              {/* Group schedules by day */}
-              {Array.from(new Set(schedules.map(schedule => schedule.dayOfWeek))).sort((a, b) => {
-                const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-                return days.indexOf(a) - days.indexOf(b);
-              }).map(day => (
-                <motion.div
-                  key={day}
-                  variants={fadeIn}
-                  className="bg-gray-50 dark:bg-gray-700 rounded-lg overflow-hidden"
-                >
-                  <div className="bg-gray-100 dark:bg-gray-600 px-4 py-3">
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{formatDayName(day)}</h3>
+              {scheduleDays.map((day) => {
+                const daySchedules = schedules
+                  .filter((s) => s.dayOfWeek === day)
+                  .sort((a, b) => {
+                    const timeA = a.startTimeString
+                      .split(":")
+                      .map(Number);
+                    const timeB = b.startTimeString
+                      .split(":")
+                      .map(Number);
+                    return (
+                      timeA[0] * 60 + timeA[1] - (timeB[0] * 60 + timeB[1])
+                    );
+                  });
+
+                return (
+                  <div key={day} style={{ background: surfaceBg }}>
+                    {/* Day header */}
+                    <div
+                      className="px-6 py-4"
+                      style={{
+                        borderBottom: `1px solid ${dividerColor}`,
+                        borderLeft: "2px solid #E50914",
+                      }}
+                    >
+                      <h3
+                        className="font-display uppercase text-xl"
+                        style={{ color: textColor, letterSpacing: "-0.02em" }}
+                      >
+                        {formatDayName(day)}
+                      </h3>
+                    </div>
+
+                    {/* Classes */}
+                    {daySchedules.map((schedule) => (
+                      <div
+                        key={schedule._id}
+                        className="px-6 py-4"
+                        style={{
+                          borderBottom: `1px solid ${dividerColor}`,
+                        }}
+                      >
+                        <p
+                          className="font-bold text-sm uppercase tracking-wide"
+                          style={{ color: textColor }}
+                        >
+                          {schedule.className}
+                        </p>
+                        <p
+                          className="text-xs mt-1 uppercase tracking-widest"
+                          style={{ color: "#F8A348" }}
+                        >
+                          {schedule.startTimeString} — {schedule.endTimeString}
+                        </p>
+                      </div>
+                    ))}
                   </div>
-                  <div className="divide-y divide-gray-200 dark:divide-gray-600">
-                    {schedules
-                      .filter(schedule => schedule.dayOfWeek === day)
-                      .sort((a, b) => {
-                        const timeA = a.startTimeString.split(':').map(Number);
-                        const timeB = b.startTimeString.split(':').map(Number);
-                        return (timeA[0] * 60 + timeA[1]) - (timeB[0] * 60 + timeB[1]);
-                      })
-                      .map(schedule => (
-                        <div key={schedule._id} className="p-4 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
-                          <div className="flex justify-between items-center">
-                            <div>
-                              <p className="font-medium text-gray-900 dark:text-white">{schedule.className}</p>
-                              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="inline-block h-4 w-4 mr-1 -mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                {schedule.startTimeString} - {schedule.endTimeString}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      ))
-                    }
-                  </div>
-                </motion.div>
-              ))}
+                );
+              })}
             </motion.div>
           )}
         </motion.div>
+      </section>
 
-        {/* Back Button */}
-        <div className="mt-8 text-center">
-          <Link
-            href="/trainers"
-            className="inline-flex items-center px-4 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-white rounded-lg transition-colors"
+      {/* ─── CTA ─── */}
+      <section
+        className="relative overflow-hidden py-32"
+        style={{ background: isDark ? "#0A0A0A" : "#FAFAFA" }}
+      >
+        <BlobField
+          colors={["#E50914", "#F8A348"]}
+          intensity={0.08}
+          blendMode={isDark ? "screen" : "multiply"}
+        />
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-80px" }}
+          className="relative z-10 px-6 md:px-16 max-w-screen-xl mx-auto"
+        >
+          <motion.span
+            variants={slideUp}
+            className="text-xs uppercase tracking-widest mb-4 block font-bold"
+            style={{ color: "#F8A348" }}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-            Back to Our Team
-          </Link>
-        </div>
-      </div>
+            Ready to Train?
+          </motion.span>
+          <motion.h2
+            variants={slideUp}
+            className="font-display uppercase mb-10"
+            style={{
+              fontSize: "clamp(3rem, 10vw, 10rem)",
+              lineHeight: 0.82,
+              letterSpacing: "-0.04em",
+              color: textColor,
+            }}
+          >
+            BOOK A<br />
+            <span
+              style={{
+                marginLeft: "8vw",
+                display: "block",
+                color: "#E50914",
+              }}
+            >
+              SESSION.
+            </span>
+          </motion.h2>
+          <motion.p
+            variants={slideUp}
+            className="max-w-md text-lg mb-12"
+            style={{ color: mutedColor }}
+          >
+            Start training with {trainer.name} and take your skills to the
+            next level.
+          </motion.p>
+          <motion.div variants={slideUp}>
+            <BrutalistButton href="/contact">Get in Touch</BrutalistButton>
+          </motion.div>
+        </motion.div>
+      </section>
     </main>
   );
 }

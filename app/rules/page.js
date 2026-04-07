@@ -10,57 +10,49 @@ export default function RulesPage() {
   return (
     <main className="flex flex-col">
       {/* Hero Section */}
-      <section className="relative py-24 overflow-hidden">
-        {/* Background with overlay */}
-        <div className="absolute inset-0 bg-black/70 z-10"></div>
-        <div
-          className="absolute inset-0 bg-cover bg-center z-0"
-          style={{
-            backgroundImage: "url('/images/cta-background.jpg')",
-            backgroundPosition: "center 30%"
-          }}
-        ></div>
-
-        <div className="container-padded relative z-20 text-center">
-          <h1 className="text-6xl md:text-7xl font-black text-white tracking-tighter">
-            Gym Rules
+      <section className="brutalist-hero-blob relative pt-40 md:pt-48 pb-32 md:pb-40 bg-[#FFFFFF] dark:bg-[#0F0F0F]">
+        <div className="relative z-10 px-6 md:px-16 max-w-screen-xl mx-auto">
+          <h1
+            className="font-display uppercase text-[#1A1A1A] dark:text-[#EDEBE6]"
+            style={{
+              fontSize: "clamp(3rem, 10vw, 10rem)",
+              lineHeight: 0.85,
+              letterSpacing: "-0.04em",
+            }}
+          >
+            GYM RULES
           </h1>
-          <p className="text-lg text-gray-300 mt-6 max-w-2xl mx-auto">
+          <p className="mt-6 max-w-xl text-lg text-[rgba(15,15,15,0.55)] dark:text-[rgba(237,235,230,0.6)]">
             Guidelines to ensure a respectful, productive, and safe training environment
           </p>
         </div>
       </section>
 
       {/* Main content with tabs */}
-      <section className="py-16 bg-white dark:bg-gray-900 transition-colors duration-300">
-        <div className="container-padded max-w-4xl">
-          <div className="prose prose-lg dark:prose-invert max-w-none">
-            <TabsContainer />
-          </div>
+      <section className="py-20 bg-[#FFFFFF] dark:bg-[#0F0F0F]">
+        <div className="px-6 md:px-16 max-w-4xl mx-auto">
+          <TabsContainer />
         </div>
       </section>
 
       {/* Call to Action */}
-      <section className="bg-gray-900 py-20 relative overflow-hidden">
-        <div className="absolute inset-0 bg-black/50 z-0"></div>
-        <div
-          className="absolute inset-0 bg-cover bg-center opacity-40 z-0"
-          style={{
-            backgroundImage: "url('/images/group1.jpg')"
-          }}
-        ></div>
-
-        <div className="container-padded relative z-10 text-center">
-          <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tighter">START YOUR JOURNEY TODAY</h2>
-          <p className="text-xl text-gray-300 max-w-2xl mx-auto mb-8">
+      <section className="brutalist-hero-blob relative py-32 bg-[#0A0A0A] dark:bg-[#0A0A0A] overflow-hidden">
+        <div className="px-6 md:px-16 max-w-screen-xl mx-auto relative z-10 text-center">
+          <h2
+            className="font-display uppercase mb-6 text-[#EDEBE6]"
+            style={{
+              fontSize: "clamp(2rem, 6vw, 5rem)",
+              lineHeight: 0.85,
+              letterSpacing: "-0.04em",
+            }}
+          >
+            START YOUR JOURNEY <span style={{ color: "#E50914" }}>TODAY</span>
+          </h2>
+          <p className="text-lg mb-10 max-w-2xl mx-auto" style={{ color: "rgba(237,235,230,0.6)" }}>
             Experience world-class martial arts training in a supportive community environment
           </p>
-
-          <Link
-            href="/contact"
-            className="btn-primary text-lg px-8 py-4"
-          >
-            Contact Us
+          <Link href="/contact" className="brutalist-btn">
+            <span>Contact Us</span>
           </Link>
         </div>
       </section>

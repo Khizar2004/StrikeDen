@@ -198,7 +198,7 @@ export default function useSchedules() {
       if (data.success) {
         setSchedules(prev => 
           prev.map(schedule => 
-            schedule.id === scheduleId ? data.data : schedule
+            schedule._id === scheduleId ? data.data : schedule
           )
         );
         toast.success('Schedule updated successfully');

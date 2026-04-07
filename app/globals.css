@@ -63,37 +63,19 @@
   /* Dark mode (default) */
   html.dark body {
     @apply bg-secondary-900 text-white-off font-sans antialiased;
-    padding-top: 64px;
-    cursor: auto; /* Set cursor to auto instead of none */
-    background-image: 
-      radial-gradient(circle at 20% 30%, rgba(229, 9, 20, 0.08) 0%, transparent 40%),
-      radial-gradient(circle at 80% 70%, rgba(229, 9, 20, 0.08) 0%, transparent 40%),
-      url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23e50914' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-    background-attachment: fixed;
+    cursor: auto;
   }
-  
+
   /* Light mode */
   html.light body {
     @apply bg-white text-gray-900 font-sans antialiased;
-    padding-top: 64px;
     cursor: auto;
-    background-image: 
-      radial-gradient(circle at 20% 30%, rgba(229, 9, 20, 0.03) 0%, transparent 40%),
-      radial-gradient(circle at 80% 70%, rgba(229, 9, 20, 0.03) 0%, transparent 40%),
-      url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23e50914' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-    background-attachment: fixed;
   }
-  
+
   /* Default body styles for backward compatibility */
   body {
     @apply bg-secondary-900 text-white-off font-sans antialiased;
-    padding-top: 64px;
     cursor: auto;
-    background-image: 
-      radial-gradient(circle at 20% 30%, rgba(229, 9, 20, 0.08) 0%, transparent 40%),
-      radial-gradient(circle at 80% 70%, rgba(229, 9, 20, 0.08) 0%, transparent 40%),
-      url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23e50914' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-    background-attachment: fixed;
   }
   
   h1, h2, h3, h4, h5, h6 {
@@ -121,19 +103,19 @@
 
   /* Default scrollbar styles for backward compatibility */
   ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
   }
-  
+
   ::-webkit-scrollbar-track {
-    background: rgba(18, 18, 18, 0.8);
+    background: #0F0F0F;
   }
-  
+
   ::-webkit-scrollbar-thumb {
-    background: rgba(229, 9, 20, 0.5);
-    border-radius: 4px;
+    background: #E50914;
+    border-radius: 0;
   }
-  
+
   ::-webkit-scrollbar-thumb:hover {
     background: rgba(229, 9, 20, 0.8);
   }
@@ -291,6 +273,171 @@
       linear-gradient(to bottom, rgba(229, 9, 20, 0.05) 1px, transparent 1px);
   }
   
+}
+
+/* Brutalist nav link styles — dark (default) */
+.nav-brutalist {
+  color: rgba(237, 235, 230, 0.6);
+  transition: color 0.2s;
+}
+.nav-brutalist:hover {
+  color: #EDEBE6;
+}
+.nav-brutalist-active {
+  color: #E50914;
+}
+.nav-admin {
+  color: rgba(237, 235, 230, 0.3);
+  transition: color 0.2s;
+}
+.nav-admin:hover {
+  color: #E50914;
+}
+
+/* Brutalist nav link styles — light */
+html.light .nav-brutalist {
+  color: rgba(15, 15, 15, 0.55);
+}
+html.light .nav-brutalist:hover {
+  color: #1A1A1A;
+}
+html.light .nav-brutalist-active {
+  color: #E50914;
+}
+html.light .nav-admin {
+  color: rgba(15, 15, 15, 0.3);
+}
+html.light .nav-admin:hover {
+  color: #E50914;
+}
+
+/* Footer hover styles (server component safe) — dark (default) */
+.footer-social {
+  color: rgba(237, 235, 230, 0.5);
+  transition: color 0.2s;
+}
+.footer-social:hover {
+  color: #E50914;
+}
+.footer-nav-link {
+  color: rgba(237, 235, 230, 0.5);
+  transition: color 0.2s;
+}
+.footer-nav-link:hover {
+  color: #EDEBE6;
+}
+
+/* Footer hover styles — light */
+html.light .footer-social {
+  color: rgba(15, 15, 15, 0.45);
+}
+html.light .footer-social:hover {
+  color: #E50914;
+}
+html.light .footer-nav-link {
+  color: rgba(15, 15, 15, 0.5);
+}
+html.light .footer-nav-link:hover {
+  color: #1A1A1A;
+}
+
+/* ─── Brutalist utility classes ─── */
+
+/* CSS-only hero blob for server components */
+.brutalist-hero-blob {
+  position: relative;
+  overflow: hidden;
+}
+.brutalist-hero-blob::before,
+.brutalist-hero-blob::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.brutalist-hero-blob::before {
+  background: radial-gradient(circle, #F8A348 0%, transparent 70%);
+  opacity: 0.08;
+  width: 80vw;
+  height: 80vw;
+}
+.brutalist-hero-blob::after {
+  background: radial-gradient(circle, #E50914 0%, transparent 70%);
+  opacity: 0.05;
+  width: 60vw;
+  height: 60vw;
+}
+html.dark .brutalist-hero-blob::before,
+html.dark .brutalist-hero-blob::after {
+  mix-blend-mode: screen;
+}
+html.light .brutalist-hero-blob::before,
+html.light .brutalist-hero-blob::after {
+  mix-blend-mode: multiply;
+}
+
+/* Dark surface bg with light mode variant */
+.brutalist-surface {
+  background: #141414;
+}
+html.light .brutalist-surface {
+  background: #F5F5F5;
+}
+
+/* Thin horizontal divider with theme-aware color */
+.brutalist-divider {
+  height: 1px;
+  background: rgba(237, 235, 230, 0.1);
+}
+html.light .brutalist-divider {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+/* No border-radius card, dark bg, subtle border */
+.brutalist-card {
+  background: #141414;
+  border: 1px solid rgba(237, 235, 230, 0.08);
+}
+html.light .brutalist-card {
+  background: #F5F5F5;
+  border-color: rgba(0, 0, 0, 0.06);
+}
+
+/* CSS-only BrutalistButton for server components */
+.brutalist-btn {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  padding: 1rem 2rem;
+  background: #EDEBE6;
+  font-weight: 700;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #0F0F0F;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+.brutalist-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #E50914;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-out;
+}
+.brutalist-btn:hover::before {
+  transform: translateX(0);
+}
+.brutalist-btn span {
+  position: relative;
+  z-index: 1;
+}
+.brutalist-btn:hover {
+  color: #FFFFFF;
 }
 
 /* Leaflet Map Styles */

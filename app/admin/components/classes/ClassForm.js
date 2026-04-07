@@ -1,7 +1,16 @@
-"use client";    //Form to add new classes (left side)
+"use client";
 
 import { useState } from "react";
 import ImageUpload from "../common/ImageUpload";
+
+const inputStyle = {
+  background: "#1A1A1A",
+  border: "1px solid rgba(237,235,230,0.1)",
+  color: "#EDEBE6",
+};
+
+const labelClass = "block text-xs uppercase tracking-widest font-bold mb-2";
+const labelStyle = { color: "rgba(237,235,230,0.5)" };
 
 /**
  * Form component for adding or editing offered classes
@@ -19,12 +28,10 @@ export default function ClassForm({ initialData = {}, onSubmit, isLoading }) {
       annual: 0
     }
   });
-  
-  const [imagePreview, setImagePreview] = useState(initialData.image || "");
-  
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    
+
     if (name.startsWith('pricing.')) {
       const pricingField = name.split('.')[1];
       setClassData(prev => ({
@@ -41,176 +48,138 @@ export default function ClassForm({ initialData = {}, onSubmit, isLoading }) {
       }));
     }
   };
-  
+
   const handleImageUploaded = (imagePath) => {
     setClassData(prev => ({
       ...prev,
       image: imagePath
     }));
   };
-  
+
   const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit(classData);
   };
-  
+
   return (
-    <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-      <div className="border-b border-gray-200 dark:border-gray-700 px-6 py-4">
-        <h3 className="text-lg font-medium text-gray-900 dark:text-white">Add New Class</h3>
-        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">These classes appear on the website for potential members.</p>
+    <form onSubmit={handleSubmit} className="overflow-hidden" style={{ background: "#141414", border: "1px solid rgba(237,235,230,0.06)" }}>
+      <div className="px-6 py-4" style={{ borderBottom: "1px solid rgba(237,235,230,0.06)" }}>
+        <h3 className="text-sm font-bold uppercase tracking-widest" style={{ color: "#EDEBE6" }}>Add New Class</h3>
+        <p className="mt-1 text-xs" style={{ color: "rgba(237,235,230,0.35)" }}>These classes appear on the website for potential members.</p>
       </div>
-      
-      <div className="px-6 py-4">
-        <div className="space-y-5">
-          <div>
-            <label htmlFor="title" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Title <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              id="title"
-              name="title"
-              required
-              value={classData.title}
-              onChange={handleChange}
-              placeholder="e.g. Boxing Fundamentals"
-              className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Class Image
-            </label>
-            <ImageUpload
-              onImageUploaded={handleImageUploaded}
-              initialImage={classData.image}
-            />
-          </div>
-          
-          <div>
-            <label htmlFor="shortDescription" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Short Description <span className="text-gray-400">(optional)</span>
-            </label>
-            <textarea
-              id="shortDescription"
-              name="shortDescription"
-              value={classData.shortDescription}
-              onChange={handleChange}
-              placeholder="Brief description shown in class listings"
-              className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-              rows="2"
-            ></textarea>
-          </div>
-          
-          <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Full Description <span className="text-gray-400">(optional)</span>
-            </label>
-            <textarea
-              id="description"
-              name="description"
-              value={classData.description}
-              onChange={handleChange}
-              placeholder="Detailed description shown on the class page"
-              className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-              rows="4"
-            ></textarea>
-          </div>
-          
-          {/* Pricing Section */}
-          <div className="mb-6">
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Pricing</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="pricing.walkIn" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Walk-in Price (PKR) <span className="text-gray-400">(optional)</span>
+
+      <div className="px-6 py-5 space-y-5">
+        <div>
+          <label htmlFor="title" className={labelClass} style={labelStyle}>
+            Title <span style={{ color: "#E50914" }}>*</span>
+          </label>
+          <input
+            type="text"
+            id="title"
+            name="title"
+            required
+            value={classData.title}
+            onChange={handleChange}
+            placeholder="e.g. Boxing Fundamentals"
+            className="w-full px-4 py-3 text-sm focus:outline-none transition-colors"
+            style={inputStyle}
+            onFocus={(e) => e.currentTarget.style.borderColor = "#E50914"}
+            onBlur={(e) => e.currentTarget.style.borderColor = "rgba(237,235,230,0.1)"}
+          />
+        </div>
+
+        <div>
+          <label className={labelClass} style={labelStyle}>
+            Class Image
+          </label>
+          <ImageUpload
+            onImageUploaded={handleImageUploaded}
+            initialImage={classData.image}
+          />
+        </div>
+
+        <div>
+          <label htmlFor="shortDescription" className={labelClass} style={labelStyle}>
+            Short Description <span style={{ color: "rgba(237,235,230,0.25)" }}>(optional)</span>
+          </label>
+          <textarea
+            id="shortDescription"
+            name="shortDescription"
+            value={classData.shortDescription}
+            onChange={handleChange}
+            placeholder="Brief description shown in class listings"
+            className="w-full px-4 py-3 text-sm focus:outline-none transition-colors resize-none"
+            style={inputStyle}
+            rows="2"
+            onFocus={(e) => e.currentTarget.style.borderColor = "#E50914"}
+            onBlur={(e) => e.currentTarget.style.borderColor = "rgba(237,235,230,0.1)"}
+          ></textarea>
+        </div>
+
+        <div>
+          <label htmlFor="description" className={labelClass} style={labelStyle}>
+            Full Description <span style={{ color: "rgba(237,235,230,0.25)" }}>(optional)</span>
+          </label>
+          <textarea
+            id="description"
+            name="description"
+            value={classData.description}
+            onChange={handleChange}
+            placeholder="Detailed description shown on the class page"
+            className="w-full px-4 py-3 text-sm focus:outline-none transition-colors resize-none"
+            style={inputStyle}
+            rows="4"
+            onFocus={(e) => e.currentTarget.style.borderColor = "#E50914"}
+            onBlur={(e) => e.currentTarget.style.borderColor = "rgba(237,235,230,0.1)"}
+          ></textarea>
+        </div>
+
+        {/* Pricing Section */}
+        <div>
+          <h3 className="text-sm font-bold uppercase tracking-widest mb-4" style={{ color: "#EDEBE6" }}>Pricing</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              { id: "pricing.walkIn", label: "Walk-in (PKR)" },
+              { id: "pricing.weekly", label: "Weekly (PKR)" },
+              { id: "pricing.monthly", label: "Monthly (PKR)" },
+              { id: "pricing.annual", label: "Annual (PKR)" },
+            ].map(field => (
+              <div key={field.id}>
+                <label htmlFor={field.id} className={labelClass} style={labelStyle}>
+                  {field.label}
                 </label>
                 <div className="relative">
-                  <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500 dark:text-gray-400">₨</span>
+                  <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-xs" style={{ color: "rgba(237,235,230,0.3)" }}>₨</span>
                   <input
                     type="number"
-                    id="pricing.walkIn"
-                    name="pricing.walkIn"
+                    id={field.id}
+                    name={field.id}
                     min="0"
                     step="0.01"
-                    value={classData.pricing.walkIn}
+                    value={classData.pricing[field.id.split('.')[1]]}
                     onChange={handleChange}
-                    className="pl-8 w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    className="w-full pl-8 pr-4 py-3 text-sm focus:outline-none transition-colors"
+                    style={inputStyle}
+                    onFocus={(e) => e.currentTarget.style.borderColor = "#E50914"}
+                    onBlur={(e) => e.currentTarget.style.borderColor = "rgba(237,235,230,0.1)"}
                   />
                 </div>
               </div>
-              <div>
-                <label htmlFor="pricing.weekly" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Weekly Price (PKR) <span className="text-gray-400">(optional)</span>
-                </label>
-                <div className="relative">
-                  <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500 dark:text-gray-400">₨</span>
-                  <input
-                    type="number"
-                    id="pricing.weekly"
-                    name="pricing.weekly"
-                    min="0"
-                    step="0.01"
-                    value={classData.pricing.weekly}
-                    onChange={handleChange}
-                    className="pl-8 w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  />
-                </div>
-              </div>
-              <div>
-                <label htmlFor="pricing.monthly" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Monthly Price (PKR) <span className="text-gray-400">(optional)</span>
-                </label>
-                <div className="relative">
-                  <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500 dark:text-gray-400">₨</span>
-                  <input
-                    type="number"
-                    id="pricing.monthly"
-                    name="pricing.monthly"
-                    min="0"
-                    step="0.01"
-                    value={classData.pricing.monthly}
-                    onChange={handleChange}
-                    className="pl-8 w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  />
-                </div>
-              </div>
-              <div>
-                <label htmlFor="pricing.annual" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Annual Price (PKR) <span className="text-gray-400">(optional)</span>
-                </label>
-                <div className="relative">
-                  <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500 dark:text-gray-400">₨</span>
-                  <input
-                    type="number"
-                    id="pricing.annual"
-                    name="pricing.annual"
-                    min="0"
-                    step="0.01"
-                    value={classData.pricing.annual}
-                    onChange={handleChange}
-                    className="pl-8 w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-red-500 focus:ring focus:ring-red-500 focus:ring-opacity-50 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  />
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>
-      
-      <div className="px-6 py-4 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+
+      <div className="px-6 py-4" style={{ borderTop: "1px solid rgba(237,235,230,0.06)" }}>
         <button
           type="submit"
           disabled={isLoading}
-          className={`w-full inline-flex justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 ${
-            isLoading ? 'opacity-75 cursor-not-allowed' : ''
-          }`}
+          className="w-full py-3 text-sm font-bold uppercase tracking-widest transition-colors disabled:opacity-50"
+          style={{ background: "#E50914", color: "#FFFFFF" }}
         >
           {isLoading ? 'Adding Class...' : initialData._id ? 'Update Class' : 'Add Class'}
         </button>
       </div>
     </form>
   );
-} 
+}
