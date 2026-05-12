@@ -7,7 +7,6 @@ export default function AdminSidebar({ activeTab, setActiveTab, handleLogout }) 
     { id: "trainers", label: "Trainers" },
     { id: "schedules", label: "Schedule" },
     { id: "offeredClasses", label: "Classes" },
-    { id: "offeredPrograms", label: "Programs" },
     { id: "settings", label: "Settings" },
   ];
 

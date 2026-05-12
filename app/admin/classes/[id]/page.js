@@ -26,10 +26,10 @@ export default function EditClass() {
     shortDescription: '',
     description: '',
     pricing: {
-      walkIn: 0,
-      weekly: 0,
-      monthly: 0,
-      annual: 0
+      regular: 0,
+      student: 0,
+      kids: 0,
+      women: 0
     }
   });
 
@@ -201,10 +201,10 @@ export default function EditClass() {
 
             {/* Pricing */}
             {[
-              { name: "pricing.walkIn", label: "Walk-in Price", value: classData.pricing?.walkIn || 0 },
-              { name: "pricing.weekly", label: "Weekly Price", value: classData.pricing?.weekly || 0 },
-              { name: "pricing.monthly", label: "Monthly Price", value: classData.pricing?.monthly || 0 },
-              { name: "pricing.annual", label: "Annual Price", value: classData.pricing?.annual || 0 },
+              { name: "pricing.regular", label: "Regular Price", value: classData.pricing?.regular || 0 },
+              { name: "pricing.student", label: "Student Discount", value: classData.pricing?.student || 0 },
+              { name: "pricing.kids", label: "Kids <13 Discount", value: classData.pricing?.kids || 0 },
+              { name: "pricing.women", label: "Women Discount", value: classData.pricing?.women || 0 },
             ].map(field => (
               <div key={field.name} className="col-span-2 md:col-span-1">
                 <label className={labelClass} style={labelStyle}>

@@ -3,14 +3,14 @@ import { useEffect } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Schedule from "../../components/Schedule";
-import OfferingsSlider from "../../components/OfferingsSlider";
+import ClassesSlider from "../../components/ClassesSlider";
 import { trackFacebookEvent, FB_EVENTS } from "../../lib/facebook";
 import { useTheme } from "../../components/ThemeProvider";
 import { slideUp, staggerContainer } from "../../lib/animations";
 import BrutalistPageHero from "../../components/BrutalistPageHero";
 import { BlobField } from "../../components/BlobField";
 
-export default function ClassesClient({ schedules, classes, programs }) {
+export default function ClassesClient({ schedules, classes }) {
   const { theme, mounted } = useTheme();
   const isDark = theme === "dark";
 
@@ -44,9 +44,9 @@ export default function ClassesClient({ schedules, classes, programs }) {
         subtitle="Classes and programs for all skill levels — find the right fit for your goals."
       />
 
-      {/* ─── Offerings Slider ─── */}
+      {/* ─── Classes Slider ─── */}
       <section className="px-6 md:px-16 py-32" style={{ background: isDark ? "#0F0F0F" : "#FFFFFF" }}>
-        <OfferingsSlider initialClasses={classes} initialPrograms={programs} isDark={isDark} />
+        <ClassesSlider initialClasses={classes} isDark={isDark} />
       </section>
 
       {/* ─── Schedule ─── */}

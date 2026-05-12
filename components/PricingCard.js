@@ -14,10 +14,10 @@ export default memo(function PricingCard({ classData, onClick }) {
   const { pricing } = classData;
   const activeTiers = pricing
     ? [
-        pricing.walkIn > 0 && { label: "Walk-in", amount: pricing.walkIn },
-        pricing.weekly > 0 && { label: "Weekly", amount: pricing.weekly },
-        pricing.monthly > 0 && { label: "Monthly", amount: pricing.monthly },
-        pricing.annual > 0 && { label: "Annual", amount: pricing.annual },
+        pricing.regular > 0 && { label: "Regular", amount: pricing.regular },
+        pricing.student > 0 && { label: "Student", amount: pricing.student },
+        pricing.kids > 0 && { label: "Kids", amount: pricing.kids },
+        pricing.women > 0 && { label: "Women", amount: pricing.women },
       ].filter(Boolean)
     : [];
 
