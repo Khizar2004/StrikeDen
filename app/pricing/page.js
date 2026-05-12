@@ -1,26 +1,26 @@
-import { getActivePrograms, getGlobalPromotion } from '../../lib/data';
+import { getActiveClasses, getGlobalPromotion } from '../../lib/data';
 import PricingClient from './PricingClient';
 
 export const revalidate = 300;
 
 export const metadata = {
-  title: 'Program Pricing — Strike Den',
-  description: 'View pricing for all Strike Den programs. Flexible walk-in, weekly, monthly, and annual plans available.',
+  title: 'Class Pricing — Strike Den',
+  description: 'View pricing for all Strike Den classes. Regular, student, kids, and women discounted rates available.',
 };
 
 export default async function PricingPage() {
-  let programs = [];
+  let classes = [];
   let globalPromotion = null;
   try {
-    [programs, globalPromotion] = await Promise.all([
-      getActivePrograms(),
+    [classes, globalPromotion] = await Promise.all([
+      getActiveClasses(),
       getGlobalPromotion(),
     ]);
   } catch {}
 
   return (
     <PricingClient
-      programs={programs}
+      classes={classes}
       globalPromotion={globalPromotion}
     />
   );

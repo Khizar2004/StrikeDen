@@ -10,20 +10,20 @@ import { BlobField } from "../../components/BlobField";
 import { BrutalistButton } from "../../components/BrutalistButton";
 import { slideUp, staggerContainer } from "../../lib/animations";
 
-const ProgramDetailsModal = dynamic(
-  () => import("../../components/ProgramDetailsModal"),
+const ClassDetailsModal = dynamic(
+  () => import("../../components/ClassDetailsModal"),
   { ssr: false }
 );
 
-export default function PricingClient({ programs }) {
+export default function PricingClient({ classes }) {
   const { theme, mounted } = useTheme();
   const isDark = theme === "dark";
 
-  const [selectedProgram, setSelectedProgram] = useState(null);
+  const [selectedClass, setSelectedClass] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleProgramClick = useCallback((program) => {
-    setSelectedProgram(program);
+  const handleClassClick = useCallback((classData) => {
+    setSelectedClass(classData);
     setIsModalOpen(true);
   }, []);
 
@@ -43,7 +43,6 @@ export default function PricingClient({ programs }) {
 
   const textColor = isDark ? "#EDEBE6" : "#1A1A1A";
   const mutedColor = isDark ? "rgba(237,235,230,0.6)" : "rgba(15,15,15,0.55)";
-  const surfaceBg = isDark ? "#141414" : "#F5F5F5";
 
   return (
     <main style={{ background: isDark ? "#0F0F0F" : "#FFFFFF" }}>
@@ -61,8 +60,8 @@ export default function PricingClient({ programs }) {
             className="text-lg md:text-xl max-w-3xl mb-16"
             style={{ color: mutedColor }}
           >
-            Explore our programs and choose the perfect plan for your fitness journey.
-            Click on any program to learn more about what&apos;s included.
+            Choose the perfect class for your fitness journey. Click on any class
+            to learn more about what&apos;s included.
           </motion.p>
 
           <motion.div
@@ -72,11 +71,11 @@ export default function PricingClient({ programs }) {
             variants={staggerContainer}
             className="flex flex-wrap justify-center gap-4"
           >
-            {programs.map((programData) => (
-              <motion.div key={programData._id} variants={slideUp} className="w-full md:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.67rem)]">
+            {classes.map((classData) => (
+              <motion.div key={classData._id} variants={slideUp} className="w-full md:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.67rem)]">
                 <PricingCard
-                  classData={programData}
-                  onClick={() => handleProgramClick(programData)}
+                  classData={classData}
+                  onClick={() => handleClassClick(classData)}
                 />
               </motion.div>
             ))}
@@ -115,12 +114,12 @@ export default function PricingClient({ programs }) {
         </motion.div>
       </section>
 
-      {/* Program Details Modal */}
+      {/* Class Details Modal */}
       {isModalOpen && (
-        <ProgramDetailsModal
+        <ClassDetailsModal
           isOpen={isModalOpen}
           onClose={handleCloseModal}
-          programData={selectedProgram}
+          classData={selectedClass}
         />
       )}
     </main>

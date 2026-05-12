@@ -84,24 +84,24 @@ export default function ClassesList({ classes, onDelete, isLoading }) {
 
               {cls.pricing && (
                 <div className="flex flex-wrap gap-1.5 mt-2">
-                  {cls.pricing.walkIn > 0 && (
+                  {cls.pricing.regular > 0 && (
                     <span className="inline-block px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider" style={{ background: "rgba(237,235,230,0.05)", color: "rgba(237,235,230,0.5)" }}>
-                      Walk-in: ₨{cls.pricing.walkIn.toLocaleString()}
+                      Regular: ₨{cls.pricing.regular.toLocaleString()}
                     </span>
                   )}
-                  {cls.pricing.weekly > 0 && (
+                  {cls.pricing.student > 0 && (
                     <span className="inline-block px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider" style={{ background: "rgba(237,235,230,0.05)", color: "rgba(237,235,230,0.5)" }}>
-                      Weekly: ₨{cls.pricing.weekly.toLocaleString()}
+                      Student: ₨{cls.pricing.student.toLocaleString()}
                     </span>
                   )}
-                  {cls.pricing.monthly > 0 && (
+                  {cls.pricing.kids > 0 && (
                     <span className="inline-block px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider" style={{ background: "rgba(237,235,230,0.05)", color: "rgba(237,235,230,0.5)" }}>
-                      Monthly: ₨{cls.pricing.monthly.toLocaleString()}
+                      Kids: ₨{cls.pricing.kids.toLocaleString()}
                     </span>
                   )}
-                  {cls.pricing.annual > 0 && (
+                  {cls.pricing.women > 0 && (
                     <span className="inline-block px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider" style={{ background: "rgba(237,235,230,0.05)", color: "rgba(237,235,230,0.5)" }}>
-                      Annual: ₨{cls.pricing.annual.toLocaleString()}
+                      Women: ₨{cls.pricing.women.toLocaleString()}
                     </span>
                   )}
                 </div>

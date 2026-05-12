@@ -48,10 +48,10 @@ export async function POST(request) {
       shortDescription: shortDescription || '',
       image: image || '',
       pricing: pricing || {
-        walkIn: 0,
-        weekly: 0,
-        monthly: 0,
-        annual: 0
+        regular: 0,
+        student: 0,
+        kids: 0,
+        women: 0
       }
     });
     

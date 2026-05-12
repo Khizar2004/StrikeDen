@@ -1,4 +1,4 @@
-import { getSchedules, getClasses, getActivePrograms } from '../../lib/data';
+import { getSchedules, getClasses } from '../../lib/data';
 import ClassesClient from './ClassesClient';
 
 export const revalidate = 300;
@@ -11,12 +11,10 @@ export const metadata = {
 export default async function ClassesPage() {
   let schedules = [];
   let classes = [];
-  let programs = [];
   try {
-    [schedules, classes, programs] = await Promise.all([
+    [schedules, classes] = await Promise.all([
       getSchedules(),
       getClasses(),
-      getActivePrograms(),
     ]);
   } catch {}
 
@@ -24,7 +22,6 @@ export default async function ClassesPage() {
     <ClassesClient
       schedules={schedules}
       classes={classes}
-      programs={programs}
     />
   );
 }

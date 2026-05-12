@@ -22,10 +22,10 @@ export default function ClassForm({ initialData = {}, onSubmit, isLoading }) {
     description: initialData.description || "",
     shortDescription: initialData.shortDescription || "",
     pricing: initialData.pricing || {
-      walkIn: 0,
-      weekly: 0,
-      monthly: 0,
-      annual: 0
+      regular: 0,
+      student: 0,
+      kids: 0,
+      women: 0
     }
   });
 
@@ -139,10 +139,10 @@ export default function ClassForm({ initialData = {}, onSubmit, isLoading }) {
           <h3 className="text-sm font-bold uppercase tracking-widest mb-4" style={{ color: "#EDEBE6" }}>Pricing</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
-              { id: "pricing.walkIn", label: "Walk-in (PKR)" },
-              { id: "pricing.weekly", label: "Weekly (PKR)" },
-              { id: "pricing.monthly", label: "Monthly (PKR)" },
-              { id: "pricing.annual", label: "Annual (PKR)" },
+              { id: "pricing.regular", label: "Regular (PKR)" },
+              { id: "pricing.student", label: "Student Discount (PKR)" },
+              { id: "pricing.kids", label: "Kids <13 (PKR)" },
+              { id: "pricing.women", label: "Women Discount (PKR)" },
             ].map(field => (
               <div key={field.id}>
                 <label htmlFor={field.id} className={labelClass} style={labelStyle}>
