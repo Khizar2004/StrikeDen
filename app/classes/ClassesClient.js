@@ -177,7 +177,7 @@ export default function ClassesClient({ schedules, classes }) {
           </motion.p>
           <motion.div variants={slideUp}>
             <a
-              href="https://api.whatsapp.com/send/?phone=923372629350&text=Hi!%20I%27m%20interested%20in%20joining%20classes%20at%20Strike%20Den.&type=phone_number&app_absent=0"
+              href="https://wa.me/923215533361?text=Hi!%20I%27m%20interested%20in%20joining%20classes%20at%20Strike%20Den."
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => handleClassSignupClick("WhatsApp Signup")}

@@ -54,7 +54,7 @@ const SocialLinks = ({ isDark }) => {
   const socials = [
     { name: "Facebook", icon: <FaFacebookF />, url: "https://www.facebook.com/profile.php?id=61570916734685" },
     { name: "Instagram", icon: <FaInstagram />, url: "https://www.instagram.com/strikeden.pk/" },
-    { name: "WhatsApp", icon: <FaWhatsapp />, url: "https://api.whatsapp.com/send/?phone=923372629350&text&type=phone_number&app_absent=0" },
+    { name: "WhatsApp", icon: <FaWhatsapp />, url: "https://wa.me/923215533361" },
   ];
 
   return (
@@ -301,7 +301,7 @@ export default function ContactPage() {
           </motion.p>
           <motion.div variants={slideUp}>
             <a
-              href="https://api.whatsapp.com/send/?phone=923372629350&text=Hi!%20I%27m%20interested%20in%20joining%20Strike%20Den.&type=phone_number&app_absent=0"
+              href="https://wa.me/923215533361?text=Hi!%20I%27m%20interested%20in%20joining%20Strike%20Den."
               target="_blank"
               rel="noopener noreferrer"
               onClick={handleWhatsAppClick}

@@ -61,7 +61,7 @@ export default function Footer() {
               </svg>
             </a>
             <a
-              href="https://api.whatsapp.com/send/?phone=923372629350&text&type=phone_number&app_absent=0"
+              href="https://wa.me/923215533361"
               className="footer-social"
               target="_blank"
               rel="noopener noreferrer"
