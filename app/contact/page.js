@@ -187,8 +187,8 @@ export default function ContactPage() {
               <h3 className="font-bold uppercase tracking-widest text-xs mb-4" style={{ color: "#F8A348" }}>Contact Us</h3>
               <div>
                 <p className="mb-1 text-xs uppercase tracking-widest" style={{ color: mutedColor }}>Phone</p>
-                <a href="tel:+923372629350" className="text-xl font-bold transition-colors" style={{ color: textColor }} onMouseEnter={(e) => (e.currentTarget.style.color = "#E50914")} onMouseLeave={(e) => (e.currentTarget.style.color = textColor)}>
-                  +92 337 2629350
+                <a href="tel:+923215533361" className="text-xl font-bold transition-colors" style={{ color: textColor }} onMouseEnter={(e) => (e.currentTarget.style.color = "#E50914")} onMouseLeave={(e) => (e.currentTarget.style.color = textColor)}>
+                  +92 321 5533361
                 </a>
               </div>
               <div>

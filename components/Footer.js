@@ -114,7 +114,7 @@ export default function Footer() {
           </div>
           <ul className="space-y-4">
             <li className="text-sm text-[rgba(15,15,15,0.5)] dark:text-[rgba(237,235,230,0.5)]">
-              +92 337 2629350
+              +92 321 5533361
             </li>
             <li className="text-sm leading-relaxed text-[rgba(15,15,15,0.5)] dark:text-[rgba(237,235,230,0.5)]">
               2nd Floor, 38-C, Shahbaz Commercial,<br />

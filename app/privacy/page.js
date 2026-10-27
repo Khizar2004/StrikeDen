@@ -200,7 +200,7 @@ export default function PrivacyPage() {
                       <div className="p-4 bg-[#F5F5F5] dark:bg-[#1A1A1A] text-[rgba(15,15,15,0.7)] dark:text-[rgba(237,235,230,0.6)]">
                         <p className="mb-2">
                           <span style={{ color: "#E50914" }} className="font-bold mr-2">T</span>
-                          +92 337 2629350
+                          +92 321 5533361
                         </p>
                         <p>
                           <span style={{ color: "#E50914" }} className="font-bold mr-2">A</span>
