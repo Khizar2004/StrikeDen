@@ -54,7 +54,7 @@ const SocialLinks = ({ isDark }) => {
   const socials = [
     { name: "Facebook", icon: <FaFacebookF />, url: "https://www.facebook.com/profile.php?id=61570916734685" },
     { name: "Instagram", icon: <FaInstagram />, url: "https://www.instagram.com/strikeden.pk/" },
-    { name: "WhatsApp", icon: <FaWhatsapp />, url: "https://api.whatsapp.com/send/?phone=923372629350&text&type=phone_number&app_absent=0" },
+    { name: "WhatsApp", icon: <FaWhatsapp />, url: "https://wa.me/923215533361" },
   ];
 
   return (
@@ -187,8 +187,8 @@ export default function ContactPage() {
               <h3 className="font-bold uppercase tracking-widest text-xs mb-4" style={{ color: "#F8A348" }}>Contact Us</h3>
               <div>
                 <p className="mb-1 text-xs uppercase tracking-widest" style={{ color: mutedColor }}>Phone</p>
-                <a href="tel:+923372629350" className="text-xl font-bold transition-colors" style={{ color: textColor }} onMouseEnter={(e) => (e.currentTarget.style.color = "#E50914")} onMouseLeave={(e) => (e.currentTarget.style.color = textColor)}>
-                  +92 337 2629350
+                <a href="tel:+923215533361" className="text-xl font-bold transition-colors" style={{ color: textColor }} onMouseEnter={(e) => (e.currentTarget.style.color = "#E50914")} onMouseLeave={(e) => (e.currentTarget.style.color = textColor)}>
+                  +92 321 5533361
                 </a>
               </div>
               <div>
@@ -301,7 +301,7 @@ export default function ContactPage() {
           </motion.p>
           <motion.div variants={slideUp}>
             <a
-              href="https://api.whatsapp.com/send/?phone=923372629350&text=Hi!%20I%27m%20interested%20in%20joining%20Strike%20Den.&type=phone_number&app_absent=0"
+              href="https://wa.me/923215533361?text=Hi!%20I%27m%20interested%20in%20joining%20Strike%20Den."
               target="_blank"
               rel="noopener noreferrer"
               onClick={handleWhatsAppClick}
