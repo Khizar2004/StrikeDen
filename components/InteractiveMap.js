@@ -20,7 +20,7 @@ export default function InteractiveMap() {
   const { theme } = useTheme();
   
   // StrikeDen location coordinates
-  const position = [24.7948238, 67.0494707]; // Latitude, Longitude
+  const position = [24.7938099, 67.0480365]; // Latitude, Longitude
   
   useEffect(() => {
     // Set default icon for all markers
@@ -48,7 +48,7 @@ export default function InteractiveMap() {
           <Popup>
             <div className="text-center">
               <strong>Strike Den</strong><br />
-              2nd Floor, 38-C, Shahbaz Commercial<br />
+              4th Floor, 59-C, Saba Avenue<br />
               DHA Phase 6, Karachi
             </div>
           </Popup>

@@ -117,7 +117,7 @@ export default function Footer() {
               +92 321 5533361
             </li>
             <li className="text-sm leading-relaxed text-[rgba(15,15,15,0.5)] dark:text-[rgba(237,235,230,0.5)]">
-              2nd Floor, 38-C, Shahbaz Commercial,<br />
+              4th Floor, 59-C, Saba Avenue,<br />
               DHA Phase 6, Karachi 75500
             </li>
           </ul>
