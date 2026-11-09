@@ -204,7 +204,7 @@ export default function PrivacyPage() {
                         </p>
                         <p>
                           <span style={{ color: "#E50914" }} className="font-bold mr-2">A</span>
-                          2nd Floor, 38-C, Shahbaz Commercial, DHA Phase 6, Karachi 75500, Pakistan
+                          4th Floor, 59-C, Saba Avenue, DHA Phase 6, Karachi 75500, Pakistan
                         </p>
                       </div>
                     </>

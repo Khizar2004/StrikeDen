@@ -162,10 +162,10 @@ export default function ContactPage() {
             <div className="p-8 flex-1">
               <FaMapMarkerAlt className="text-3xl mb-5" style={{ color: "#E50914" }} />
               <h3 className="font-bold uppercase tracking-widest text-xs mb-4" style={{ color: "#F8A348" }}>Our Location</h3>
-              <p className="mb-2" style={{ color: mutedColor }}>2nd Floor, 38-C, Shahbaz Commercial, DHA Phase 6</p>
+              <p className="mb-2" style={{ color: mutedColor }}>4th Floor, 59-C, Saba Avenue, DHA Phase 6</p>
               <p className="mb-5" style={{ color: mutedColor }}>Karachi 75500, Pakistan</p>
               <a
-                href="https://www.google.com/maps/place/Strike+Den+%7C+MMA+%26+Judo/@24.7948238,67.0468958,963m/data=!3m1!1e3!4m6!3m5!1s0x3eb33d8b3de8175d:0xccac7c6c8c8c752e!8m2!3d24.7948238!4d67.0494707!16s%2Fg%2F11wws9jpr8?entry=ttu&g_ep=EgoyMDI1MDMxMS4wIKXMDSoASAFQAw%3D%3D"
+                href="https://www.google.com/maps/place/Strike+Den+%7C+MMA+%26+BJJ/@24.7938099,67.0480365,17z/data=!3m1!4b1!4m6!3m5!1s0x3eb33d8b3de8175d:0xccac7c6c8c8c752e!8m2!3d24.7938099!4d67.0480365!16s%2Fg%2F11wws9jpr8"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1 text-xs uppercase tracking-widest transition-all hover:gap-2"
